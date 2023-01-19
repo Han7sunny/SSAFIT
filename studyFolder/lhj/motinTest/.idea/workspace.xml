@@ -4,11 +4,41 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="335e0e1c-0612-4249-a939-dcc252414296" name="Changes" comment="" />
+    <list default="true" id="335e0e1c-0612-4249-a939-dcc252414296" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/assets/adaptive-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/assets/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/assets/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/assets/splash.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/babel.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../appFE/RN/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/assets/adaptive-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/assets/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/assets/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/assets/splash.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/babel.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../mirrorFE/RN/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
@@ -68,25 +98,15 @@
       <workItem from="1673999882735" duration="865000" />
       <workItem from="1674013778693" duration="14000" />
       <workItem from="1674020706436" duration="1174000" />
+      <workItem from="1674114681720" duration="1186000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/main.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/motinTest$main.coverage" NAME="main Coverage Results" MODIFIED="1674000135403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/main_py$main.coverage" NAME="main Coverage Results" MODIFIED="1674021272854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/motinTest$main.coverage" NAME="main Coverage Results" MODIFIED="1674114708221" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
