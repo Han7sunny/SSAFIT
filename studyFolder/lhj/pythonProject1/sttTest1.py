@@ -1,0 +1,8 @@
+
+r = sr.Recognizer()
+with sr.Microphone() as source:
+    print("Say something! : ")
+    audio = r.listen(source)
+# print( r.recognize_google(audio, language='ko-KR'))
+text = r.recognize_google(audio, language='ko-KR')
+print(text)
