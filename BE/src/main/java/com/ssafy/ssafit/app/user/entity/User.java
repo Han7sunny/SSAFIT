@@ -29,7 +29,7 @@ public class User {
     @Column(length = 100, nullable = false)
     private String photo;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String photo_encoding;
 
     @Column(nullable = false)
