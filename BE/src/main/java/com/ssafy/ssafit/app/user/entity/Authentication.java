@@ -21,12 +21,13 @@ public class Authentication {
     @Column(length = 5, nullable = false)
     private String code;
 
-    private LocalDateTime expire_time;
+    @Column(name = "expire_time")
+    private LocalDateTime expireTime;
 
     @Builder
-    public Authentication(String id, String code, LocalDateTime expire_time) {
+    public Authentication(String id, String code, LocalDateTime expireTime) {
         this.id = id;
         this.code = code;
-        this.expire_time = expire_time.plusMinutes(5);
+        this.expireTime = expireTime.plusMinutes(5);
     }
 }

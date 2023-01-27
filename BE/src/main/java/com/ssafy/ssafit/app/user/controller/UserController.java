@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RequestMapping("/user")
 @RestController
@@ -23,8 +24,8 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> idCheck(@PathVariable String id) {
+    @GetMapping("/id-check")
+    public ResponseEntity<?> idCheck(@RequestParam String id) {
         try {
             int res = userService.idCheck(id);
             return new ResponseEntity<Integer>(res, HttpStatus.OK);
@@ -33,8 +34,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<?> nameCheck(@PathVariable String name) {
+    @GetMapping("/name-check")
+    public ResponseEntity<?> nameCheck(@RequestParam String name) {
         try {
             boolean existence = userService.nameCheck(name);
             return new ResponseEntity<Boolean>(existence, HttpStatus.OK);
@@ -43,8 +44,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<?> emailCheck(@PathVariable String email) {
+    @GetMapping("/email-check")
+    public ResponseEntity<?> emailCheck(@RequestParam String email) {
         try {
             boolean existence = userService.emailCheck(email);
             return new ResponseEntity<Boolean>(existence, HttpStatus.OK);
@@ -53,11 +54,31 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{password}")
-    public ResponseEntity<?> passwordCheck(@PathVariable String password) {
+    @GetMapping("/password-verification")
+    public ResponseEntity<?> passwordCheck(@RequestParam String password) {
         try {
             boolean validation = userService.passwordCheck(password);
             return new ResponseEntity<Boolean>(validation, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/find-password")
+    public ResponseEntity<?> findPassword(@RequestParam String id, @RequestParam String email) {
+        try {
+            boolean check = userService.findPassword(id, email);
+            return new ResponseEntity<Boolean>(check, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> idPwd) {
+        try {
+            userService.changePassword(idPwd);
+            return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
         }
@@ -88,8 +109,9 @@ public class UserController {
     private ResponseEntity<?> checkCode(@RequestParam("code") String code,@RequestParam("id") String id) {
         try {
             boolean check = userService.checkCode(code, id);
+            return new ResponseEntity<Boolean>(check, HttpStatus.OK);
         } catch (Exception e) {
-
+            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
         }
     }
 }
