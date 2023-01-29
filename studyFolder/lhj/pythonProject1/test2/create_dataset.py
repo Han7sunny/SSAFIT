@@ -5,7 +5,7 @@ import time, os
 
 actions = ['select', 'close', 'move']
 seq_length = 30
-secs_for_action = 30
+secs_for_action = 60
 
 # MediaPipe hands model
 mp_hands = mp.solutions.hands

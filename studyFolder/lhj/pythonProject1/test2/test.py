@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 actions = ['select', 'close', 'move']
 seq_length = 30
 
-model = load_model('models/model2_1.0.h5')
+model = load_model('models/model.h5')
 
 # MediaPipe hands model
 mp_hands = mp.solutions.hands
@@ -28,6 +28,7 @@ seq = []
 action_seq = []
 before = [0] * 2
 after = [0] * 2
+l = 0.01
 
 while cap.isOpened():
     ret, img = cap.read()
@@ -70,33 +71,35 @@ while cap.isOpened():
             y_pred = model.predict(input_data).squeeze()  # print 있음
             i_pred = int(np.argmax(y_pred))
             conf = y_pred[i_pred]
+            print(y_pred, conf)
 
-            if conf < 0.9:
-                continue
+            if conf >= 0.9:
+                action = actions[i_pred]
+                action_seq.append(action)
 
-            action = actions[i_pred]
-            action_seq.append(action)
+                if len(action_seq) < 3:
+                    continue
 
-            if len(action_seq) < 3:
-                continue
-
-            this_action = '?'
-            if action_seq[-1] == action_seq[-2] == action_seq[-3]:
-                this_action = action
-            cv2.putText(img, f'{this_action.upper()}', org=(int(res.landmark[0].x * img.shape[1]), int(res.landmark[0].y * img.shape[0] + 20)), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
-            if this_action == 'move':
-                delta_x = after[0] - before[0]
-                delta_y = after[1] - before[1]
-                if abs(delta_x) > abs(delta_y):
-                    if delta_x > 0.05:
-                        print('right')
-                    elif delta_x < -0.05:
-                        print('left')
-                elif abs(delta_y) > abs(delta_x):
-                    if delta_y < -0.05:
-                        print('up')
-                    elif delta_y > 0.05:
-                        print('down')
+                this_action = '?'
+                if action_seq[-1] == action_seq[-2] == action_seq[-3]:
+                    this_action = action
+                # cv2.putText(img, f'{this_action.upper()}', org=(int(res.landmark[0].x * img.shape[1]), int(res.landmark[0].y * img.shape[0] + 20)), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
+                text = ''
+                if this_action == 'move':
+                    delta_x = after[0] - before[0]
+                    delta_y = after[1] - before[1]
+                    if abs(delta_x) > abs(delta_y):
+                        if delta_x >= l:
+                            text = 'right'
+                        elif delta_x <= -l:
+                            text = 'left'
+                    elif abs(delta_y) > abs(delta_x):
+                        if delta_y <= -l:
+                            text = 'up'
+                        elif delta_y >= l:
+                            text = 'down'
+                cv2.putText(img, f'{text.upper()}' if this_action == 'move' else f'{this_action.upper()}', org=(20, 30),
+                            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
             before[0] = after[0]
             before[1] = after[1]
     # out.write(img0)
