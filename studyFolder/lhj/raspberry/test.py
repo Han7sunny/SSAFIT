@@ -6,6 +6,9 @@ def main():
 
     while cv2.waitKey(10) < 0:
         ret, frame = capture.read()
+        if not ret:
+            print("Could not read frame")
+            exit()
         cv2.imshow("Chap2_camera", frame)
 
     capture.release()
