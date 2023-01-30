@@ -18,12 +18,6 @@ hands = mp_hands.Hands(
 
 cap = cv2.VideoCapture(0)
 
-# w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-# h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-# fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-# out = cv2.VideoWriter('input.mp4', fourcc, cap.get(cv2.CAP_PROP_FPS), (w, h))
-# out2 = cv2.VideoWriter('output.mp4', fourcc, cap.get(cv2.CAP_PROP_FPS), (w, h))
-
 seq = []
 action_seq = []
 before = [0] * 2
@@ -83,7 +77,6 @@ while cap.isOpened():
                 this_action = '?'
                 if action_seq[-1] == action_seq[-2] == action_seq[-3]:
                     this_action = action
-                # cv2.putText(img, f'{this_action.upper()}', org=(int(res.landmark[0].x * img.shape[1]), int(res.landmark[0].y * img.shape[0] + 20)), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
                 text = ''
                 if this_action == 'move':
                     delta_x = after[0] - before[0]
@@ -98,12 +91,10 @@ while cap.isOpened():
                             text = 'up'
                         elif delta_y >= l:
                             text = 'down'
-                cv2.putText(img, f'{text.upper()}' if this_action == 'move' else f'{this_action.upper()}', org=(20, 30),
+                cv2.putText(img, ('move - ' + f'{text.upper()}') if this_action == 'move' else f'{this_action.upper()}', org=(20, 30),
                             fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(255, 255, 255), thickness=2)
             before[0] = after[0]
             before[1] = after[1]
-    # out.write(img0)
-    # out2.write(img)
     cv2.imshow('img', img)
     if cv2.waitKey(1) == ord('q'):
         break
