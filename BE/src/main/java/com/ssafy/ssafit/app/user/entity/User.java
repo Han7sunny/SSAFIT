@@ -1,5 +1,7 @@
 package com.ssafy.ssafit.app.user.entity;
 
+import com.ssafy.ssafit.app.exercise.entity.Exercise;
+import com.ssafy.ssafit.app.record.entity.Record;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,6 +36,9 @@ public class User {
 
     @Column(nullable = false)
     private boolean on_off;
+
+    @OneToMany(mappedBy = "user")
+    private List<Record> record;
 
     @Builder
     public User(String id, String name, String password, String email, String photo, String photo_encoding, boolean on_off) {
