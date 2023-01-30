@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.routine.controller;
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.routine.dto.req.RoutineGenerateReqDto;
+import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,18 @@ public class RoutineController {
     @PostMapping("/generate-routine")
     public ResponseEntity<?> generateRoutine(@RequestBody RoutineGenerateReqDto routineGenerateReqDto) {
         try {
-            System.out.println(routineGenerateReqDto.getRoutineName());
-            System.out.println(routineGenerateReqDto.getExerciseList().size());
             routineService.generateRoutine(routineGenerateReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("추가 성공").build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-exercise-info/{id}")
+    public ResponseEntity<?> getExerciseInfo(@PathVariable("id") Long routineId) {
+        try {
+            List<RoutineExerciseRespDto> routineExerciseRespDtos = routineService.getExerciseInfo(routineId);
+            return new ResponseEntity<List<RoutineExerciseRespDto>>(routineExerciseRespDtos, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

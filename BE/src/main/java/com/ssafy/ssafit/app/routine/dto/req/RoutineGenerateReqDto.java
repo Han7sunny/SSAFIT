@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public class RoutineGenerateReqDto {
 
-    public class Exercise {
+    public static class Exercise {
         private Long exerciseId;
         private Long exerciseSet;
         private Long reps;
