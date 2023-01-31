@@ -4,10 +4,14 @@ import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
+import com.ssafy.ssafit.app.routine.dto.req.RoutineAddReqDto;
 import com.ssafy.ssafit.app.routine.dto.req.RoutineGenerateReqDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
+import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
+import com.ssafy.ssafit.app.user.entity.User;
+import com.ssafy.ssafit.app.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RoutineServiceImpl implements RoutineService{
+public class RoutineServiceImpl implements RoutineService {
 
     private RoutineRepository routineRepository;
     private ExerciseRepository exerciseRepository;
     private ExerciseTypeRepository exerciseTypeRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    public RoutineServiceImpl(RoutineRepository routineRepository, ExerciseRepository exerciseRepository, ExerciseTypeRepository exerciseTypeRepository) {
+    public RoutineServiceImpl(RoutineRepository routineRepository, ExerciseRepository exerciseRepository, ExerciseTypeRepository exerciseTypeRepository, UserRepository userRepository) {
         this.routineRepository = routineRepository;
         this.exerciseRepository = exerciseRepository;
         this.exerciseTypeRepository = exerciseTypeRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,6 +42,7 @@ public class RoutineServiceImpl implements RoutineService{
                 .name(routineGenerateReqDto.getRoutineName())
                 .build();
 
+        routine.getUser().add(userRepository.findById(routineGenerateReqDto.getUserId()).get());
         routineRepository.save(routine);
 
         int sz = routineGenerateReqDto.getExerciseList().size();
@@ -56,6 +63,33 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
+    public void deleteRoutine(String userId, Long routineId) {
+        Routine routine = routineRepository.findById(routineId).get();
+        routine.getUser().remove(userRepository.findById(userId).get());
+        routineRepository.save(routine);
+    }
+
+    @Override
+    @Transactional
+    public void modifyRoutine(RoutineGenerateReqDto routineGenerateReqDto) {
+        deleteRoutine(routineGenerateReqDto.getUserId(), routineGenerateReqDto.getRoutineId());
+        generateRoutine(routineGenerateReqDto);
+    }
+
+    @Override
+    public boolean addUserRoutine(RoutineAddReqDto routineAddReqDto) {
+        Routine routine = routineRepository.findById(routineAddReqDto.getRoutineId()).get();
+        User user = userRepository.findById(routineAddReqDto.getUserId()).get();
+        if(routine.getUser().contains(user))
+            return false;
+        else {
+            routine.getUser().add(user);
+            routineRepository.save(routine);
+            return true;
+        }
+    }
+
+    @Override
     public List<RoutineExerciseRespDto> getExerciseInfo(Long routineId) {
         List<Exercise> exerciseList = exerciseRepository.findByRoutine_RoutineId(routineId);
 
@@ -65,10 +99,6 @@ public class RoutineServiceImpl implements RoutineService{
         for(int i = 0; i < sz; i++) {
             Exercise tmp_exercise = exerciseList.get(i);
             ExerciseType exerciseType = exerciseTypeRepository.findById(tmp_exercise.getExerciseType().getExerciseTypeId()).get();
-
-            System.out.println(exerciseType.getExerciseTypeId());
-            System.out.println(exerciseType.getExerciseTypeName());
-            System.out.println(exerciseType.getExerciseArea());
 
             routineExerciseRespDtoList.add(RoutineExerciseRespDto.builder()
                             .exerciseId(tmp_exercise.getId())
@@ -86,5 +116,20 @@ public class RoutineServiceImpl implements RoutineService{
         return  routineExerciseRespDtoList;
     }
 
+    @Override
+    public List<RoutineInfoRespDto> getUserRoutine(String userId) {
+        List<Long> routineList = routineRepository.getUserRoutine(userId);
+        List<RoutineInfoRespDto> routineInfoRespDtoList = new ArrayList<RoutineInfoRespDto>();
 
+        for(Long tmp : routineList) {
+            Routine routine = routineRepository.findById(tmp).get();
+
+            routineInfoRespDtoList.add(RoutineInfoRespDto.builder()
+                            .routineId(routine.getRoutineId())
+                            .name(routine.getName())
+                            .build());
+        }
+
+        return routineInfoRespDtoList;
+    }
 }

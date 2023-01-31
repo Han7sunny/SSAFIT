@@ -1,5 +1,6 @@
 package com.ssafy.ssafit.app.user.controller;
 
+import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.service.UserService;
 import com.ssafy.ssafit.util.Sha256;
@@ -17,8 +18,6 @@ public class UserController {
 
     private UserService userService;
 
-    private final String SUCCESS = "success";
-    private final String FAIL = "fail";
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -28,9 +27,9 @@ public class UserController {
     public ResponseEntity<?> idCheck(@RequestParam String id) {
         try {
             int res = userService.idCheck(id);
-            return new ResponseEntity<Integer>(res, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(res)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -38,9 +37,9 @@ public class UserController {
     public ResponseEntity<?> nameCheck(@RequestParam String name) {
         try {
             boolean existence = userService.nameCheck(name);
-            return new ResponseEntity<Boolean>(existence, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(existence)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -48,9 +47,9 @@ public class UserController {
     public ResponseEntity<?> emailCheck(@RequestParam String email) {
         try {
             boolean existence = userService.emailCheck(email);
-            return new ResponseEntity<Boolean>(existence, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(existence)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -58,9 +57,9 @@ public class UserController {
     public ResponseEntity<?> passwordCheck(@RequestParam String password) {
         try {
             boolean validation = userService.passwordCheck(password);
-            return new ResponseEntity<Boolean>(validation, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(validation)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -68,9 +67,9 @@ public class UserController {
     public ResponseEntity<?> findPassword(@RequestParam String id, @RequestParam String email) {
         try {
             boolean check = userService.findPassword(id, email);
-            return new ResponseEntity<Boolean>(check, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -78,9 +77,10 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> idPwd) {
         try {
             userService.changePassword(idPwd);
-            return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("변경 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+
         }
     }
 
@@ -89,9 +89,9 @@ public class UserController {
         String encryptPassword = Sha256.encrypt(userJoinReqDto.getPassword());
         try {
             userService.userJoin(userJoinReqDto, encryptPassword);
-            return new ResponseEntity<String>(SUCCESS, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -99,9 +99,10 @@ public class UserController {
     private ResponseEntity<?> createCode(@RequestParam("email") String email) {
         try {
             String id = userService.createCode(email);
-            return new ResponseEntity<String>(id, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(id).build(), HttpStatus.OK);
         } catch(Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+
         }
     }
 
@@ -109,9 +110,9 @@ public class UserController {
     private ResponseEntity<?> checkCode(@RequestParam("code") String code,@RequestParam("id") String id) {
         try {
             boolean check = userService.checkCode(code, id);
-            return new ResponseEntity<Boolean>(check, HttpStatus.OK);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<String>(FAIL, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 }

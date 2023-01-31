@@ -57,7 +57,10 @@ public class RoutineGenerateReqDto {
         }
     }
 
+    private Long routineId;
     private String routineName;
+
+    private String userId;
 
     private List<Exercise> exerciseList;
 
