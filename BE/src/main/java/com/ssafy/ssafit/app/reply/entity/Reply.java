@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -33,7 +33,7 @@ public class Reply {
     @Temporal(TemporalType.TIMESTAMP)
     private Date registered_time;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modified_time;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date modified_time;
 
 }

@@ -1,18 +1,15 @@
 package com.ssafy.ssafit;
 
-import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
-import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
+
 import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.board.repository.BoardRepository;
-import com.ssafy.ssafit.app.board.service.BoardService;
-import com.ssafy.ssafit.app.reply.controller.ReplyController;
+import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
 import com.ssafy.ssafit.app.user.dto.Role;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
-import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,12 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest
-public class BoardTest {
+public class ReplyTest {
+
 
     private static final Logger logger = LoggerFactory.getLogger(BoardTest.class);
 
@@ -44,10 +41,7 @@ public class BoardTest {
     ReplyRepository replyRepository;
 
     @Autowired
-    private BoardService boardService;
-
-    @Autowired
-    private ReplyService replyService;
+    ReplyService replyService;
 
     @BeforeEach
     @Test
@@ -102,49 +96,43 @@ public class BoardTest {
 
     }
 
-//    @Test
-//    void viewBoard(){
-//        logger.info("[View] viewBoard()");
-//        //        게시글 조회
-//        long boardId = 1;
-//        BoardRespDto getBoard = boardService.view(boardId);
-//        logger.info("[View] Board _ replyList length : {}", getBoard.getReplyList().size());
-//        Assertions.assertThat(getBoard.getReplyList().size()).isEqualTo(2);
-//    }
-//
-//    @Test
-//    void deleteBoard(){
-//        long boardId = 1;
-//        boardService.delete(boardId);
-//        Assertions.assertThat(boardRepository.findById(boardId)).isEmpty();
-//    }
-//
-//    @Test
-//    void modifyBoard(){
-//        logger.info("[modify] modifyBoard");
-//
-//        long boardId = 1;
-//        BoardReqDto boardReqDto = BoardReqDto.builder().board_id(boardId).user_id("test11").title("modify_title").content("modity_content").share(true).build();
-//        boardService.modify(boardReqDto);
-//
-//        logger.info("[view] view");
-//        BoardRespDto getBoard = boardService.view(boardId);
-//
-//        Assertions.assertThat(getBoard.getTitle()).isEqualTo(boardReqDto.getTitle());
-//        Assertions.assertThat(getBoard.getContent()).isEqualTo(boardReqDto.getContent());
-//        Assertions.assertThat(getBoard.isShare()).isEqualTo(boardReqDto.isShare());
-//
-//    }
-//
-//    @Test
-//    void clickLikes(){
-//        logger.info("[Enter] clickLikes()");
-//        logger.info("[View] view board");
-//        long boardId = 1;
-//        BoardRespDto board = boardService.view(boardId);
-//        logger.info("[likes] click likes");
-//        BoardRespDto afterClickLikes = boardService.increaseLike(boardId);
-//        Assertions.assertThat(afterClickLikes.getLikes()).isEqualTo(board.getLikes() + 1);
-//
-//    }
+    @Test
+    void regist(){
+        logger.info("[Enter] regist() ");
+
+        long boardId = 1;
+        int beforeReplySize = replyService.getReplyListByBoardId(boardId).size();
+        logger.info("[check] check reply size before regist reply : {} ", beforeReplySize);
+
+
+        logger.info("[regist] regist reply");
+        ReplyReqDto reply = ReplyReqDto.builder().board_id(boardId).user_id("test1").content("regist_reply_test").build();
+        replyService.regist(reply);
+
+        logger.info("[view] get reply");
+        List<Reply> after = replyService.getReplyListByBoardId(boardId);
+        Assertions.assertThat(after.size()).isEqualTo(beforeReplySize + 1);
+    }
+
+    @Test
+    void delete(){
+        logger.info("[Enter] delete()");
+
+        long boardId = 1;
+        int beforeReplySize = replyService.getReplyListByBoardId(boardId).size();
+
+        logger.info("[delete] delete reply");
+        long replyId = 2;
+        replyService.delete(replyId);
+
+        Assertions.assertThat(replyService.getReplyListByBoardId(boardId).size()).isEqualTo(beforeReplySize - 1);
+    }
+
+    @Test
+    void modify(){
+        logger.info("[Enter] modify()");
+
+
+    }
+
 }

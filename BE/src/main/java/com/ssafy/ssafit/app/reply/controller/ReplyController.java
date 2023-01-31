@@ -1,5 +1,6 @@
 package com.ssafy.ssafit.app.reply.controller;
 
+import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
 import org.slf4j.Logger;
@@ -22,17 +23,18 @@ public class ReplyController {
     public ReplyController(ReplyService replyService) {
         this.replyService = replyService;
     }
-//    @GetMapping("/user/{userId}")
-////    @ApiOperation(value = "사용자가 작성한 댓글 조회", notes = "입력한 사용자 ID(userId)에 해당하는 모든 댓글(Reply)을 조회한다.", response = Reply.class)
-//    public ResponseEntity<List<Reply>> getReplyListByUserId(@PathVariable("userId") String userId) throws Exception {
-////    public ResponseEntity<List<Reply>> getReplyListByUserId(@PathVariable("userId") @ApiParam(value = "사용자 ID", required = true) String userId) throws Exception {
-//        logger.info("Called getReplyListByUserId. userId: {}", userId);
-//        return new ResponseEntity<List<Reply>>(replyService.getListByUserId(userId), HttpStatus.OK);
-//    }
+
+    @GetMapping("/user/{userId}")
+//    @ApiOperation(value = "사용자가 작성한 댓글 조회", notes = "입력한 사용자 ID(userId)에 해당하는 모든 댓글(Reply)을 조회한다.", response = Reply.class)
+    public ResponseEntity<List<Reply>> getReplyListByUserId(@PathVariable("userId") String userId) throws Exception {
+//    public ResponseEntity<List<Reply>> getReplyListByUserId(@PathVariable("userId") @ApiParam(value = "사용자 ID", required = true) String userId) throws Exception {
+        logger.info("Called getReplyListByUserId. userId: {}", userId);
+        return new ResponseEntity<List<Reply>>(replyService.getReplyListByUserId(userId), HttpStatus.OK);
+    }
 
     @PostMapping
 //    @ApiOperation(value = "댓글 작성", notes = "입력한 정보로 새로운 댓글을 생성한다.")
-    public ResponseEntity<Boolean> postReply(@RequestBody Reply reply) throws Exception {
+    public ResponseEntity<Boolean> postReply(@RequestBody ReplyReqDto reply) throws Exception {
         logger.info("Called postReply. reply: {}", reply);
         replyService.regist(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
@@ -40,7 +42,7 @@ public class ReplyController {
 
     @PutMapping
 //    @ApiOperation(value = "댓글 수정", notes = "입력한 정보로 기존 댓글을 수정한다.")
-    public ResponseEntity<Boolean> modifyReply(@RequestBody Reply reply) throws Exception {
+    public ResponseEntity<Boolean> modifyReply(@RequestBody ReplyReqDto reply) throws Exception {
         logger.info("Called modifyReply. reply: {}", reply);
         replyService.modify(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);

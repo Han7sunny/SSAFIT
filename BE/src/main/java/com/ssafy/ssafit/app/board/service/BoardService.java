@@ -8,8 +8,11 @@ import java.util.List;
 public interface BoardService {
     void regist(BoardReqDto board);
 //    List<BoardRespDto> search(BoardSearchCriteria criteria);
-    BoardRespDto view(long boardId);
+    BoardRespDto view(long boardId, long category_id);
     void modify(BoardReqDto board);
     void delete(long boardId);
+
+    BoardRespDto increaseLike(long boardId);
+
     void hit(long boardId);
 }

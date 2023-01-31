@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board,Long> {
 //    List<Board> findByCategoryId(long category_id);
+    List<Board> findByShareTrue();
     List<Board> findByUser_id(long user_id);
 }
