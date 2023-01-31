@@ -1,1 +1,1 @@
-from model.keypoint_classifier.pose_classifier import PoseClassifier
+from model.pose_classifier.pose_classifier import PoseClassifier

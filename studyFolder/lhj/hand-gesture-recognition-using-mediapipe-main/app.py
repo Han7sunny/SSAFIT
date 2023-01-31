@@ -71,7 +71,7 @@ def main():
     point_history_classifier = PointHistoryClassifier()
 
     # ラベル読み込み ###########################################################
-    with open('model/pose_classifier/pose_classifier_label.csv',
+    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
         keypoint_classifier_labels = [
@@ -129,7 +129,6 @@ def main():
                 brect = calc_bounding_rect(debug_image, hand_landmarks)
                 # ランドマークの計算
                 landmark_list = calc_landmark_list(debug_image, hand_landmarks)
-                print(landmark_list)
 
                 # 相対座標・正規化座標への変換
                 pre_processed_landmark_list = pre_process_landmark(
@@ -283,11 +282,10 @@ def logging_csv(number, mode, landmark_list, point_history_list):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 9):
-        csv_path = 'model/pose_classifier/keypoint.csv'
+        csv_path = 'model/keypoint_classifier/keypoint.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
-            print(number, *landmark_list)
     if mode == 2 and (0 <= number <= 9):
         csv_path = 'model/point_history_classifier/point_history.csv'
         with open(csv_path, 'a', newline="") as f:

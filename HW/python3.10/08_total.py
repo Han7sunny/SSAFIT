@@ -122,7 +122,6 @@ def pre_process_point_history(img, point_history):
     return temp_point_history
 
 
-
 # def draw_landmarks(img, landmark_point):
 #     # 接続線
 #     if len(landmark_point) > 0:
@@ -542,6 +541,7 @@ def pose():
                 pose_end = False
                 return
 
+
 # 引数解析 #################################################################
 args = get_args()
 
@@ -615,7 +615,7 @@ before = [0] * 2
 after = [0] * 2
 l = 0.01
 
-path = os.getcwd()+'/picture/'
+path = os.getcwd() + '/picture/'
 os.chdir(path)  # 해당 폴더로 이동
 files = os.listdir(path)
 
@@ -648,8 +648,6 @@ while cap.isOpened():
         print("Could not read frame")
         exit()
     key = cv.waitKey(1)
-
-    
 
     if not is_login:
         if key & 0xFF == ord('l'):

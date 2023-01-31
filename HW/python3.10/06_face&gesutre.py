@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import csv, copy, argparse, itertools, os, threading, pyttsx3
 from collections import Counter
 from collections import deque
@@ -10,7 +8,6 @@ import mediapipe as mp
 import face_recognition as fr
 import speech_recognition as sr
 
-from utils import CvFpsCalc
 from model import KeyPointClassifier
 from model import PointHistoryClassifier
 
@@ -57,14 +54,11 @@ def calc_bounding_rect(image, landmarks):
 
 def calc_landmark_list(image, landmarks):
     image_width, image_height = image.shape[1], image.shape[0]
-
     landmark_point = []
 
-    # キーポイント
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
 
         landmark_point.append([landmark_x, landmark_y])
 
@@ -74,7 +68,6 @@ def calc_landmark_list(image, landmarks):
 def pre_process_landmark(landmark_list):
     temp_landmark_list = copy.deepcopy(landmark_list)
 
-    # 相対座標に変換
     base_x, base_y = 0, 0
     for index, landmark_point in enumerate(temp_landmark_list):
         if index == 0:
@@ -83,27 +76,21 @@ def pre_process_landmark(landmark_list):
         temp_landmark_list[index][0] = temp_landmark_list[index][0] - base_x
         temp_landmark_list[index][1] = temp_landmark_list[index][1] - base_y
 
-    # 1次元リストに変換
     temp_landmark_list = list(
         itertools.chain.from_iterable(temp_landmark_list))
-
-    # 正規化
     max_value = max(list(map(abs, temp_landmark_list)))
 
     def normalize_(n):
         return n / max_value
 
     temp_landmark_list = list(map(normalize_, temp_landmark_list))
-
     return temp_landmark_list
 
 
 def pre_process_point_history(image, point_history):
     image_width, image_height = image.shape[1], image.shape[0]
-
     temp_point_history = copy.deepcopy(point_history)
 
-    # 相対座標に変換
     base_x, base_y = 0, 0
     for index, point in enumerate(temp_point_history):
         if index == 0:
@@ -114,7 +101,6 @@ def pre_process_point_history(image, point_history):
         temp_point_history[index][1] = (temp_point_history[index][1] -
                                         base_y) / image_height
 
-    # 1次元リストに変換
     temp_point_history = list(
         itertools.chain.from_iterable(temp_point_history))
 
@@ -153,7 +139,6 @@ def draw_info_text(image, brect, handedness, hand_sign_text, finger_gesture_text
 
     return image
 
-
 def draw_point_history(image, point_history):
     for index, point in enumerate(point_history):
         if point[0] != 0 and point[1] != 0:
@@ -171,66 +156,49 @@ def draw_info(image, fps):
 
 
 def gesture():
-    print('in')
     while True:
-        fps = cvFpsCalc.get()
-
-        # キー処理(ESC：終了) #################################################
-        cv.waitKey(10)
-
-        # カメラキャプチャ #####################################################
+        key = cv.waitKey(10)
         ret, image = cap.read()
         if not ret:
             break
         image = cv.flip(image, 1)  # ミラー表示
         debug_image = copy.deepcopy(image)
 
-        # 検出実施 #############################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
         image.flags.writeable = False
         results = hands.process(image)
         image.flags.writeable = True
 
-        #  ####################################################################
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
                 after[0] = hand_landmarks.landmark[8].x
                 after[1] = hand_landmarks.landmark[8].y
-                # 外接矩形の計算
                 brect = calc_bounding_rect(debug_image, hand_landmarks)
-                # ランドマークの計算
                 landmark_list = calc_landmark_list(debug_image, hand_landmarks)
 
-                # 相対座標・正規化座標への変換
                 pre_processed_landmark_list = pre_process_landmark(
                     landmark_list)
                 pre_processed_point_history_list = pre_process_point_history(
                     debug_image, point_history)
-                # 学習データ保存
 
-                # ハンドサイン分類
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-                if hand_sign_id == 2:  # 指差しサイン
-                    point_history.append(landmark_list[8])  # 人差指座標
+                if hand_sign_id == 2:
+                    point_history.append(landmark_list[8])
                 else:
                     point_history.append([0, 0])
 
-                # フィンガージェスチャー分類
                 finger_gesture_id = 0
                 point_history_len = len(pre_processed_point_history_list)
                 if point_history_len == (history_length * 2):
                     finger_gesture_id = point_history_classifier(
                         pre_processed_point_history_list)
 
-                # 直近検出の中で最多のジェスチャーIDを算出
                 finger_gesture_history.append(finger_gesture_id)
                 most_common_fg_id = Counter(
                     finger_gesture_history).most_common()
 
-                # 描画
-                # debug_image = draw_landmarks(debug_image, landmark_list)
                 debug_image = draw_info_text(
                     debug_image,
                     brect,
@@ -242,12 +210,11 @@ def gesture():
             point_history.append([0, 0])
 
         debug_image = draw_point_history(debug_image, point_history)
-        debug_image = draw_info(debug_image, fps)
         before[0] = after[0]
         before[1] = after[1]
-        # 画面反映 #############################################################
+
         cv.imshow('Hand Gesture Recognition', debug_image)
-        if not using_gesture:
+        if not using_gesture or key == 27:
             cv.destroyWindow('Hand Gesture Recognition')
             print('exit')
             return
@@ -296,7 +263,6 @@ def findMember():
         except:
             pass
 
-# 引数解析 #################################################################
 args = get_args()
 
 cap_device = args.device
@@ -307,7 +273,6 @@ use_static_image_mode = args.use_static_image_mode
 min_detection_confidence = args.min_detection_confidence
 min_tracking_confidence = args.min_tracking_confidence
 
-# カメラ準備 ###############################################################
 cap = cv.VideoCapture(cap_device)
 cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
 cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
@@ -315,7 +280,6 @@ if not cap.isOpened():
     print("Could not open webcam")
     exit()
 
-# モデルロード #############################################################
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(
     static_image_mode=use_static_image_mode,
@@ -328,7 +292,6 @@ keypoint_classifier = KeyPointClassifier()
 
 point_history_classifier = PointHistoryClassifier()
 
-# ラベル読み込み ###########################################################
 with open('model/keypoint_classifier/keypoint_classifier_label.csv',
           encoding='utf-8-sig') as f:
     keypoint_classifier_labels = csv.reader(f)
@@ -343,14 +306,9 @@ with open(
         row[0] for row in point_history_classifier_labels
     ]
 
-# FPS計測モジュール ########################################################
-cvFpsCalc = CvFpsCalc(buffer_len=10)
-
-# 座標履歴 #################################################################
 history_length = 16
 point_history = deque(maxlen=history_length)
 
-# フィンガージェスチャー履歴 ################################################
 finger_gesture_history = deque(maxlen=history_length)
 
 is_login = False
@@ -402,7 +360,6 @@ while cap.isOpened():
             using_gesture = True
             t3 = threading.Thread(target=gesture)
             t3.start()
-
 
     if not is_login:
         if key & 0xFF == ord('l'):
