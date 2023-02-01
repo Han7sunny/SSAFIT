@@ -7,9 +7,11 @@ import tensorflow as tf
 class PoseClassifier(object):
     def __init__(
         self,
-        model_path='model/pose_classifier/pose_classifier.tflite',
+        model,
         num_threads=1,
     ):
+        print(model)
+        model_path = 'model/pose_classifier/'+model+'_pose_classifier.tflite'
         self.interpreter = tf.lite.Interpreter(model_path=model_path,
                                                num_threads=num_threads)
 
