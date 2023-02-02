@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import Button from '../../components/Button'
-import TodayRoutine from "./TodayRoutine";
+import TodayRoutine from "../../components/TodayRoutine";
 import RecordScreen from "./RecordScreen";
 
 export default function MainScreen({ navigation }) {
@@ -17,6 +17,12 @@ export default function MainScreen({ navigation }) {
       >
         운동 루틴 만들기
       </Button> 
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('MyGroupListScreen')}
+      >
+        나의 그룹
+      </Button>
     </View>
   )
 }

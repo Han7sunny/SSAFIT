@@ -9,7 +9,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
-// import {MainTab} from './src/Navigations';
+import { MainTab } from './src/Navigations';
 // import LogContext from './contexts/LogContext';
 
 import { 
@@ -21,6 +21,7 @@ import {
 } from './src/screens/Login';
 
 import {
+  MyGroup,
   MainScreen,
   CreateRoutineScreen,
   RoutineListScreen,
@@ -28,14 +29,19 @@ import {
 } from './src/screens/Main';
 
 import {
+  GroupList,
+  MyGroupListScreen,
   GroupListScreen,
-} from './src/screens/Group'
+  CreateGroupScreen
+} from './src/screens/Group';
 
 import RoutineItem from './src/components/RoutineItem';
+import { Text } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator()
 
 function App() {
+  const NAME = 'lhj'
   return (
     <NavigationContainer>
       {/* <RootStack /> */}
@@ -43,11 +49,14 @@ function App() {
       </LogContext.Provider> */}
 
       <Stack.Navigator>
-        {/* <Stack.Screen name="MainTab" component={MainTab} options={{ headershown: false }}/> */}
+        {/* <Stack.Screen 
+          name="MainTab" 
+          component={MainTab} 
+          options={{ headershown: false }}/> */}
         {/* Main */}
         <Stack.Screen name="MainScreen" component={MainScreen}/>
         <Stack.Screen name="CreateRoutineScreen" component={CreateRoutineScreen}/>
-        <Stack.Screen name="RoutinseListScreen" component={RoutineListScreen}/>
+        <Stack.Screen name="RoutineListScreen" component={RoutineListScreen}/>
         <Stack.Screen name="RoutineDetailScreen" component={RoutineDetailScreen}/>
 
         {/* Auth(Login) */}
@@ -58,10 +67,14 @@ function App() {
         <Stack.Screen name="Dashboard" component={Dashboard}/>
 
         {/* Group */}
-        {/* <Stack.Screen name="GroupListScreen" component={GroupListScreen}/> */}
+        <Stack.Screen name="MyGroup" component={MyGroup}/>
+        {/* <Stack.Screen name="GroupList" component={GroupList}/> */}
+        <Stack.Screen name="CreateGroupScreen" component={CreateGroupScreen}/>
+        <Stack.Screen name="MyGroupListScreen" component={MyGroupListScreen}/>
+        <Stack.Screen name="GroupListScreen" component={GroupListScreen}/>
 
         {/* components */}
-        <Stack.Screen name='RoutineItem' component={RoutineItem} />
+        {/* <Stack.Screen name='RoutineItem' component={RoutineItem} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

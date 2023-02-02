@@ -35,6 +35,7 @@ while cap.isOpened():
 
     if result.multi_hand_landmarks is not None:
         for res in result.multi_hand_landmarks:
+            print(res)
             after[0] = result.multi_hand_landmarks[0].landmark[8].x
             after[1] = result.multi_hand_landmarks[0].landmark[8].y
             joint = np.zeros((21, 4))
@@ -55,6 +56,7 @@ while cap.isOpened():
 
             angle = np.degrees(angle) # Convert radian to degree
             d = np.concatenate([joint.flatten(), angle])
+            print(d)
             seq.append(d)
             mp_drawing.draw_landmarks(img, res, mp_hands.HAND_CONNECTIONS)
 

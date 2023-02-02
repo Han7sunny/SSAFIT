@@ -1,12 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 export default function TodayRoutine() {
   return(
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container}>
       <Text>Today's Routine</Text>
       {/* axios로 오늘의 운동 루틴을 가져와야 하는가? 아니면 props로 받을 것인지 */}
-    </View>
+    </TouchableOpacity>
   )
 }
 

@@ -15,7 +15,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-MODE = ['', 'squat', 'push-up', 'lunge-left', 'lunge-right', 'sit-up', 'P.T-jump', 'bicycle-crunch', 'side']
+MODE = ['', 'test', 'squat', 'push-up', 'lunge-left', 'lunge-right', 'sit-up', 'P.T-jump', 'bicycle-crunch', 'side']
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -53,7 +53,6 @@ def main():
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
     # モデルロード #############################################################
-    # cap = cv.VideoCapture(0)
     mode = 0
     a = -1
     with open('model/pose_classifier/pose_classifier_label.csv',
@@ -63,7 +62,7 @@ def main():
     with mp_pose.Pose(
             min_detection_confidence=0.9,
             min_tracking_confidence=0.9) as pose:
-        pose_classifier = PoseClassifier(MODE[1]+'5')
+        # pose_classifier = PoseClassifier(MODE[1]+'4')
         while cap.isOpened():
             key = cv.waitKey(10)
             if key == 27:  # ESC
@@ -94,14 +93,16 @@ def main():
                 landmark_list = calc_landmark_list(image, pose_landmarks)
                 # print(landmark_list)
 
-                pre_processed_landmark_list = pre_process_landmark(
+                pre_processed_landmark_list, d = pre_process_landmark(
                     landmark_list)
+                pre_processed_landmark_list += d
+                print(len(pre_processed_landmark_list), pre_processed_landmark_list)
                 # 学習データ保存
                 logging_csv(number, mode, pre_processed_landmark_list)
-                hand_sign_id = pose_classifier(pre_processed_landmark_list)
-                if a != hand_sign_id:
-                    print(pose_classifier_labels[hand_sign_id])
-                    a = hand_sign_id
+                # hand_sign_id = pose_classifier(pre_processed_landmark_list)
+                # if a != hand_sign_id:
+                #     print(pose_classifier_labels[hand_sign_id])
+                #     a = hand_sign_id
                 mp_drawing.draw_landmarks(
                     image,
                     results.pose_landmarks,
@@ -134,9 +135,9 @@ def calc_landmark_list(image, landmarks):
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
+        landmark_z = landmark.z
 
-        landmark_point.append([landmark_x, landmark_y])
+        landmark_point.append([landmark_x, landmark_y, landmark_z])
 
     return landmark_point
 
@@ -145,13 +146,18 @@ def pre_process_landmark(landmark_list):
     temp_landmark_list = copy.deepcopy(landmark_list)
 
     # 相対座標に変換
-    base_x, base_y = 0, 0
+    base_x, base_y, base_z = 0, 0, 0
+
+    joint = np.zeros((33, 3))
     for index, landmark_point in enumerate(temp_landmark_list):
+        # print(landmark_point)
         if index == 0:
-            base_x, base_y = landmark_point[0], landmark_point[1]
+            base_x, base_y, base_z = landmark_point[0], landmark_point[1], landmark_point[2]
 
         temp_landmark_list[index][0] = temp_landmark_list[index][0] - base_x
         temp_landmark_list[index][1] = temp_landmark_list[index][1] - base_y
+        temp_landmark_list[index][2] = temp_landmark_list[index][2] - base_z
+        joint[index] = landmark_point
 
     # 1次元リストに変換
     temp_landmark_list = list(
@@ -159,13 +165,26 @@ def pre_process_landmark(landmark_list):
 
     # 正規化
     max_value = max(list(map(abs, temp_landmark_list)))
+    v1 = joint[[i for i in range(32)], :3]  # Parent joint
+    v2 = joint[[i for i in range(1, 33)], :3]  # Child joint
+    v = v2 - v1  # [20, 3]
+    # Normalize v
+    v = v / np.linalg.norm(v, axis=1)[:, np.newaxis]
+
+    # Get angle using arcos of dot product
+    angle = np.arccos(np.einsum('nt,nt->n',
+                                v[[i for i in range(31)], :],
+                                v[[i for i in range(1, 32)], :]))  # [15,]
+
+    angle = np.degrees(angle)  # Convert radian to degree
+    d = np.concatenate([joint.flatten(), angle])
 
     def normalize_(n):
         return n / max_value
 
     temp_landmark_list = list(map(normalize_, temp_landmark_list))
 
-    return temp_landmark_list
+    return temp_landmark_list, d.tolist()
 
 
 def pre_process_point_history(image, point_history):
@@ -195,7 +214,7 @@ def logging_csv(number, mode, landmark_list):
     if mode == 0:
         pass
     if mode != 0 and (0 <= number <= 27):
-        csv_path = 'model/pose_classifier/' + MODE[mode] +'_pose.csv'
+        csv_path = 'model/pose_classifier/' + MODE[mode] +'2_pose.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])

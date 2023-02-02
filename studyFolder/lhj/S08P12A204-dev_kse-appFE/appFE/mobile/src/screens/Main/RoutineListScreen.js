@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
-import LogContext from '../../../contexts/LogContext'
+// import LogContext from '../../../contexts/LogContext'
 import RoutineItem from '../../components/RoutineItem'
 import Button from '../../components/Button'
-import axios from 'axios'
+// import axios from 'axios'
 
 const DATA = [
   // 리스트로 출력할 루틴 데이터
@@ -21,10 +21,9 @@ const DATA = [
     id: '3',
     title: '하체 운동'
   },
-  
 ]
 
-export default function RoutineListScreen({navigation}) {
+export default function RoutineListScreen({ navigation }) {
 
   return (
     <View>
