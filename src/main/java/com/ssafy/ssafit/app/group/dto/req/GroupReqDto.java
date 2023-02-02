@@ -28,12 +28,13 @@ public class GroupReqDto {
     private String title;
 
     // 모집 인원
-    private int maximum_member;
+    private int maximumMember;
 
     @Column(length = 2000)
     private String content;
 
-    private LocalDate start_date;
+    private LocalDate startDate;
 
-    private LocalDate end_date;
+    private LocalDate endDate;
+
 }

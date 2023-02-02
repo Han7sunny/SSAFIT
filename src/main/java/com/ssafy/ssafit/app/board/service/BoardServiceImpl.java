@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +42,11 @@ public class BoardServiceImpl implements BoardService{
 
 
     private BoardRepository boardRepository;
+
     private ReplyRepository replyRepository;
 
     private GroupRepository groupRepository;
+
     private FileRepository fileRepository;
 
     @Autowired
@@ -54,35 +57,19 @@ public class BoardServiceImpl implements BoardService{
         this.fileRepository = fileRepository;
     }
 
-
-
-
     @Override
-    public void regist(BoardReqDto board) {
-        Board registBoard = Board.builder().title(board.getTitle()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time()).content(board.getContent()).share(board.isShare()).build();
-        boardRepository.save(registBoard);
+    public Board regist(BoardReqDto board) {
+        Board registBoard = Board.builder().title(board.getTitle()).registered_time(LocalDateTime.now()).content(board.getContent()).share(board.isShare()).build();
+        return boardRepository.save(registBoard);
     }
 
+    //  파일 첨부 가능 게시글 : 공지사항, 질문글
     @Override
-    public void registWithImg(BoardReqDto board, List<String> imgList) { // userId도 함께 넘겨주기
-        //        그룹 모집글 작성과 동시에 그룹 생성
-        Board registBoard = Board.builder().title(board.getTitle()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time()).content(board.getContent()).share(board.isShare()).build();
-
-
-
-        //        그룹 모집글
-//        if(board.getCategory_id() == GROUP_RECRUIT){ //  || board.getCategory_id() == GROUP_STATUS
-//        Group newGroup =
-//            groupRepository.save(newGroup);
-//        }
-
-        Board getBoard = boardRepository.save(registBoard);
-
+    public void registFile(Board board, List<String> imgList) { // userId도 함께 넘겨주기
         for (String imgUrl: imgList) {
-            File file = File.builder().board(getBoard).imgUrl(imgUrl).build();
+            File file = File.builder().board(board).imgUrl(imgUrl).build();
             fileRepository.save(file);
         }
-
     }
 
 
@@ -113,47 +100,46 @@ public class BoardServiceImpl implements BoardService{
 //        if(board.getCategoryId() == ){
 //        }
 
-//        그룹 모집글일 경우
+        BoardRespDto boardRespDto = new BoardRespDto(board);
+        boardRespDto.setBoardId(boardId);
+        boardRespDto.setReplyList(board.getReplyList());
 
-
-        return BoardRespDto.builder().board_id(boardId).title(board.getTitle()).content(board.getContent())
-                .registered_time(board.getRegistered_time()).modified_time(board.getModified_time())
-                .hits(board.getHits()).likes(board.getLikes()).downloads(board.getDownloads()).share(board.isShare())
-//                .user_id(board.getUser_id())
-//                .category_id(board.getCategory_id())
-                .replyList(board.getReplyList())
-                .build();
+        return boardRespDto;
     }
 
     @Override
     public GroupRecruitRespDto getGroupRecruit(long groupId) {
+        LOGGER.info("[Enter] getGroupRecruit ");
         Optional<Group> getGroup = groupRepository.findById(groupId);
         if(getGroup.isEmpty()){
             return GroupRecruitRespDto.builder().success(false).msg("해당 게시글을 찾을 수 없습니다.").build();
         }
         Group group = getGroup.get();
         Board board = boardRepository.findByGroupId(groupId);
-        return GroupRecruitRespDto.builder()
-                .title(board.getTitle()).content(board.getContent()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time()).user_id(board.getUser().getId())
-                .groupName(group.getName()).goal(group.getGoal()).penalty(group.getPenalty())
-                .start_date(group.getStart_date()).end_date(group.getEnd_date()).period(group.getPeriod())
-                .maximum_member(group.getMaximum_member()).current_member(group.getCurrent_member())
-                .build();
+
+        GroupRecruitRespDto groupRecruitRespDto = new GroupRecruitRespDto(group);
+        groupRecruitRespDto.setTitle(board.getTitle());
+        groupRecruitRespDto.setContent(board.getContent());
+        groupRecruitRespDto.setUserId(board.getUser().getId());
+        groupRecruitRespDto.setRegisteredTime(board.getRegistered_time());
+        groupRecruitRespDto.setModifiedTime(board.getModified_time());
+
+        return groupRecruitRespDto;
     }
 
     @Override
     public List<GroupRecruitRespDto> getGroupRecruitList() {
         LOGGER.info("[Enter] getGroupRecruitList ");
-        List<Board> getGroupRecruitList = boardRepository.findByGroupIdNotNullShareTrue();
+        List<Board> getGroupRecruitList = boardRepository.findByGroupIdNotNullAndShareTrue();
         List<GroupRecruitRespDto> groupRecruitList = new ArrayList<>();
         for (Board board : getGroupRecruitList) {
             Group group = board.getGroup();
-            GroupRecruitRespDto groupRecruitResp = GroupRecruitRespDto.builder()
-                    .title(board.getTitle()).content(board.getContent()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time()).user_id(board.getUser().getId())
-                    .groupName(group.getName()).goal(group.getGoal()).penalty(group.getPenalty())
-                    .start_date(group.getStart_date()).end_date(group.getEnd_date()).period(group.getPeriod())
-                    .maximum_member(group.getMaximum_member()).current_member(group.getCurrent_member())
-                    .build();
+            GroupRecruitRespDto groupRecruitResp = new GroupRecruitRespDto(group);
+            groupRecruitResp.setTitle(board.getTitle());
+            groupRecruitResp.setContent(board.getContent());
+            groupRecruitResp.setUserId(board.getUser().getId());
+            groupRecruitResp.setRegisteredTime(board.getRegistered_time());
+            groupRecruitResp.setModifiedTime(board.getModified_time());
             groupRecruitList.add(groupRecruitResp);
         }
         return  groupRecruitList;
@@ -162,22 +148,16 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public void modify(BoardReqDto board) {
+        LOGGER.info("[Enter] modify ");
 
-        Board getBoard = boardRepository.findById(board.getBoard_id()).get();
-//        if(getBoard.isEmpty()){
-//            // 해당 게시글 존재하지 않음
-//        }
+        Board getBoard = boardRepository.findById(board.getBoardId()).get();
 
         getBoard.setTitle(board.getTitle());
         getBoard.setContent(board.getContent());
-        getBoard.setModified_time(board.getModified_time());
+        getBoard.setModified_time(LocalDateTime.now());
         getBoard.setShare(board.isShare());
-//      변경되는 사항만 넣어주기 .. modify -> save하면 id(pk) 확인해서 새로운 값을 저절로 갱신해주는?
 
-//        Board modifyBoard = Board.builder().title(board.getTitle()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time()).content(board.getContent()).share(board.isShare()).build();
-//         pk 값 넣어줘야하나?
         boardRepository.save(getBoard);
-
     }
 
     @Override
@@ -188,19 +168,15 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public BoardRespDto increaseLike(long boardId) {
         Board board = boardRepository.findById(boardId).get();
-        board.setLikes(board.getLikes()+1);
+        board.setLikes(board.getLikes() + 1);
         boardRepository.save(board);
-        return BoardRespDto.builder().board_id(boardId).
-                user_id(board.getUser().getId()).title(board.getTitle()).content(board.getContent()).registered_time(board.getRegistered_time()).modified_time(board.getModified_time())
-                .hits(board.getHits()).likes(board.getLikes()).downloads(board.getDownloads()).share(board.isShare())
-                .replyList(board.getReplyList())
-                .build();
+        return new BoardRespDto(board);
     }
 
     @Override
     public void hit(long boardId) {
         Board board = boardRepository.findById(boardId).get();
-        board.setHits(board.getHits()+1);
+        board.setHits(board.getHits() + 1);
         boardRepository.save(board);
     }
 }

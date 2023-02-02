@@ -21,10 +21,10 @@ public class GroupMember {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "`group_id`")
     private Group group;
 
-    private boolean accept_invitagion;
+    private boolean accept_invitation;
 
     private double achievement_rate;
 

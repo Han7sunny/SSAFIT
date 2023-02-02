@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.reply.controller;
 import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reply")
+@Api("Reply Controller API v1")
 public class ReplyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ReplyController.class);
@@ -34,7 +36,7 @@ public class ReplyController {
         return new ResponseEntity<List<Reply>>(replyService.getReplyListByUserId(userId), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/regist")
     @ApiOperation(value = "댓글 작성", notes = "입력한 정보로 새로운 댓글을 생성한다.")
     public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply) throws Exception {
         logger.info("Called postReply. reply: {}", reply);
@@ -42,7 +44,7 @@ public class ReplyController {
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{replyId}")
     @ApiOperation(value = "댓글 수정", notes = "입력한 정보로 기존 댓글을 수정한다.")
     public ResponseEntity<Boolean> modifyReply(@RequestBody @ApiParam(value = "수정 댓글", required = true) ReplyReqDto reply) throws Exception {
         logger.info("Called modifyReply. reply: {}", reply);
@@ -57,4 +59,5 @@ public class ReplyController {
         replyService.delete(replyId);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
+
 }

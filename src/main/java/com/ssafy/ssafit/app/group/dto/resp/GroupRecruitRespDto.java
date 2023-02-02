@@ -1,6 +1,7 @@
 package com.ssafy.ssafit.app.group.dto.resp;
 
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
+import com.ssafy.ssafit.app.group.entity.Group;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @SuperBuilder
 public class GroupRecruitRespDto extends BoardRespDto {
 
-    private long group_id;
+    private long groupId;
 
     private String groupName;
 
@@ -23,18 +24,30 @@ public class GroupRecruitRespDto extends BoardRespDto {
 
     private String penalty;
 
-    private double achievement_rate;
+    private double achievementRate;
 
     //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate start_date;
+    private LocalDate startDate;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 
-    private LocalDate end_date;
+    private LocalDate endDate;
 
     private int period;
 
-    private int maximum_member;
+    private int maximumMember;
 
-    private int current_member;
+    private int currentMember;
+
+    public GroupRecruitRespDto(Group group){
+        this.groupId = group.getId();
+        this.groupName = group.getGroupName();
+        this.goal = group.getGoal();
+        this.penalty = group.getPenalty();
+        this.achievementRate = group.getAchievement_rate();
+        this.startDate = group.getStart_date();
+        this.endDate = group.getEnd_date();
+        this.maximumMember = group.getMaximum_member();
+        this.currentMember = group.getCurrent_member();
+    }
 }

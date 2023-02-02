@@ -12,19 +12,21 @@ import java.util.Date;
 @Builder
 public class BoardReqDto {
 
-    private long board_id;
+    private long boardId;
 
-    private String user_id;
+    private String userId;
+
+    private long groupId;
 
     private String title;
 
-    private long category_id;
+    private long categoryId;
 
     private String content;
 
-    private LocalDateTime registered_time;
+    private LocalDateTime registeredTime;
 
-    private LocalDateTime modified_time;
+    private LocalDateTime modifiedTime;
 
     private boolean share;
 //    file

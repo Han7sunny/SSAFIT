@@ -31,21 +31,18 @@ public class GroupRespDto extends CommonResp {
 
     private LocalDate end_date;
 
-    private int period; // ?
-
     private int maximum_member;
 
     private int current_member;
 
     public GroupRespDto(Group group){
         this.groupId = group.getId();
-        this.name = group.getName();
+        this.name = group.getGroupName();
         this.goal = group.getGoal();
         this.penalty = group.getPenalty();
         this.achievement_rate = group.getAchievement_rate();
         this.start_date = group.getStart_date();
         this.end_date = group.getEnd_date();
-        this.period = group.getPeriod();
         this.maximum_member = group.getMaximum_member();
         this.current_member = group.getCurrent_member();
     }

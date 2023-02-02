@@ -22,40 +22,40 @@ public class BoardRespDto extends CommonResp {
 //    @Builder
     public BoardRespDto(BoardReqDto boardReqDto){
         super();
-        this.board_id = boardReqDto.getBoard_id();
-        this.user_id = boardReqDto.getUser_id();
-        this.category_id = boardReqDto.getCategory_id();
+        this.boardId = boardReqDto.getBoardId();
+        this.userId = boardReqDto.getUserId();
+        this.categoryId = boardReqDto.getCategoryId();
         this.title = boardReqDto.getTitle();
         this.content = boardReqDto.getContent();
-        this.registered_time = boardReqDto.getRegistered_time();
-        this.modified_time = boardReqDto.getModified_time();
+        this.registeredTime = boardReqDto.getRegisteredTime();
+        this.modifiedTime = boardReqDto.getModifiedTime();
         this.share = boardReqDto.isShare();
     }
 
     public BoardRespDto(Board board){
-        this.board_id = board.getId();
-        this.user_id = board.getUser().getId();
+        this.boardId = board.getId();
+        this.userId = board.getUser().getId();
 //        this.category_id = board.getCategory().getId();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.registered_time = board.getRegistered_time();
-        this.modified_time = board.getModified_time();
+        this.registeredTime = board.getRegistered_time();
+        this.modifiedTime = board.getModified_time();
         this.share = board.isShare();
     }
 
-    private long board_id;
+    private long boardId;
 
-    private String user_id;
+    private String userId;
 
-    private long category_id;
+    private long categoryId;
 
     private String title;
 
     private String content;
 
-    private LocalDateTime registered_time;
+    private LocalDateTime registeredTime;
 
-    private LocalDateTime modified_time;
+    private LocalDateTime modifiedTime;
 
     private int hits;
 

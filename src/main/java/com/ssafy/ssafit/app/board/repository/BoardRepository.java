@@ -15,7 +15,7 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     List<Board> findByShareTrue();
 
     //  그룹 모집글 중 공개글 목록 조회
-    List<Board> findByGroupIdNotNullShareTrue();
+    List<Board> findByGroupIdNotNullAndShareTrue();
 
     Board findByGroupId(long group_id);
 

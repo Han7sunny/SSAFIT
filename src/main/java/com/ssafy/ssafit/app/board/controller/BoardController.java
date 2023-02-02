@@ -2,8 +2,12 @@ package com.ssafy.ssafit.app.board.controller;
 
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
+import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.board.service.BoardService;
 import com.ssafy.ssafit.app.common.CommonResp;
+import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
+import com.ssafy.ssafit.app.group.service.GroupMemberService;
+import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,12 +38,18 @@ public class BoardController {
 
     private BoardService boardService;
     private ReplyService replyService;
+    private GroupMemberService groupMemberService;
 
     @Autowired
-    public BoardController(BoardService boardService, ReplyService replyService) {
+    public BoardController(BoardService boardService, ReplyService replyService, GroupMemberService groupMemberService) {
         this.boardService = boardService;
         this.replyService = replyService;
+        this.groupMemberService = groupMemberService;
     }
+
+
+
+
 
 //    @GetMapping("/{boardId}")
 ////    @ApiOperation(value = "게시판 ID로 게시글 조회", notes = "입력한 게시판 ID(boardId)에 해당하는 모든 게시글(Post)을 조회한다.", response = Post.class)
@@ -69,13 +80,11 @@ public class BoardController {
 
     //    imagePath 확인 필요
     //    게시글 생성시 -> 공지사항(관리자) 커뮤니티(질문글, 운동 루틴 공유), 그룹 페이지(그룹 현황, 그룹 모집글)
-    @PostMapping(value = "/post")
+    @PostMapping(value = "/regist")
     @ApiOperation(value = "게시글 생성", notes = "입력한 정보로 새로운 게시글을 생성한다.")
-//    public ResponseEntity<Boolean> postPost(@RequestBody BoardReqDto board) throws Exception {
-    public ResponseEntity<Boolean> postPost(@ApiParam(value = "게시글 정보", required = true) @RequestBody BoardReqDto board, @RequestParam(value = "files", required = false) List<MultipartFile> files, @Value("${file.path.upload-images}") String imagePath) throws Exception {
-//    public ResponseEntity<Boolean> postPost(@ApiParam(value = "게시글 정보", required = true) Post post, @RequestParam(value = "files", required = false) List<MultipartFile> files, @Value("${file.path.upload-images}") String imagePath) throws Exception {
+    public ResponseEntity<Boolean> registBoard(@ApiParam(value = "게시글 정보", required = true) @RequestBody BoardReqDto board, @RequestParam(value = "files", required = false) List<MultipartFile> files, @Value("${file.path.upload-images}") String imagePath) throws Exception {
         logger.info("Called registBoard. board: {}, files: {}", board, files);
-//        logger.info("Called registBoard. board: {}", board);
+        Board registedBoard = boardService.regist(board);
 
         List<String> imgSrcList = new ArrayList<>();
         if (!files.isEmpty()) {
@@ -112,25 +121,23 @@ public class BoardController {
 //                      아휴 그냥 이미지 하나만 올릴 수 있게 할까?;;
                 }
             }
-//            boardService.regist(board); // 수정
+            boardService.registFile(registedBoard, imgSrcList);
         }
-        boardService.registWithImg(board, imgSrcList);
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
     }
 
     @PutMapping("/{boardId}")
-    @ApiOperation(value = "게시글 수정", notes = "입력한 정보로 기존  게시글을 수정한다.")
+    @ApiOperation(value = "게시글 수정", notes = "입력한 정보로 기존 게시글을 수정한다.")
     public ResponseEntity<Boolean> modifyBoard(@RequestBody @ApiParam(value = "게시글 정보", required = true) BoardReqDto board) throws Exception {
-//    public ResponseEntity<Boolean> modifyBoard(@RequestBody @ApiParam(value = "게시글 정보", required = true) BoardReqDto board) throws Exception {
         logger.info("Called modifyBoard. board: {}", board);
-        boardService.modify(board); // 성공하면 리턴?
+        boardService.modify(board);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+
     @DeleteMapping("/{boardId}")
-    @ApiOperation(value = "게시글 삭제", notes = "입력한 게시글 ID에 해당하는 게시글을 삭제한다. 리뷰 게시판의 경우 관련 데이터도 함께 삭제되며, 게시판의 종류와 상관 없이 게시글에 대해 작성된 모든 댓글도 함께 삭제된다.")
+    @ApiOperation(value = "게시글 삭제", notes = "입력한 게시글 ID에 해당하는 게시글을 삭제한다. 게시판의 종류와 상관 없이 게시글에 대해 작성된 모든 댓글도 함께 삭제된다.")
     public ResponseEntity<Boolean> deleteBoard(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId) throws Exception {
-//    public ResponseEntity<Boolean> deleteBoard(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId) throws Exception {
         logger.info("Called deleteBoard. boardId: {}", boardId);
         boardService.delete(boardId);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -144,15 +151,32 @@ public class BoardController {
         // board에 포함된 routine_id 추출
 
         // routine_in_user에 추가
-// 해당 게시글의 downloads 증가
+
+        // 해당 게시글의 downloads 증가
+
         return new ResponseEntity<CommonResp>(HttpStatus.OK);
     }
 
-    //        게시글 좋아요
     @PostMapping("/{boardId}/likes")
-    @ApiOperation(value = "좋아요 누르기", notes = "게시글 ID의 좋아요 클릭시 게시글의 좋아요 수가 증가한다.")
+    @ApiOperation(value = "좋아요 누르기", notes = "게시글 ID의 좋아요 클릭시 게시글의 좋아요 수가 증가한다.", response = BoardRespDto.class)
     public ResponseEntity<BoardRespDto> clickLike(@PathVariable("boardId") long boardId){
         return new ResponseEntity<BoardRespDto>(boardService.increaseLike(boardId), HttpStatus.OK);
+    }
+
+    @PostMapping("/{boardId}/{replyId}/add")
+    @ApiOperation(value = "그룹원 추가", notes = "해당 댓글의 회원을 그룹원에 추가한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> addToGroup(@RequestBody @ApiParam(value = "댓글 정보", required = true) GroupMemberReqDto groupMember) throws Exception {
+        logger.info("Called addToGroup. ");
+        groupMemberService.addGroupMember(groupMember);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PostMapping("/{boardId}/{replyId}/delete")
+    @ApiOperation(value = "그룹원 제외", notes = "해당 댓글의 회원을 그룹원에서 제외한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> deleteFromGroup(@RequestBody @ApiParam(value = "댓글 정보", required = true) GroupMemberReqDto groupMember) throws Exception {
+        logger.info("Called deleteFromGroup. ");
+        groupMemberService.deleteGroupMember(groupMember);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
 }
