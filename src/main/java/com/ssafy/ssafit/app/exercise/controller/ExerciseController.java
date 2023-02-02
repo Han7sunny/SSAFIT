@@ -1,9 +1,11 @@
 package com.ssafy.ssafit.app.exercise.controller;
 
+import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.service.ExerciseService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class ExerciseController {
     }
 
     @GetMapping("/get-exercise-type")
+    @ApiOperation(value = "원하는 운동 부위별로 운동 정보 가져오기", notes = "입력한 운동 부위에 해당하는 운동들의 정보를 가져온다.", response = List.class)
     public ResponseEntity<?> getExerciseType(@RequestParam String area) {
         try {
             List<ExerciseTypeRespDto> exerciseTypeList = exerciseService.getExerciseType(area);

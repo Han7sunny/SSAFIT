@@ -5,6 +5,7 @@ import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.service.RecordService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class RecordController {
     }
 
     @PostMapping("/record-registration")
+    @ApiOperation(value = "운동 루틴 예약 기능",
+            notes = "원하는 날짜에 수행할 운동 루틴을 등록한다.\n" +
+                    "routineId : 등록하고자 하는 루틴의 아이디 (PK)\n" +
+                    "startDay : 등록하고자 하는 날의 일\n" +
+                    "startMonth : 등록하고자 하는 날의 월\n" +
+                    "startYear : 등록하고자 하는 날의 년\n",
+            response = CommonResp.class)
     public ResponseEntity<?> registerExercise(@RequestBody RecordRegisterReqDto recordRegisterReqDto) {
         try {
             recordService.registerExercise(recordRegisterReqDto);
@@ -34,6 +42,9 @@ public class RecordController {
     }
 
     @GetMapping("/get-schedule/{id}")
+    @ApiOperation(value = "예약한 운동 루틴 정보", notes = "특정 날짜에 예약해놓은 운동 루틴 정보를 얻는다.\n" +
+            "day : 조회하고 싶은 날의 일\n",
+            response = List.class)
     public ResponseEntity<?> getSchedule(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
         try {
             LocalDate startDate = LocalDate.of(year, month, day);
@@ -45,6 +56,7 @@ public class RecordController {
     }
 
     @DeleteMapping("/remove-schedule")
+    @ApiOperation(value = "예약한 운동 루틴 제거 기능", notes = "예약해놓은 운동 루틴을 제거한다.", response = CommonResp.class)
     public ResponseEntity<?> removeSchedule(@RequestParam Long recordId) {
         try {
             recordService.removeSchedule(recordId);
@@ -55,6 +67,7 @@ public class RecordController {
     }
 
     @GetMapping("/get-exercise-record/{id}")
+    @ApiOperation(value = "특정 날짜의 운동 기록 가져오는 기능", notes = "원하는 날짜에 수행한 운동들의 정보를 가져온다.", response = CommonResp.class)
     public ResponseEntity<?> getExerciseRecord(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
         try {
             LocalDate time = LocalDate.of(year, month, day);

@@ -1,13 +1,12 @@
 package com.ssafy.ssafit.app.user.controller;
 
-import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
-import com.ssafy.ssafit.app.config.JwtTokenProvider;
+import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
+import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.service.UserService;
-
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
@@ -16,22 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
-import com.ssafy.ssafit.app.common.CommonResp;
-import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
-import com.ssafy.ssafit.app.user.service.UserService;
-import com.ssafy.ssafit.util.Sha256;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 import java.util.Map;
 
 @RequestMapping("/user")
@@ -194,9 +183,8 @@ public class UserController {
 
     @PostMapping("/join")
     public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
-        String encryptPassword = Sha256.encrypt(userJoinReqDto.getPassword());
         try {
-            userService.userJoin(userJoinReqDto, encryptPassword);
+            userService.userJoin(userJoinReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
