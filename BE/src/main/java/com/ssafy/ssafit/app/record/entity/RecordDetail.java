@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.record.entity;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,12 @@ public class RecordDetail {
 
     @Column(nullable = false)
     private Long count;
+
+    @Builder
+    public RecordDetail(Long recordDetailId, Record record, Exercise exercise, Long count) {
+        this.recordDetailId = recordDetailId;
+        this.record = record;
+        this.exercise = exercise;
+        this.count = count;
+    }
 }

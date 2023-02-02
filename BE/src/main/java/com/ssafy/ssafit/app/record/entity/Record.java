@@ -50,7 +50,7 @@ public class Record {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @OneToMany(mappedBy = "record")
+    @OneToMany(mappedBy = "record", cascade = {CascadeType.ALL})
     private List<RecordDetail> recordDetails;
 
     @Builder

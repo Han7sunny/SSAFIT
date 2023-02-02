@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecordScheduleRespDto {
-    private Long routine_id;
-
+    private Long recordId;
+    private Long routineId;
     private String name;
 }

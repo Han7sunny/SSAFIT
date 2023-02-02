@@ -64,7 +64,6 @@ public class UserServiceImpl implements UserService {
     public void changePassword(Map<String, String> idPwd) {
         String id = idPwd.get("id");
         String password = Sha256.encrypt(idPwd.get("password"));
-        System.out.println(id + " " + password);
         userRepository.updatePassword(id, password);
     }
 
