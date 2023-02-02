@@ -62,7 +62,7 @@ public class User {
 //        role.forEach(o -> o.setUser(this));
 //    }
 
-}
+
     @OneToMany(mappedBy = "user")
     private List<Record> record;
 
