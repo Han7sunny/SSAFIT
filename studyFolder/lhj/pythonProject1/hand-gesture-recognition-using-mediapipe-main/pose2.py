@@ -15,7 +15,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-MODE = ['', 'test', 'squat', 'push-up', 'lunge-left', 'lunge-right', 'sit-up', 'P.T-jump', 'bicycle-crunch', 'side']
+MODE = ['', 'squat', 'push-up', 'lunge-left', 'lunge-right', 'sit-up', 'P.T-jump', 'bicycle-crunch', 'side']
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -62,7 +62,7 @@ def main():
     with mp_pose.Pose(
             min_detection_confidence=0.9,
             min_tracking_confidence=0.9) as pose:
-        # pose_classifier = PoseClassifier(MODE[1]+'4')
+        pose_classifier = PoseClassifier(MODE[1]+'5')
         while cap.isOpened():
             key = cv.waitKey(10)
             if key == 27:  # ESC
@@ -76,7 +76,7 @@ def main():
                 # If loading a video, use 'break' instead of 'continue'.
                 continue
             image = cv.flip(image, 1)
-            image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
+            # image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
 
             # To improve performance, optionally mark the image as not writeable to
             # pass by reference.
@@ -99,10 +99,10 @@ def main():
                 print(len(pre_processed_landmark_list), pre_processed_landmark_list)
                 # 学習データ保存
                 logging_csv(number, mode, pre_processed_landmark_list)
-                # hand_sign_id = pose_classifier(pre_processed_landmark_list)
-                # if a != hand_sign_id:
-                #     print(pose_classifier_labels[hand_sign_id])
-                #     a = hand_sign_id
+                hand_sign_id = pose_classifier(pre_processed_landmark_list)
+                if a != hand_sign_id:
+                    print(pose_classifier_labels[hand_sign_id])
+                    a = hand_sign_id
                 mp_drawing.draw_landmarks(
                     image,
                     results.pose_landmarks,

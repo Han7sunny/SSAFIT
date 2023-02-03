@@ -29,10 +29,11 @@ import {
 } from './src/screens/Main';
 
 import {
-  GroupList,
   MyGroupListScreen,
+  MyGroupDetail,
   GroupListScreen,
-  CreateGroupScreen
+  CreateGroupScreen,
+  GroupListDetailScreen
 } from './src/screens/Group';
 
 import RoutineItem from './src/components/RoutineItem';
@@ -67,11 +68,14 @@ function App() {
         <Stack.Screen name="Dashboard" component={Dashboard}/>
 
         {/* Group */}
-        <Stack.Screen name="MyGroup" component={MyGroup}/>
-        {/* <Stack.Screen name="GroupList" component={GroupList}/> */}
-        <Stack.Screen name="CreateGroupScreen" component={CreateGroupScreen}/>
+        {/* <Stack.Screen name="MyGroup" component={MyGroup}/> */}
         <Stack.Screen name="MyGroupListScreen" component={MyGroupListScreen}/>
+        <Stack.Screen name="MyGroupDetail" component={MyGroupDetail}/>
+        
+        <Stack.Screen name="CreateGroupScreen" component={CreateGroupScreen}/>
+
         <Stack.Screen name="GroupListScreen" component={GroupListScreen}/>
+        <Stack.Screen name="GroupListDetailScreen" component={GroupListDetailScreen}/>
 
         {/* components */}
         {/* <Stack.Screen name='RoutineItem' component={RoutineItem} /> */}

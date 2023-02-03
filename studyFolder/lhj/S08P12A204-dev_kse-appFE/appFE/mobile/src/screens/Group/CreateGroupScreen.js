@@ -14,20 +14,29 @@ const Title = styled.Text`
 
 export default function CreateGroupScreen({navigation}) {
   const [isEnabled, setIsEnabled] = useState(false);
+
+  const [groupTitle, setgroupTitle] = useState('');
   const [groupName, setgroupName] = useState('');
   const [groupMember, setgroupMember] = useState('');
+  const [groupPeopleNum, setgroupPeopleNum] = useState('');
   const [groupStartDate, setgroupStartDate] = useState('');
   const [groupEndDate, setgroupEndDate] = useState('');
+  // const [groupStartDate, setgroupStartDate] = useState('');
+  // const [groupEndDate, setgroupEndDate] = useState('');
   const [groupGoal, setgroupGoal] = useState('');
   const [groupPenalty, setgroupPenalty] = useState('');
+  const [groupContent, setgroupContent] = useState('');
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+  const Name = useRef();
   const Member = useRef();
+  const PeopleNum = useRef();
   const StartDate = useRef();
   const EndDate = useRef();
   const Goal = useRef();
   const Penalty = useRef();
+  const content = useRef();
   const showDatePicker = () => {
     setDatePickerVisibility(true);
     
@@ -65,12 +74,12 @@ export default function CreateGroupScreen({navigation}) {
         { isEnabled && <View>
           <Text>제목</Text>
           <TextInput 
-              value={groupName}
-              autoFocus={true}
-              onChangeText={(value) => setgroupName(value)}
+              value={groupTitle}
+              // autoFocus={isEnabled &&true}
+              onChangeText={(value) => setgroupTitle(value)}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                Member.current.focus()
+                console.log(groupTitle);
+                Name.current.focus()
               }}
               returnKeyType="next"
             />
@@ -80,7 +89,7 @@ export default function CreateGroupScreen({navigation}) {
           <Text>그룹명</Text>
           <TextInput 
               value={groupName}
-              autoFocus={true}
+              autoFocus={ true}
               onChangeText={(value) => setgroupName(value)}
               onSubmitEditing={()=>{
                 console.log(groupName);
@@ -98,22 +107,25 @@ export default function CreateGroupScreen({navigation}) {
               right={<TextInput.Icon icon='plus' onPress={() => navigation.navigate('MyGroupListScreen')}/>}
               ref={Member}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                StartDate.current.focus()
+                console.log(groupMember);
+                if(isEnabled) PeopleNum.current.focus()
+                else StartDate.current.focus()
               }}
             />
         </View>
         { isEnabled && <View>
           <Text>모집인원</Text>
           <TextInput 
-              value={groupName}
+              value={groupPeopleNum}
               autoFocus={true}
-              onChangeText={(value) => setgroupName(value)}
+              onChangeText={(value) => setgroupPeopleNum(value)}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                Member.current.focus()
+                console.log(groupPeopleNum);
+                StartDate.current.focus()
               }}
               returnKeyType="next"
+              ref={PeopleNum}
+              
             />
         </View>
         }
@@ -126,6 +138,10 @@ export default function CreateGroupScreen({navigation}) {
                 returnKeyType="next"
                 right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
                 ref={StartDate}
+                onSubmitEditing={()=>{
+                  console.log(groupName);
+                  StartDate.current.focus()
+                }}
               />
               {/* <Text>~</Text>
               <TextInput 
@@ -152,6 +168,10 @@ export default function CreateGroupScreen({navigation}) {
                 returnKeyType="next"
                 right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
                 ref={StartDate}
+                onSubmitEditing={()=>{
+                  console.log(groupName);
+                  Goal.current.focus()
+                }}
               />
               {/* <Text>~</Text>
               <TextInput 
@@ -188,20 +208,23 @@ export default function CreateGroupScreen({navigation}) {
               onChangeText={(value) => setgroupPenalty(value)}
               returnKeyType="next"
               ref={Penalty}
+              onSubmitEditing={()=>{
+                console.log(groupName);
+                if(isEnabled) content.current.focus()
+              }}
             />
         </View>
         
         { isEnabled && <View>
           <Text>내용</Text>
           <TextInput 
-              value={groupName}
+              value={groupContent}
               autoFocus={true}
-              onChangeText={(value) => setgroupName(value)}
+              onChangeText={(value) => setgroupContent(value)}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                Member.current.focus()
+                console.log(groupContent);
               }}
-              returnKeyType="next"
+              ref={content}
             />
         </View>
         }
@@ -217,3 +240,4 @@ export default function CreateGroupScreen({navigation}) {
     </SafeAreaView >
   )
 }
+

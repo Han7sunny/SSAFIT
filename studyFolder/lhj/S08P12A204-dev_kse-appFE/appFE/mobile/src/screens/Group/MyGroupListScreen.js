@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native'
 import styled from 'styled-components/native'
 import Button from '../../components/Button'
+import MyGroupSimple from './MyGroupSimple'
 
 const Title = styled.Text`
   font-size: 40px;
@@ -12,8 +13,10 @@ const Title = styled.Text`
 
 export default function MyGroupListScreen({navigation}) {
   const Lists = [
-    {name:'a', date:'230130', img:'', num:10}, 
-    {name:'b', date:'123456', img:'', num:5}
+    {id: 0, title: 'a', nowNum: 2, date:'01/01/23'},
+    {id: 1, title: 'b', nowNum: 1, heart: 1, date:'01/01/23'},
+    {id: 2, title: 'c', nowNum: 10, heart: 10, date:'01/01/23'},
+    {id: 3, title: 'd', nowNum: 1, heart: 1, date:'01/01/23'},
   ]
 
   return (
@@ -23,18 +26,11 @@ export default function MyGroupListScreen({navigation}) {
         data={Lists}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({item}) => (
-          <View style={[styles.container, {padding: 10, flex: 1, height: 100, alignItems: 'center', alignContent: 'space-around', flexDirection: 'row'}]}>
-            <View>
-              <Text style={styles.box}>{item.name}</Text>
-              <Text style={styles.box}>{item.date}</Text>
-            </View>
-            <View style={{padding: 10, flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-              <Image source={require('./icon.png')} style={{width: 50, height: 50,margin: 10}}/>
-              <Text style={{fontWeight: 'bold', fontSize:25}}>{item.num} 명</Text>
-            </View>
-          </View>
+          <MyGroupSimple 
+            item={item}
+            navigation = {navigation}/>
         )}
-        keyExtractor={item => item.name.toString()}
+        keyExtractor={item => item.title.toString()}
       />
       <Button
         mode="contained"

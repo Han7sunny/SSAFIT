@@ -77,7 +77,7 @@ def main():
                 # If loading a video, use 'break' instead of 'continue'.
                 continue
             image = cv.flip(image, 1)
-            image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
+            # image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
 
             # To improve performance, optionally mark the image as not writeable to
             # pass by reference.
