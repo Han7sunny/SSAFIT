@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@react-native-community/datetimepicker": "^6.7.3",
-    "date-fns": "^2.29.3",
-    "react-native-modal-datetime-picker": "^14.0.1"
-  }
-}

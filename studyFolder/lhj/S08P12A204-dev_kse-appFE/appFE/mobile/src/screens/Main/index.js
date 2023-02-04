@@ -1,5 +1,0 @@
-export { default as MyGroup } from './MyGroup'
-export { default as MainScreen } from './MainScreen'
-export { default as CreateRoutineScreen } from './CreateRoutineScreen'
-export { default as RoutineListScreen } from './RoutineListScreen'
-export { default as RoutineDetailScreen } from './RoutineDetailScreen'

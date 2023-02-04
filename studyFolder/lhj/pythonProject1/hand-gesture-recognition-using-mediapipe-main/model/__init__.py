@@ -1,1 +1,0 @@
-from model.pose_classifier.pose_classifier import PoseClassifier
