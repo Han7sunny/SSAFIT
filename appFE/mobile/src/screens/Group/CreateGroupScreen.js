@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, Switch, ScrollView, SafeAreaView } from 'react-native'
+import { View, Text, Switch, ScrollView, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import { TextInput } from 'react-native-paper'
 import styled from 'styled-components/native'
 import Button from '../../components/Button'
@@ -67,6 +67,7 @@ export default function CreateGroupScreen({navigation}) {
           value={isEnabled}
         />
       </View>
+
       <ScrollView
         keyboardDismissMode = 'on-drag'
         scrollToOverflowEnabled = 'true'
@@ -132,17 +133,41 @@ export default function CreateGroupScreen({navigation}) {
         { isEnabled && <View>
           <Text>모집 기간</Text>
           <View>
-            <TextInput 
+            <View>
+              
+              <TextInput
                 value={groupStartDate}
                 onChangeText={(value) => setgroupStartDate(value)}
                 returnKeyType="next"
-                right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
+                right={ <TextInput.Icon icon="eye" />}
+              //   <TouchableOpacity onPress={showDatePicker}>
+              //   <Image source={require('./icon.png')} />
+              // </TouchableOpacity>    }
                 ref={StartDate}
                 onSubmitEditing={()=>{
                   console.log(groupName);
                   StartDate.current.focus()
                 }}
+                
               />
+              <TouchableOpacity onPress={showDatePicker}>
+                <Image source={require('./icon.png')} />
+              </TouchableOpacity>
+            </View>
+            {/* <TextInput 
+                value={groupStartDate}
+                onChangeText={(value) => setgroupStartDate(value)}
+                returnKeyType="next"
+                right={ <TextInput.Icon icon="eye" />}
+              //   <TouchableOpacity onPress={showDatePicker}>
+              //   <Image source={require('./icon.png')} />
+              // </TouchableOpacity>    }
+                ref={StartDate}
+                onSubmitEditing={()=>{
+                  console.log(groupName);
+                  StartDate.current.focus()
+                }}
+              /> */}
               {/* <Text>~</Text>
               <TextInput 
                 value={groupEndDate}

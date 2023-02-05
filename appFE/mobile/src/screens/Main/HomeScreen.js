@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
       </Button> 
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('MyGroupListScreen')}
+        onPress={() => navigation.navigate('CreateGroupScreen')}
       >
         나의 그룹
       </Button>
