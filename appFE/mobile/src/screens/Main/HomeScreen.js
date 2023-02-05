@@ -12,7 +12,7 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.text}> 운동 시작한지 N일 </Text>
       <RecordScreen />
       <TodayRoutine />
-      <MyGroup />
+      <MyGroup navigation={navigation}/>
       <Button
         mode="contained"
         onPress={() => navigation.navigate('CreateRoutineScreen')}
@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
       </Button> 
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('MyGroupListScreen')}
+        onPress={() => navigation.navigate('CreateGroupScreen')}
       >
         나의 그룹
       </Button>

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
 import MemberScreen from './MemberScreen'
+import Button from '../../components/Button'
 
 const Title = styled.Text`
   font-size: 60px;
@@ -57,6 +58,7 @@ export default function MyGroupSimple({route}) {
         <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
         <FlatList
           data={item.member}
+          style={{height: 290}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <MemberScreen member={item}/>
@@ -64,6 +66,11 @@ export default function MyGroupSimple({route}) {
           keyExtractor={item => item.name.toString()}
         />
       </View>
+      <Button
+          mode="contained"
+          onPress={() => navigation.navigate('MainMyPageScreen')}>
+          그룹 탈퇴
+      </Button>
     </View>
   )
 }
