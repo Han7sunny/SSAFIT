@@ -9,6 +9,11 @@ const imagePickerOption = {
    maxWidth: 768,
    maxHeight: 768,
    includeBase64: Platform.OS === "android",
+   storageOptions: {
+    privateDirectory: true,
+    skipBackup: true,
+    path: 'images',
+  },
 };
 export default function ChangeImageScreen({navigation}) {
  const my = {id:1, name:'이학준'}
@@ -18,29 +23,22 @@ export default function ChangeImageScreen({navigation}) {
     if (res.didCancel || !res) {
       return;
     }
-    console.log("PickImage", res);
-  };
-  
-  // 카메라 촬영
-  const onLaunchCamera = async () => {
-    const result = launchCamera(imagePickerOption, onPickImage);
-    if (result.didCancel) return null;
-      
-    const localUri = result.assets[0].uri;
+    const localUri = res.assets[0].uri;
     const uriPath = localUri.split("//").pop();
     const imageName = localUri.split("/").pop();
     setPhoto("file://"+uriPath);
+    console.log(localUri)
+    console.log(res.assets[0])
+};
+  
+  // 카메라 촬영
+  const onLaunchCamera = () => {
+    launchCamera(imagePickerOption, onPickImage);
   };
   
   // 갤러리에서 사진 선택
-  const onLaunchImageLibrary = async () => {
-    const result = await launchImageLibrary(imagePickerOption, onPickImage);
-    if (result.didCancel) return null;
-      
-    const localUri = result.assets[0].uri;
-    const uriPath = localUri.split("//").pop();
-    const imageName = localUri.split("/").pop();
-    setPhoto("file://"+uriPath);
+  const onLaunchImageLibrary = () => {
+    launchImageLibrary(imagePickerOption, onPickImage);
   };
 
   // 안드로이드를 위한 모달 visible 상태값
