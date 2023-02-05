@@ -45,6 +45,10 @@ import {
 import {
   MainMyPageScreen,
   ChangeImageScreen,
+  AddGroupScreen,
+  AddGroupDetailScreen,
+  AddScreen,
+  CancelScreen,
 } from './src/screens/My'
 
 import RoutineItem from './src/components/RoutineListItem';
@@ -97,6 +101,10 @@ const MyPageStackNavigator = () =>{
   <MyPageStack.Navigator initialRouteName='MainMyPageScreen'>
     <MyPageStack.Screen name="MainMyPageScreen" component={MainMyPageScreen} options={{ headerShown: false }}/>
     <MyPageStack.Screen name="ChangeImageScreen" component={ChangeImageScreen} options={{ headerShown: false }}/>
+    <MyPageStack.Screen name="AddGroupScreen" component={AddGroupScreen} options={{ headerShown: false }}/>
+    <MyPageStack.Screen name="AddGroupDetailScreen" component={AddGroupDetailScreen} options={{ headerShown: false }}/>
+    <MyPageStack.Screen name="AddScreen" component={AddScreen} options={{ headerShown: false }}/>
+    <MyPageStack.Screen name="CancelScreen" component={CancelScreen} options={{ headerShown: false }}/>
   </MyPageStack.Navigator>
   )
 }
@@ -104,11 +112,11 @@ const MyPageStackNavigator = () =>{
 const LoginStackNavigator = () =>{
   return(
   <LoginStack.Navigator initialRouteName='MainMyPageScreen'>
-    <LoginStack.Screen name="StartScreen" component={StartScreen}/>
-    <LoginStack.Screen name="LoginScreen" component={LoginScreen}/>
-    <LoginStack.Screen name="RegisterScreen" component={RegisterScreen}/>
-    <LoginStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen}/>
-    <LoginStack.Screen name="Dashboard" component={Dashboard}/>
+    <LoginStack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
+    <LoginStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+    <LoginStack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
+    <LoginStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }}/>
+    <LoginStack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
   </LoginStack.Navigator>
   )
 }

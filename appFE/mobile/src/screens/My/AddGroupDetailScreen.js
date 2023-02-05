@@ -1,8 +1,7 @@
-import React from "react";
+import React from 'react';
 import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
-import styled from 'styled-components/native'
-import MemberScreen from './MemberScreen'
 import Button from '../../components/Button'
+import styled from 'styled-components/native'
 
 const Title = styled.Text`
   font-size: 60px;
@@ -11,9 +10,10 @@ const Title = styled.Text`
   margin: 0px 20px;
 `;
 
-export default function MyGroupSimple({route}) {
-  const id = route.params.id;
-  const item = {title: 'A', startDate: '2023/01/01', endDate: '2023/05/01', goal: '열심히 하자', penalty: '벌금', totalResult: 40,
+export default function AddGroupScreen({navigation, route}) {
+ console.log(route.params.id);
+ const id = route.params.id;
+  const item = {title: 'A', head:'이학준',startDate: '2023/01/01', endDate: '2023/05/01', goal: '열심히 하자', penalty: '벌금', totalResult: 40,
                 member:[
                   {id: 0, name: 'a', state: false, result: 80},
                   {id: 1, name: 'b', state: true, result: 20},
@@ -21,17 +21,17 @@ export default function MyGroupSimple({route}) {
                   {id: 3, name: 'd', state: true, result: 90},
                 ]
               };
-  console.log(route.params.id)
-  return (
-    <View>
-      <Title>{item.title}</Title>
+ return (
+  <View>
+    <Text> 그룹 초대 요청 </Text>
+    <Title>{item.title}</Title>
       <View>
 
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image source={require('./icon.png')} style={{width: 70, height: 70,margin: 10}}/>
+          <Image source={require('../Group/icon.png')} style={{width: 70, height: 70,margin: 10}}/>
           <View>
             <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
-            <Text>sfg</Text>
+            <Text>{item.head}</Text>
           </View>
         </View>
 
@@ -50,36 +50,34 @@ export default function MyGroupSimple({route}) {
           <Text>{item.penalty}</Text>
         </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 달성률</Text>
-          <Text>{item.totalResult}</Text>
-        </View>
-
         <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
         <FlatList
           data={item.member}
-          style={{height: 290}}
+          style={{height: 190}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
-            <MemberScreen member={item}/>
+            <Text>{item.name}</Text>
           )}
           keyExtractor={item => item.name.toString()}
         />
       </View>
       <Button
-          mode="contained"
-          onPress={() => navigation.navigate('MainMyPageScreen')}>
-          그룹 탈퇴
-      </Button>
-    </View>
-  )
+        mode="contained"
+        onPress={() => navigation.navigate('AddScreen', {id: id})}>
+        수락
+    </Button>
+    <Button
+        mode="contained"
+        onPress={() => navigation.navigate('CancelScreen', {id: id})}>
+        거절
+    </Button>
+  </View>
+ ) 
 }
 
 const styles = StyleSheet.create({
-  separator: {
-    backgroundColor: '#e0e0e0',
-    height: 1,
-  },
-})
-
-
+    separator: {
+      backgroundColor: '#e0e0e0',
+      height: 1,
+    },
+  })
