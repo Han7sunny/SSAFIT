@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MirrorUpdateRecordReqDto {
     private Long recordId;
-    private String time;
 
     private Long experiencePoint;
 

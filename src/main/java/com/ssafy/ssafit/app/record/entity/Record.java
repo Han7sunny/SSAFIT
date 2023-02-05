@@ -1,6 +1,7 @@
 package com.ssafy.ssafit.app.record.entity;
 
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
+import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.user.entity.User;
 import lombok.AccessLevel;
@@ -32,6 +33,10 @@ public class Record {
 
     @Column(name = "achievement_rate")
     private Double achievementRate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "`group_id`")
+    private Group group;
 
     private Long mileage;
 

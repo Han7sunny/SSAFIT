@@ -34,7 +34,8 @@ public class RecordController {
             response = CommonResp.class)
     public ResponseEntity<?> registerExercise(@RequestBody RecordRegisterReqDto recordRegisterReqDto) {
         try {
-            recordService.registerExercise(recordRegisterReqDto);
+            LocalDate startDate = LocalDate.of(recordRegisterReqDto.getStartYear(), recordRegisterReqDto.getStartMonth(), recordRegisterReqDto.getStartDay());
+            recordService.registerExercise(recordRegisterReqDto, startDate);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("추가 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -43,7 +44,10 @@ public class RecordController {
 
     @GetMapping("/get-schedule/{id}")
     @ApiOperation(value = "예약한 운동 루틴 정보", notes = "특정 날짜에 예약해놓은 운동 루틴 정보를 얻는다.\n" +
-            "day : 조회하고 싶은 날의 일\n",
+            "day : 조회하고 싶은 날의 일\n" +
+            "month : 조회하고 싶은 날의 월\n" +
+            "year : 조회하고 싶은 날의 년\n" +
+            "id : 조회하고 싶은 유저의 아이디",
             response = List.class)
     public ResponseEntity<?> getSchedule(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
         try {
@@ -56,7 +60,10 @@ public class RecordController {
     }
 
     @DeleteMapping("/remove-schedule")
-    @ApiOperation(value = "예약한 운동 루틴 제거 기능", notes = "예약해놓은 운동 루틴을 제거한다.", response = CommonResp.class)
+    @ApiOperation(value = "예약한 운동 루틴 제거 기능",
+            notes = "예약해놓은 운동 루틴을 제거한다." +
+            "recordId : 제거하고 싶은 record의 아이디",
+            response = CommonResp.class)
     public ResponseEntity<?> removeSchedule(@RequestParam Long recordId) {
         try {
             recordService.removeSchedule(recordId);
@@ -67,7 +74,13 @@ public class RecordController {
     }
 
     @GetMapping("/get-exercise-record/{id}")
-    @ApiOperation(value = "특정 날짜의 운동 기록 가져오는 기능", notes = "원하는 날짜에 수행한 운동들의 정보를 가져온다.", response = CommonResp.class)
+    @ApiOperation(value = "특정 날짜의 운동 기록 가져오는 기능",
+            notes = "원하는 날짜에 수행한 운동들의 정보를 가져온다." +
+                    "day : 조회하고 싶은 날의 일\n" +
+                    "month : 조회하고 싶은 날의 월\n" +
+                    "year : 조회하고 싶은 날의 년\n" +
+                    "id : 조회하고 싶은 유저의 아이디",
+            response = CommonResp.class)
     public ResponseEntity<?> getExerciseRecord(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
         try {
             LocalDate time = LocalDate.of(year, month, day);

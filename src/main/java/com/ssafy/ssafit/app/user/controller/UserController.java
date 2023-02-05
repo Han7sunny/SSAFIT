@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @RequestMapping("/user")
@@ -121,6 +122,10 @@ public class UserController {
     }
 
     @GetMapping("/id-check")
+    @ApiOperation(value = "아이디 유효성 검사",
+            notes = "아이디가 유효하지 않을 때 : 1, 아이디가 중복되는 것이 있을 때 : 0, 유효한 아이디일 때 : 2\n"+
+            "아이디 조건 : 첫문자는 영문자로 시작, 영문자와 숫자, _ 로만 이루어져있는 6~16자리 아이디",
+            response = CommonResp.class)
     public ResponseEntity<?> idCheck(@RequestParam String id) {
         try {
             int res = userService.idCheck(id);
@@ -131,6 +136,9 @@ public class UserController {
     }
 
     @GetMapping("/name-check")
+    @ApiOperation(value = "닉네임 중복 검사",
+            notes = "중복되는 닉네임이 있을 경우 true, 없을 경우 false 반환",
+            response = CommonResp.class)
     public ResponseEntity<?> nameCheck(@RequestParam String name) {
         try {
             boolean existence = userService.nameCheck(name);
@@ -141,6 +149,9 @@ public class UserController {
     }
 
     @GetMapping("/email-check")
+    @ApiOperation(value = "이메일 중복 검사",
+            notes = "중복되는 이메일이 있을 경우 true, 없을 경우 false 반환",
+            response = CommonResp.class)
     public ResponseEntity<?> emailCheck(@RequestParam String email) {
         try {
             boolean existence = userService.emailCheck(email);
@@ -151,6 +162,10 @@ public class UserController {
     }
 
     @GetMapping("/password-verification")
+    @ApiOperation(value = "비밀번호 유효성 검사",
+            notes = "유효한 비밀번호인 경우 true, 아닐 경우 false 반환\n" +
+            "비밀번호 조건 : 영문자, 숫자, 특수기호가 최소한 하나씩 들어간 8 ~ 16자리 비밀번호",
+            response = CommonResp.class)
     public ResponseEntity<?> passwordCheck(@RequestParam String password) {
         try {
             boolean validation = userService.passwordCheck(password);
@@ -161,6 +176,10 @@ public class UserController {
     }
 
     @GetMapping("/find-password")
+    @ApiOperation(value = "비밀번호 찾기 기능",
+            notes = "입력받은 아이디와 이메일을 통해 일치하는 유저가 있는지 확인합니다." +
+                    "있을 경우 true 반환, 없을 경우 false 반환",
+            response = CommonResp.class)
     public ResponseEntity<?> findPassword(@RequestParam String id, @RequestParam String email) {
         try {
             boolean check = userService.findPassword(id, email);
@@ -171,6 +190,9 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
+    @ApiOperation(value = "비밀번호 변경 기능",
+            notes = "유저의 아이디와 바꿀 비밀번호 정보를 통해 비밀번호를 변경",
+            response = CommonResp.class)
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> idPwd) {
         try {
             userService.changePassword(idPwd);
@@ -182,6 +204,9 @@ public class UserController {
     }
 
     @PostMapping("/join")
+    @ApiOperation(value = "회원가입 기능",
+            notes = "회원가입 기능",
+            response = CommonResp.class)
     public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
         try {
             userService.userJoin(userJoinReqDto);
@@ -192,6 +217,9 @@ public class UserController {
     }
 
     @GetMapping("/create-code")
+    @ApiOperation(value = "이메일 인증 시 이메일로 인증코드 발송 기능",
+            notes = "입력받은 이메일로 인증코드를 보냅니다. 반환받은 id값은 입력받은 인증코드를 확인할 때 사용합니다.",
+            response = CommonResp.class)
     private ResponseEntity<?> createCode(@RequestParam("email") String email) {
         try {
             String id = userService.createCode(email);
@@ -203,6 +231,9 @@ public class UserController {
     }
 
     @GetMapping("/check-code")
+    @ApiOperation(value = "이메일 인증 시 인증코드 검증 기능",
+            notes = "id값은 이메일을 보낼 때 반환받은 값, 코드는 메일에 입력된 값을 사용합니다.",
+            response = CommonResp.class)
     private ResponseEntity<?> checkCode(@RequestParam("code") String code,@RequestParam("id") String id) {
         try {
             boolean check = userService.checkCode(code, id);

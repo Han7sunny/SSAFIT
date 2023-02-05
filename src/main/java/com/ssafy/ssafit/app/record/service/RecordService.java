@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface RecordService {
-    void registerExercise(RecordRegisterReqDto recordRegisterReqDto);
+    Long registerExercise(RecordRegisterReqDto recordRegisterReqDto, LocalDate startDate);
 
     List<RecordScheduleRespDto> getSchedule(LocalDate time, String userId);
 

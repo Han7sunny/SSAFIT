@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
@@ -24,4 +25,5 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query(value = "update record r set r.start_time = :startTime where r.record_id = :id", nativeQuery = true)
     void updateStartTime(@Param("startTime") LocalDateTime startTime, @Param("id") Long recordId);
 
+    Optional<Record> findByUser_IdAndRoutine_RoutineIdAndStartDate(String userId, long l, LocalDate now);
 }

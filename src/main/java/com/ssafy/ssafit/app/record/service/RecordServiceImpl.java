@@ -2,6 +2,7 @@ package com.ssafy.ssafit.app.record.service;
 
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
+import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
@@ -27,19 +28,21 @@ public class RecordServiceImpl implements RecordService{
     RoutineRepository routineRepository;
     UserRepository userRepository;
     ExerciseRepository exerciseRepository;
+    ExerciseTypeRepository exerciseTypeRepository;
+
     @Autowired
-    public RecordServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository, RoutineRepository routineRepository, UserRepository userRepository, ExerciseRepository exerciseRepository) {
+    public RecordServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository, RoutineRepository routineRepository, UserRepository userRepository, ExerciseRepository exerciseRepository,
+                             ExerciseTypeRepository exerciseTypeRepository) {
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
         this.userRepository = userRepository;
         this.exerciseRepository = exerciseRepository;
+        this.exerciseTypeRepository = exerciseTypeRepository;
     }
 
     @Override
-    public void registerExercise(RecordRegisterReqDto recordRegisterReqDto) {
-        LocalDate startDate = LocalDate.of(recordRegisterReqDto.getStartYear(), recordRegisterReqDto.getStartMonth(), recordRegisterReqDto.getStartDay());
-
+    public Long registerExercise(RecordRegisterReqDto recordRegisterReqDto, LocalDate startDate) {
         Routine routine = routineRepository.findById(recordRegisterReqDto.getRoutineId()).get();
 
         Record record = Record.builder()
@@ -56,12 +59,15 @@ public class RecordServiceImpl implements RecordService{
         for (Exercise exercise: exerciseList) {
             RecordDetail recordDetail = RecordDetail.builder()
                     .record(record)
-                    .exercise(exerciseRepository.findById(exercise.getId()).get())
+                    .exerciseType(exercise.getExerciseType())
                     .count(0L)
+                    .countRez(exercise.getExerciseSet() * exercise.getReps())
                     .build();
 
             recordDetailRepository.save(recordDetail);
         }
+
+        return record.getId();
     }
 
     @Override
@@ -100,8 +106,8 @@ public class RecordServiceImpl implements RecordService{
             List<RecordDetail> recordDetailList = record.getRecordDetails();
 
             for (RecordDetail recordDetail: recordDetailList) {
-                String exerciseName = recordDetail.getExercise().getExerciseType().getExerciseTypeName();
-                Long countRez = recordDetail.getExercise().getExerciseSet() * recordDetail.getExercise().getReps();
+                String exerciseName = recordDetail.getExerciseType().getExerciseTypeName();
+                Long countRez = recordDetail.getCountRez();
                 tmpList.add(new RecordExerciseRecordRespDto.ExerciseDetail(exerciseName, recordDetail.getCount(), countRez));
             }
 

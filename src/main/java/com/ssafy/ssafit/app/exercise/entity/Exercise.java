@@ -28,8 +28,6 @@ public class Exercise {
     @JoinColumn(name="routine_id")
     private Routine routine;
 
-    @OneToMany(mappedBy = "exercise")
-    private List<RecordDetail> recordDetails;
     @Column(length = 45, nullable = false)
     private String name;
 
@@ -43,11 +41,10 @@ public class Exercise {
     private Long restTime;
 
     @Builder
-    public Exercise(Long id, ExerciseType exerciseType, Routine routine, List<RecordDetail> recordDetails, String name, Long reps, Long exerciseSet, Long restTime) {
+    public Exercise(Long id, ExerciseType exerciseType, Routine routine, String name, Long reps, Long exerciseSet, Long restTime) {
         this.id = id;
         this.exerciseType = exerciseType;
         this.routine = routine;
-        this.recordDetails = recordDetails;
         this.name = name;
         this.reps = reps;
         this.exerciseSet = exerciseSet;

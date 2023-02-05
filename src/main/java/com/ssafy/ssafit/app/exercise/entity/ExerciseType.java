@@ -1,5 +1,6 @@
 package com.ssafy.ssafit.app.exercise.entity;
 
+import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class ExerciseType {
     private String exerciseArea;
     @OneToMany(mappedBy = "exerciseType")
     private List<Exercise> exercise;
+
+    @OneToMany(mappedBy = "exerciseType")
+    private List<RecordDetail> recordDetailList;
 
     @Builder
     public ExerciseType(Long exerciseTypeId, String exerciseTypeName, String exerciseArea) {

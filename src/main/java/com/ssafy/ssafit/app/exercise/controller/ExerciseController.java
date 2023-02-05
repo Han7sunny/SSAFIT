@@ -28,7 +28,10 @@ public class ExerciseController {
     }
 
     @GetMapping("/get-exercise-type")
-    @ApiOperation(value = "원하는 운동 부위별로 운동 정보 가져오기", notes = "입력한 운동 부위에 해당하는 운동들의 정보를 가져온다.", response = List.class)
+    @ApiOperation(value = "원하는 운동 부위별로 운동 정보 가져오기",
+            notes = "입력한 운동 부위에 해당하는 운동들의 정보를 가져온다.\n"
+                    + "area : 원하는 운동 부위 (빈 문자열로 보낼 경우 모든 운동 정보 반환)"
+            , response = List.class)
     public ResponseEntity<?> getExerciseType(@RequestParam String area) {
         try {
             List<ExerciseTypeRespDto> exerciseTypeList = exerciseService.getExerciseType(area);

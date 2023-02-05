@@ -2,6 +2,8 @@ package com.ssafy.ssafit.app.group.entity;
 
 import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
+import com.ssafy.ssafit.app.record.entity.Record;
+import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import lombok.*;
 
 import javax.persistence.*;
@@ -53,6 +55,9 @@ public class Group {
         this.maximum_member = groupReqDto.getMaximumMember();
 
     }
+
+    @OneToMany(mappedBy = "group")
+    private List<Record> recordList;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     private List<GroupMember> groupMember;
