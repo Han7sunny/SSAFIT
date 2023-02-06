@@ -1,9 +1,6 @@
 package com.ssafy.ssafit.app.record.dto.req;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,6 +8,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @ToString
+@Builder
 public class RecordRegisterReqDto {
 
     private String userId;

@@ -24,8 +24,8 @@ public class GroupMember {
     @JoinColumn(name = "`group_id`")
     private Group group;
 
-    private boolean accept_invitation;
+    private boolean acceptInvitation;
 
-    private double achievement_rate;
+    private double achievementRate;
 
 }

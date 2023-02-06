@@ -1,32 +1,27 @@
 package com.ssafy.ssafit.app.user.service;
 
 import com.ssafy.ssafit.app.config.JwtTokenProvider;
-import com.ssafy.ssafit.app.user.dto.Role;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.entity.Authentication;
-import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.AuthenticationRepository;
-import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.util.MailService;
 import com.ssafy.ssafit.util.RandomString;
 import com.ssafy.ssafit.util.Sha256;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -88,6 +83,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public List<UserInfoResp> userList() {
+
+        List<User> getUserList = userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        List<UserInfoResp> userList = new ArrayList<>();
+        for (User user : getUserList) {
+            userList.add(UserInfoResp.builder().userId(user.getId()).userName(user.getName()).build());
+        }
+        return userList;
+    }
+
+    @Override
     public User findId(String email) {
         return userRepository.findByEmail(email);
     }
@@ -136,15 +142,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void userJoin(UserJoinReqDto userJoinReqDto, String encryptPassword) {
+    public void userJoin(UserJoinReqDto userJoinReqDto) {
         User user = User.builder()
                 .id(userJoinReqDto.getId())
-                .password(encryptPassword)
+                .password(passwordEncoder.encode(userJoinReqDto.getPassword()))
                 .name(userJoinReqDto.getName())
                 .email(userJoinReqDto.getEmail())
                 .photo("12345")
-                .photo_encoding("12345")
-                .on_off(false)
+                .photoEncoding("12345")
+                .onOff(false)
                 .build();
 
         userRepository.save(user);
@@ -172,5 +178,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean findPassword(String id, String email) {
         return userRepository.existsByIdAndEmail(id, email);
+    }
+
+    @Override
+    public List<UserInfoResp> searchUsers(String name) {
+        List<User> userList = userRepository.findAllByNameContaining(name);
+        List<UserInfoResp> userInfoList = new ArrayList<>();
+        for (User user : userList) {
+            userInfoList.add(UserInfoResp.builder().userId(user.getId()).userName(user.getName()).build());
+        }
+        return userInfoList;
     }
 }

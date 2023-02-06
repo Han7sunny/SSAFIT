@@ -11,11 +11,12 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board,Long> {
 //    List<Board> findByCategoryIdShareTrue(long category_id);
 
+    List<Board> findByCategoryIdBetweenAndSharePostTrue(long startId, long endId);
     //  공개글 조회
-    List<Board> findByShareTrue();
+    List<Board> findByCategoryIdAndSharePostTrue(long categoryId);
 
-    //  그룹 모집글 중 공개글 목록 조회
-    List<Board> findByGroupIdNotNullAndShareTrue();
+//    //  그룹 모집글 중 공개글 목록 조회
+//    List<Board> findByGroupIdNotNullAndShareTrue();
 
     Board findByGroupId(long group_id);
 

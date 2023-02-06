@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.group.entity;
 import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
-@Builder
+@SuperBuilder
 @Table(name = "`group`")
 public class Group {
 
@@ -25,36 +26,47 @@ public class Group {
 
     private String groupName;
 
-    private String goal;
+    private double goal;
 
     private String penalty;
 
-    private double achievement_rate;
+    private double achievementRate;
+
+    private LocalDate startRecruitDate;
+
+    private LocalDate endRecruitDate;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate start_date;
+//@Column(name = "`start_date`")
+    private LocalDate startDate;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 
-    private LocalDate end_date;
+    private LocalDate endDate;
 
-//    private int period; // ?
+    private int period; // ?
 
-    private int maximum_member;
+    private int maximumMember;
 
-    private int current_member;
+    private int currentMember;
+
+    private String groupRoutine;
+
+//    private boolean confirm; // 그룹 확정 여부
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+    private List<GroupMember> groupMember;
 
     public Group(GroupReqDto groupReqDto){
         this.groupName = groupReqDto.getGroupName();
         this.goal = groupReqDto.getGoal();
         this.penalty = groupReqDto.getPenalty();
-        this.start_date = groupReqDto.getStartDate();
-        this.end_date = groupReqDto.getEndDate();
-        this.maximum_member = groupReqDto.getMaximumMember();
-
+        this.startRecruitDate = groupReqDto.getStartRecruitDate();
+        this.endRecruitDate = groupReqDto.getEndRecruitDate();
+        this.startDate = groupReqDto.getStartDate();
+        this.endDate = groupReqDto.getEndDate();
+        this.period = groupReqDto.getPeriod();
+        this.maximumMember = groupReqDto.getMaximumMember();
+        this.currentMember = groupReqDto.getCurrentMember();
     }
-
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
-    private List<GroupMember> groupMember;
-
 }

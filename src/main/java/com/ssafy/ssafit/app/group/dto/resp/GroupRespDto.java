@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.group.dto.resp;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.group.entity.Group;
+import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class GroupRespDto extends CommonResp {
 
     private String name;
 
-    private String goal;
+    private double goal;
 
     private String penalty;
 
@@ -31,20 +33,28 @@ public class GroupRespDto extends CommonResp {
 
     private LocalDate end_date;
 
+    private int period;
+
     private int maximum_member;
 
     private int current_member;
+
+    private List<GroupMemberRespDto> groupMemberList; // accept_invitation true일 경우만 .. ?
+
+    private List<RoutineInfoRespDto> routineList;
+
 
     public GroupRespDto(Group group){
         this.groupId = group.getId();
         this.name = group.getGroupName();
         this.goal = group.getGoal();
         this.penalty = group.getPenalty();
-        this.achievement_rate = group.getAchievement_rate();
-        this.start_date = group.getStart_date();
-        this.end_date = group.getEnd_date();
-        this.maximum_member = group.getMaximum_member();
-        this.current_member = group.getCurrent_member();
+        this.achievement_rate = group.getAchievementRate();
+        this.start_date = group.getStartDate();
+        this.end_date = group.getEndDate();
+        this.period = group.getPeriod();
+        this.maximum_member = group.getMaximumMember();
+        this.current_member = group.getCurrentMember();
     }
 
 }

@@ -18,6 +18,8 @@ public class BoardReqDto {
 
     private long groupId;
 
+    private long routineId;
+
     private String title;
 
     private long categoryId;
@@ -28,7 +30,6 @@ public class BoardReqDto {
 
     private LocalDateTime modifiedTime;
 
-    private boolean share;
-//    file
-//    private String path;
+    private boolean sharePost;
+
 }

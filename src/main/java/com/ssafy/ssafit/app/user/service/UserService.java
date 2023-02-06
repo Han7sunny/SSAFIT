@@ -2,17 +2,19 @@ package com.ssafy.ssafit.app.user.service;
 
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
 
     LoginResponseDto login(LoginRequestDto loginRequestDto);
+
+    List<UserInfoResp> userList(); // 그룹 모집 및 생성을 위함..?
 
     User findId(String email);
 
@@ -30,9 +32,11 @@ public interface UserService {
 
     void changePassword(Map<String, String> idPwd);
 
-    void userJoin(UserJoinReqDto userJoinReqDto, String encryptPassword);
+    void userJoin(UserJoinReqDto userJoinReqDto);
 
     String createCode(String email);
 
     boolean checkCode(String code, String id);
+
+    List<UserInfoResp> searchUsers(String name);
 }

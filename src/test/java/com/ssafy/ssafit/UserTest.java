@@ -18,7 +18,7 @@ public class UserTest {
     @Test
     void join(){
 
-        User user = User.builder().id("admin").password("admin").name("admin").email("test@test").photo("photo_path").photo_encoding("photo_encoding").on_off(false).build();
+        User user = User.builder().id("admin").password("admin").name("admin").email("test@test").photo("photo_path").photoEncoding("photo_encoding").onOff(false).build();
         userRepository.save(user);
 
         User joinedUser = userRepository.findById("admin").get();

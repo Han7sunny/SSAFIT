@@ -31,6 +31,11 @@ public class GroupMemberServiceImpl implements GroupMemberService{
     }
 
     @Override
+    public List<GroupMember> getGroupRecruitRequest(String userId) {
+        return groupMemberRepository.findByUserIdAndAcceptInvitationFalse(userId);
+    }
+
+    @Override
     public boolean findGroupMember(long groupId, String userId) {
         GroupMember groupMember = groupMemberRepository.findByGroupIdAndUserId(groupId, userId);
         return groupMember != null;
@@ -48,7 +53,7 @@ public class GroupMemberServiceImpl implements GroupMemberService{
     public void addGroupMember(GroupMemberReqDto groupMember) {
         User user = userRepository.findById(groupMember.getUserId()).get();
         Group group = groupRepository.findById(groupMember.getGroupId()).get();
-        groupMemberRepository.save(GroupMember.builder().user(user).group(group).accept_invitation(groupMember.isAcceptInvitation()).build());
+        groupMemberRepository.save(GroupMember.builder().user(user).group(group).acceptInvitation(groupMember.isAcceptInvitation()).build());
     }
 
     // 그룹 초대 요청에 거절할 경우 GroupMember에서 삭제 / 그룹에서 그룹원 제외

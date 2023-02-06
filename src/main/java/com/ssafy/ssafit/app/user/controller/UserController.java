@@ -194,9 +194,9 @@ public class UserController {
 
     @PostMapping("/join")
     public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
-        String encryptPassword = Sha256.encrypt(userJoinReqDto.getPassword());
+//        String encryptPassword = Sha256.encrypt(userJoinReqDto.getPassword());
         try {
-            userService.userJoin(userJoinReqDto, encryptPassword);
+            userService.userJoin(userJoinReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);

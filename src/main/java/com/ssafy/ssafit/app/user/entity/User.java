@@ -41,14 +41,10 @@ public class User {
     private String photo;
 
     @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
-    private String photo_encoding;
+    private String photoEncoding;
 
     @Column(nullable = false)
-    private boolean on_off;
-
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-//    @Builder.Default
-//    private List<Authority> roles = new ArrayList<>();
+    private boolean onOff;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -62,7 +58,7 @@ public class User {
 //        role.forEach(o -> o.setUser(this));
 //    }
 
-}
+
     @OneToMany(mappedBy = "user")
     private List<Record> record;
 
@@ -73,7 +69,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.photo = photo;
-        this.photo_encoding = photo_encoding;
-        this.on_off = on_off;
+        this.photoEncoding = photo_encoding;
+        this.onOff = on_off;
     }
 }

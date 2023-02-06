@@ -55,17 +55,17 @@ public class BoardTest {
         logger.info("[init] init data for BoardTest");
         User user1 = User.builder()
                 .id("test11").password(passwordEncoder.encode("test1pw")).email("test1@test1.com")
-                .on_off(false).photo("photo1").photo_encoding("photo_encoding1")
+                .onOff(false).photo("photo1").photoEncoding("photo_encoding1")
                 .name("testName1").role(Role.USER).roles(Collections.singletonList("ROLE_USER"))
                 .build();
         User user2 = User.builder()
                 .id("test2").password(passwordEncoder.encode("test22pw")).email("test2@test1.com")
-                .on_off(false).photo("photo2").photo_encoding("photo_encoding2")
+                .onOff(false).photo("photo2").photoEncoding("photo_encoding2")
                 .name("testName2").role(Role.USER).roles(Collections.singletonList("ROLE_USER"))
                 .build();
         User user3 = User.builder()
                 .id("test3").password(passwordEncoder.encode("test3pw")).email("test3@test.com")
-                .on_off(false).photo("photo3").photo_encoding("photo_encoding3")
+                .onOff(false).photo("photo3").photoEncoding("photo_encoding3")
                 .name("testName3").role(Role.USER).roles(Collections.singletonList("ROLE_USER"))
                 .build();
         logger.info("[User] join user");
@@ -74,8 +74,8 @@ public class BoardTest {
         userRepository.save(user3);
 
         //        게시글 작성
-        Board registBoard1 = Board.builder().user(user1).title("test게시글제목").content("testContent").hits(0).likes(0).downloads(10).share(false).build();
-        Board registBoard2 = Board.builder().user(user2).title("test게시글제목2").content("testContent2").hits(2).likes(0).downloads(10).share(false).build();
+        Board registBoard1 = Board.builder().user(user1).title("test게시글제목").content("testContent").hits(0).likes(0).downloads(10).sharePost(false).build();
+        Board registBoard2 = Board.builder().user(user2).title("test게시글제목2").content("testContent2").hits(2).likes(0).downloads(10).sharePost(false).build();
         logger.info("[Board] regist board");
         boardRepository.save(registBoard1);
         boardRepository.save(registBoard2);
