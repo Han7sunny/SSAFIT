@@ -8,6 +8,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View } from 'react-native';
 
@@ -57,67 +58,70 @@ import { Text } from 'react-native-paper';
 
 
 const Tab = createBottomTabNavigator();
-const MainStack = createNativeStackNavigator();
-const GroupStack = createNativeStackNavigator();
-const CommunityStack = createNativeStackNavigator();
-const MyPageStack = createNativeStackNavigator();
-const LoginStack = createNativeStackNavigator();
 
-const MainStackNavigator = () => {
-  return(
-  <MainStack.Navigator initialRouteName='HomeScreen'>
-    <MainStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
-    <MainStack.Screen name="CreateRoutineScreen" component={CreateRoutineScreen} options={{ headerShown: false }}/>
-    <MainStack.Screen name="MyRoutineListScreen" component={MyRoutineListScreen} options={{ headerShown: false }}/>
-    <MainStack.Screen name="RoutineDetailScreen" component={RoutineDetailScreen} options={{ headerShown: false }}/>
-    <MainStack.Screen name="MyGroup" component={MyGroup}/>
-  </MainStack.Navigator>
-  )
-}
-const GroupStackNavigator = () => {
-  return(
-  <GroupStack.Navigator initialRouteName='GroupListScreen'>
-    <GroupStack.Screen name="GroupListScreen" component={GroupListScreen} options={{ headerShown: false }}/>
-    <GroupStack.Screen name="GroupListDetailScreen" component={GroupListDetailScreen} options={{ headerShown: false }}/>
-    <GroupStack.Screen name="MyGroupListScreen" component={MyGroupListScreen} options={{ headerShown: false }}/>
-    <GroupStack.Screen name="MyGroupDetail" component={MyGroupDetail} options={{ headerShown: false }}/>
-    <GroupStack.Screen name="CreateGroupScreen" component={CreateGroupScreen} options={{ headerShown: false }}/>
-  </GroupStack.Navigator>
-  )
-}
-const CommunityStackNavigator = () => {
-  return(
-  <CommunityStack.Navigator initialRouteName='CommunityScreen'>
-    <CommunityStack.Screen name="CommunityScreen" component={CommunityScreen} options={{ headerShown: false }}/>
-    <CommunityStack.Screen name="ArticleDetailScreen" component={ArticleDetailScreen} options={{ headerShown: false }}/>
-    <CommunityStack.Screen name="CreateArticleScreen" component={CreateArticleScreen} options={{ headerShown: false }}/>
-    <CommunityStack.Screen name="ArticleListScreen" component={ArticleListScreen} options={{ headerShown: false }}/>
-  </CommunityStack.Navigator>
-  )
-}
+const MainSide = createDrawerNavigator()
+const GroupSide = createDrawerNavigator();
+const CommunitySide = createDrawerNavigator();
+const MyPageSide = createDrawerNavigator();
+const LoginSide = createDrawerNavigator();
 
-const MyPageStackNavigator = () =>{
+const MainSideNavigator = () => {
   return(
-  <MyPageStack.Navigator initialRouteName='MainMyPageScreen'>
-    <MyPageStack.Screen name="MainMyPageScreen" component={MainMyPageScreen} options={{ headerShown: false }}/>
-    <MyPageStack.Screen name="ChangeImageScreen" component={ChangeImageScreen} options={{ headerShown: false }}/>
-    <MyPageStack.Screen name="AddGroupScreen" component={AddGroupScreen} options={{ headerShown: false }}/>
-    <MyPageStack.Screen name="AddGroupDetailScreen" component={AddGroupDetailScreen} options={{ headerShown: false }}/>
-    <MyPageStack.Screen name="AddScreen" component={AddScreen} options={{ headerShown: false }}/>
-    <MyPageStack.Screen name="CancelScreen" component={CancelScreen} options={{ headerShown: false }}/>
-  </MyPageStack.Navigator>
+  <MainSide.Navigator initialRouteName='HomeScreen'>
+    <MainSide.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
+    <MainSide.Screen name="CreateRoutineScreen" component={CreateRoutineScreen} options={{ headerShown: false }}/>
+    <MainSide.Screen name="MyRoutineListScreen" component={MyRoutineListScreen} options={{ headerShown: false }}/>
+    <MainSide.Screen name="RoutineDetailScreen" component={RoutineDetailScreen} options={{ headerShown: false }}/>
+    <MainSide.Screen name="MyGroup" component={MyGroup}/>
+    <MainSide.Screen name='RoutineItem' component={RoutineItem} />
+  </MainSide.Navigator>
+  )
+}
+const GroupSideNavigator = () => {
+  return(
+  <GroupSide.Navigator initialRouteName='GroupListScreen'>
+    <GroupSide.Screen name="GroupListScreen" component={GroupListScreen} options={{ headerShown: false }}/>
+    <GroupSide.Screen name="GroupListDetailScreen" component={GroupListDetailScreen} options={{ headerShown: false }}/>
+    <GroupSide.Screen name="MyGroupListScreen" component={MyGroupListScreen} options={{ headerShown: false }}/>
+    <GroupSide.Screen name="MyGroupDetail" component={MyGroupDetail} options={{ headerShown: false }}/>
+    <GroupSide.Screen name="CreateGroupScreen" component={CreateGroupScreen} options={{ headerShown: false }}/>
+  </GroupSide.Navigator>
+  )
+}
+const CommunitySideNavigator = () => {
+  return(
+  <CommunitySide.Navigator initialRouteName='CommunityScreen'>
+    <CommunitySide.Screen name="CommunityScreen" component={CommunityScreen} options={{ headerShown: false }}/>
+    <CommunitySide.Screen name="ArticleDetailScreen" component={ArticleDetailScreen} options={{ headerShown: false }}/>
+    <CommunitySide.Screen name="CreateArticleScreen" component={CreateArticleScreen} options={{ headerShown: false }}/>
+    <CommunitySide.Screen name="ArticleListScreen" component={ArticleListScreen} options={{ headerShown: false }}/>
+    <CommunitySide.Screen name='ArticleItem' component={ArticleItem} />
+  </CommunitySide.Navigator>
   )
 }
 
-const LoginStackNavigator = () =>{
+const MyPageSideNavigator = () =>{
   return(
-  <LoginStack.Navigator initialRouteName='MainMyPageScreen'>
-    <LoginStack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
-  </LoginStack.Navigator>
+  <MyPageSide.Navigator initialRouteName='MainMyPageScreen'>
+    <MyPageSide.Screen name="MainMyPageScreen" component={MainMyPageScreen} options={{ headerShown: false }}/>
+    <MyPageSide.Screen name="ChangeImageScreen" component={ChangeImageScreen} options={{ headerShown: false }}/>
+    <MyPageSide.Screen name="AddGroupScreen" component={AddGroupScreen} options={{ headerShown: false }}/>
+    <MyPageSide.Screen name="AddGroupDetailScreen" component={AddGroupDetailScreen} options={{ headerShown: false }}/>
+    <MyPageSide.Screen name="AddScreen" component={AddScreen} options={{ headerShown: false }}/>
+    <MyPageSide.Screen name="CancelScreen" component={CancelScreen} options={{ headerShown: false }}/>
+  </MyPageSide.Navigator>
+  )
+}
+
+const LoginSideNavigator = () =>{
+  return(
+  <LoginSide.Navigator initialRouteName='MainMyPageScreen'>
+    <LoginSide.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
+    <LoginSide.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+    <LoginSide.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
+    <LoginSide.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }}/>
+    <LoginSide.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
+  </LoginSide.Navigator>
   )
 }
 
@@ -126,17 +130,16 @@ function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={MainStackNavigator}/>
-        <Tab.Screen name="Group" component={GroupStackNavigator}/>
-        <Tab.Screen name="Community" component={CommunityStackNavigator}/>
-        <Tab.Screen name="MyPage" component={MyPageStackNavigator}/>
-        <Tab.Screen name="Login" component={LoginStackNavigator}/>
+        <Tab.Screen name="Home" component={MainSideNavigator}/>
+        <Tab.Screen name="Group" component={GroupSideNavigator}/>
+        <Tab.Screen name="Community" component={CommunitySideNavigator}/>
+        <Tab.Screen name="MyPage" component={MyPageSideNavigator}/>
+        <Tab.Screen name="Login" component={LoginSideNavigator}/>
       
        
 
         {/* components */}
-        {/* <Stack.Screen name='RoutineItem' component={RoutineItem} />
-        <Stack.Screen name='ArticleItem' component={ArticleItem} /> */}
+        
       </Tab.Navigator>
       
 

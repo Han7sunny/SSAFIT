@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, FlatList, Pressable, StyleSheet } 
 import Button from '../../components/Button'
 
 export default function MainMyPageScreen({navigation}) {
- const my = {id:1, name:'이학준', state:'admin'}
+ const my = {id:1, name:'이학준', state:'member'}
  const groups =[{id:0, name:'유현준'}, {id:1, name:'송경삼'},{id:2, name:'강권우'},{id:3, name:'김성은'},{id:4, name:'한선희'}]
  const announcements = [{id:0, title:'첫번째 공지사항'}, {id:1, title:'두번째 공지사항'}, {id:2, title:'세번째 공지사항'}, {id:3, title:'네번째 공지사항'}]
  return (
