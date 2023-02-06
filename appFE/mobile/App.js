@@ -52,6 +52,12 @@ import {
   CancelScreen,
 } from './src/screens/My'
 
+import {
+  AnnouncementListScreen,
+  AddAnnouncementScreen,
+  AnnouncementDetailScreen,
+} from './src/screens/Announcement'
+
 import RoutineItem from './src/components/RoutineListItem';
 import ArticleItem from './src/components/ArticleItem';
 import { Text } from 'react-native-paper';
@@ -64,6 +70,8 @@ const GroupSide = createDrawerNavigator();
 const CommunitySide = createDrawerNavigator();
 const MyPageSide = createDrawerNavigator();
 const LoginSide = createDrawerNavigator();
+
+const Announcement = createNativeStackNavigator();
 
 const MainSideNavigator = () => {
   return(
@@ -111,6 +119,16 @@ const MyPageSideNavigator = () =>{
     <MyPageSide.Screen name="CancelScreen" component={CancelScreen} options={{ headerShown: false }}/>
   </MyPageSide.Navigator>
   )
+
+}
+const AnnouncementNavigator = () =>{
+  return(
+  <Announcement.Navigator initialRouteName='AnnouncementListScreen'>
+    <Announcement.Screen name="AnnouncementListScreen" component={AnnouncementListScreen} options={{ headerShown: false }}/>
+    <Announcement.Screen name="AddAnnouncementScreen" component={AddAnnouncementScreen} options={{ headerShown: false }}/>
+    <Announcement.Screen name="AnnouncementDetailScreen" component={AnnouncementDetailScreen} options={{ headerShown: false }}/>
+  </Announcement.Navigator>
+  )
 }
 
 const LoginSideNavigator = () =>{
@@ -135,6 +153,7 @@ function App() {
         <Tab.Screen name="Community" component={CommunitySideNavigator}/>
         <Tab.Screen name="MyPage" component={MyPageSideNavigator}/>
         <Tab.Screen name="Login" component={LoginSideNavigator}/>
+        <Tab.Screen name="Announcement" component={AnnouncementNavigator}/>
       
        
 
