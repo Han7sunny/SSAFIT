@@ -61,12 +61,13 @@ const MainStack = createNativeStackNavigator();
 const GroupStack = createNativeStackNavigator();
 const CommunityStack = createNativeStackNavigator();
 const MyPageStack = createNativeStackNavigator();
-const LoginStack = createNativeStackNavigator();
+// const LoginStack = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
   return(
-  <MainStack.Navigator initialRouteName='HomeScreen'>
+  <MainStack.Navigator initialRouteName='LoginScreen'>
     <MainStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
+    <MainStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="CreateRoutineScreen" component={CreateRoutineScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="MyRoutineListScreen" component={MyRoutineListScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="RoutineDetailScreen" component={RoutineDetailScreen} options={{ headerShown: false }}/>
@@ -109,17 +110,17 @@ const MyPageStackNavigator = () =>{
   )
 }
 
-const LoginStackNavigator = () =>{
-  return(
-  <LoginStack.Navigator initialRouteName='MainMyPageScreen'>
-    <LoginStack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }}/>
-    <LoginStack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
-  </LoginStack.Navigator>
-  )
-}
+// const LoginStackNavigator = () =>{
+//   return(
+//   <LoginStack.Navigator initialRouteName='MainMyPageScreen'>
+//     <LoginStack.Screen name="StartScreen" component={StartScreen} options={{ headerShown: false }}/>
+//     <LoginStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+//     <LoginStack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
+//     <LoginStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }}/>
+//     <LoginStack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }}/>
+//   </LoginStack.Navigator>
+//   )
+// }
 
 
 function App() {
@@ -130,10 +131,8 @@ function App() {
         <Tab.Screen name="Group" component={GroupStackNavigator}/>
         <Tab.Screen name="Community" component={CommunityStackNavigator}/>
         <Tab.Screen name="MyPage" component={MyPageStackNavigator}/>
-        <Tab.Screen name="Login" component={LoginStackNavigator}/>
+        {/* <Tab.Screen name="Login" component={LoginStackNavigator}/> */}
       
-       
-
         {/* components */}
         {/* <Stack.Screen name='RoutineItem' component={RoutineItem} />
         <Stack.Screen name='ArticleItem' component={ArticleItem} /> */}

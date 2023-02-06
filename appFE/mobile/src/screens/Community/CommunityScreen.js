@@ -4,52 +4,55 @@ import Button from '../../components/Button'
 import ArticleItem from '../../components/ArticleItem'
 import RoutineListItem from '../../components/RoutineListItem'
 import axios from 'axios'
-
-let articleData = [
-  {
-	  success : true,
-	  board_id : 1,
-	  user_id: "asdf1234",
-	  category_id : 2,
-	  title : "Test title",
-	  content : "Test content",
-	  registered_time : "23-02-02",
-	  modified_time : "23-02-02",
-	  share : true, // 게시글 공개/비공개 여부
-	  hits : 100,
-	  likes : 20,
-	  replyList : [
-      {
-        id: 1,
-        content: '1번 댓글'
-      },
-      {
-        id: 2,
-        content: '2번 댓글'
-      },
-      {
-        id: 3,
-        content: '3번 댓글'
-      }
-  ]
-}]
+import { useSelector } from 'react-redux'
+import { articleDataAction } from '../../redux/actions/actionCreators'
+const articleData = useSelector(store=>store.articleData)
+// let articleData = [
+//   {
+// 	  success : true,
+// 	  board_id : 1,
+// 	  user_id: "asdf1234",
+// 	  category_id : 2,
+// 	  title : "Test title",
+// 	  content : "Test content",
+// 	  registered_time : "23-02-02",
+// 	  modified_time : "23-02-02",
+// 	  share : true, // 게시글 공개/비공개 여부
+// 	  hits : 100,
+// 	  likes : 20,
+// 	  replyList : [
+//       {
+//         id: 1,
+//         content: '1번 댓글'
+//       },
+//       {
+//         id: 2,
+//         content: '2번 댓글'
+//       },
+//       {
+//         id: 3,
+//         content: '3번 댓글'
+//       }
+//   ]
+// }]
+// let articleData = []
 
 export default function CommunityScreen({ navigation }) {
-
-  // axios({
-  //   method: 'get',
-  //   url: '',
-  //   headers: {
-  //     authorization: `${123423647}`
-  //   }
-  // })
-  // .then(function (res) {
-  //   console.log(res.data)
-  //   articleData = res.data
-  // })
-  // .catch(function (err) {
-  //   console.log(err)
-  // })
+  axios({
+    method: 'get',
+    url: 'http://70.12.246.116:8080/board/',
+  })
+  .then(function (res) {
+    // console.log(res.data)
+    const articleData = res.data
+    console.log('아티크르륻닐ㅇㄴ랑니라멓민ㅇ ' ,articleData)
+    articleDataAction.getArticleData({
+      articleData,
+    })
+  })
+  .catch(function (err) {
+    console.log(err)
+  })
 
   return (
     <View>
@@ -67,10 +70,10 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={articleData}
+            data={this.articleData}
             renderItem={({item}) => (
               <ArticleItem 
-                id={item.board_id}
+                id={item.boardId}
                 title={item.title}
               />
             )}
@@ -86,7 +89,7 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={articleData}
+            data={this.articleData}
             renderItem={({item}) => (
             
             <RoutineListItem 

@@ -5,7 +5,13 @@ import { SelectList } from 'react-native-dropdown-select-list'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
+AsyncStorage.getItem('username', (err, result) => {
+  const UserInfo = JSON.parse(result)
+  const accessToken = UserInfo.token
+  console.log('토큰 :' , accessToken)
+})
 
 export default function CreateArticleScreen({ navigation }) {
   const [title, setTitle] = useState('')
@@ -14,9 +20,9 @@ export default function CreateArticleScreen({ navigation }) {
   function onPost() {
     axios({
       method: 'post',
-      url: 'http://70.12.246.102:8080/board/post',
+      url: 'http://70.12.246.116:8080/board/post',
       headers: {
-        authorization: `${123435689}`
+        authorization: `${accessToken}`
       },
       data: {
         "board_id": 0,
@@ -33,12 +39,12 @@ export default function CreateArticleScreen({ navigation }) {
 
   const onChangeTitle = (event) => {
     event.persist()
-    console.log(event.nativeEvent)
+    // console.log(event.nativeEvent)
     setTitle(event.nativeEvent.title)
   }
   const onChangeContent = (event) => {
     event.persist()
-    console.log(event.nativeEvent)
+    // console.log(event.nativeEvent)
     setContent(event.nativeEvent.content)
     }
 
@@ -48,7 +54,7 @@ export default function CreateArticleScreen({ navigation }) {
     async function getData() {
       axios({
         method: 'get',
-        url: 'http://70.12.246.102:8080/routine/get-user-routine/asdf1234'
+        url: 'http://70.12.246.116:8080/routine/get-user-routine/asdf1234'
       })
       .then(function (res) {
         let newData = res.data.map((item) => {

@@ -5,34 +5,47 @@ import { Text } from 'react-native-paper'
 import Button from '../../components/Button'
 import TextInput from '../../components/TextInput'
 import RoutineInput from '../../components/RoutineInput'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+// import { useSelector } from 'react-redux'
+
+// const userData = useSelector(store=>store.userData)
 let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
 let routineName = ''
+const [accessToken, setAccessToken] = useState('')
+const [userId, setUserId] = useState('')
 
+AsyncStorage.getItem('username', (err, result) => {
+  const UserInfo = JSON.parse(result)
+  console.log(UserInfo)
+  setAccessToken(UserInfo.token)
+  setUserId(UserInfo.id)
+  console.log('토큰 :' , accessToken)
+})
 // axios 요청 보낼 함수
 function onPost() {
   axios({
     method: 'post',
-    url: 'http://70.12.246.102:8080/routine/generate-routine',
+    url: 'http://70.12.246.116:8080/routine/generate-routine',
     headers: {
-      authorization: `${1232546579990}`
+      authorization: `${accessToken}`
       // react native - jwt 라이브러리
     },
     data: {
       "routineName": `${routineName}`,
-      "userId": 'asdf1234',
+      "userId": userId,
       "exerciseList": exerciseList
     }
   })
   .then(function (response) {
     console.log(response.data)
-    console.log('==== 데이터 POST 성공 ======')
-    console.log('routineName :', routineName)
-    console.log('exerciseList :', exerciseList)
+    // console.log('==== 데이터 POST 성공 ======')
+    // console.log('routineName :', routineName)
+    // console.log('exerciseList :', exerciseList)
   })
   .catch(function (error) {
-    console.log('==== 데이터 POST 실패 ======')
-    console.log('routineName :', routineName)
-    console.log('exerciseList :', exerciseList)
+    // console.log('==== 데이터 POST 실패 ======')
+    // console.log('routineName :', routineName)
+    // console.log('exerciseList :', exerciseList)
     console.log(error)
   })
 }
@@ -53,10 +66,10 @@ export default function CreateRoutineScreen({ navigation }) {
   // routine 정보 주고 받을 함수
   const routineInfo = ({sendData}) => {
     // sendData.push({"name" : "1번운동 별칭"})
-    console.log(`========== sendData : ${sendData} ============`)
+    // console.log(`========== sendData : ${sendData} ============`)
     exerciseList.push(sendData)
-    console.log('루틴 리스트 :', exerciseList)
-    console.log('======================')
+    // console.log('루틴 리스트 :', exerciseList)
+    // console.log('======================')
   }
 
   return (

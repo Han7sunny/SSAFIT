@@ -38,7 +38,7 @@ export default function MyRoutineListScreen({ navigation }) {
           // console.log(res.data[0].name)
           const newData = res.data[0]
           routineData.push(newData)
-          console.log('routineData :', routineData)
+          // console.log('routineData :', routineData)
           // console.log('데이터를 받아왔다~ : ', routineData)
         })
         .catch(function (err) {
