@@ -105,6 +105,8 @@ public class GroupController {
     @ApiOperation(value = "그룹 모집글 좋아요 누르기", notes = "게시글 ID의 좋아요 클릭시 게시글의 좋아요 수가 증가한다.", response = Boolean.class)
 //    public ResponseEntity<GroupRecruitRespDto> clickLike(@PathVariable("boardId") long groupId){
     public ResponseEntity<Boolean> clickLike(@PathVariable("groupId") long groupId){
+        LOGGER.info("[Enter] clickLike");
+
         String userId = "test123";
         // userId 가져오기
 

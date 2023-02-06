@@ -35,14 +35,9 @@ import java.util.Optional;
 @Service
 public class BoardServiceImpl implements BoardService{
 
-    // 공지사항
-    private static final long NOTICE = 1; // 공지사항
-
     // 커뮤니티
     private static final long QA = 2; // 질문글
     private static final long SHARE_ROUTINE = 3; // 운동 루틴 공유글
-
-    private final Logger LOGGER = LoggerFactory.getLogger(BoardServiceImpl.class);
 
     private UserRepository userRepository;
 
@@ -52,8 +47,6 @@ public class BoardServiceImpl implements BoardService{
 
     private ReplyRepository replyRepository;
 
-    private GroupRepository groupRepository;
-
     private RoutineRepository routineRepository;
 
     private FileRepository fileRepository;
@@ -61,12 +54,11 @@ public class BoardServiceImpl implements BoardService{
     private LikesRepository likesRepository;
 
     @Autowired
-    public BoardServiceImpl(UserRepository userRepository, BoardRepository boardRepository, CategoryRepository categoryRepository, ReplyRepository replyRepository, GroupRepository groupRepository, RoutineRepository routineRepository, FileRepository fileRepository, LikesRepository likesRepository) {
+    public BoardServiceImpl(UserRepository userRepository, BoardRepository boardRepository, CategoryRepository categoryRepository, ReplyRepository replyRepository, RoutineRepository routineRepository, FileRepository fileRepository, LikesRepository likesRepository) {
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
         this.categoryRepository = categoryRepository;
         this.replyRepository = replyRepository;
-        this.groupRepository = groupRepository;
         this.routineRepository = routineRepository;
         this.fileRepository = fileRepository;
         this.likesRepository = likesRepository;
@@ -75,22 +67,18 @@ public class BoardServiceImpl implements BoardService{
     // 질문글, 운동 루틴 공유글 작성
     @Override
     public Board regist(BoardReqDto board) {
-//        Category category = categoryRepository.findById(board.getCategoryId()).get();
-        LOGGER.info("Check Timezone in BoardServiceImpl regist : {}", LocalDateTime.now());
+
         Board registBoard = Board.builder().title(board.getTitle()).registeredTime(LocalDateTime.now()).content(board.getContent()).sharePost(board.isSharePost()).build();
+
         registBoard.setCategory(categoryRepository.findById(board.getCategoryId()).get());
         registBoard.setUser(userRepository.findById(board.getUserId()).get());
         if(board.getCategoryId() == SHARE_ROUTINE) { // 운동 루틴 공유 게시글
             Routine routine = routineRepository.findById(board.getRoutineId()).get();
             registBoard.setRoutine(routine);
         }
+
         return boardRepository.save(registBoard);
     }
-
-//    @Override
-//    public void registGroupRecruit(Group group, BoardReqDto board) {
-//        boardRepository.save(Board.builder().group(group).title(board.getTitle()).registered_time(LocalDateTime.now()).content(board.getContent()).sharePost(board.isSharePost()).build());
-//    }
 
     //  파일 첨부 가능 게시글 : 공지사항, 질문글
     @Override
@@ -103,7 +91,7 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public BoardRespDto view(long boardId) {
-        LOGGER.info("[view] boardId : {}", boardId);
+
         Optional<Board> getBoard = boardRepository.findById(boardId);
 
         if(getBoard.isEmpty()){
@@ -148,36 +136,46 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public List<BoardRespDto> getBoardList() {
-        List<Board> getBoardList = boardRepository.findByCategoryIdBetweenAndSharePostTrue(QA,SHARE_ROUTINE);
+
         List<BoardRespDto> boardList = new ArrayList<>();
+
+        List<Board> getBoardList = boardRepository.findByCategoryIdBetweenAndSharePostTrue(QA,SHARE_ROUTINE);
         for (Board board : getBoardList) {
             BoardRespDto boardRespDto = new BoardRespDto(board);
             boardList.add(boardRespDto);
         }
+
         return boardList;
+
     }
 
     @Override
     public List<BoardRespDto> getQAList() {
-        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(QA);
+
         List<BoardRespDto> QAList = new ArrayList<>();
+
+        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(QA);
         for (Board board : boardList) {
             BoardRespDto boardRespDto = new BoardRespDto(board);
             boardRespDto.setReplySize(replyRepository.countByBoard_Id(board.getId()));
             QAList.add(boardRespDto);
         }
+
         return QAList;
     }
 
     @Override
     public List<BoardRespDto> getShareRoutineList() {
-        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(SHARE_ROUTINE);
+
         List<BoardRespDto> shareRoutineList = new ArrayList<>();
+
+        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(SHARE_ROUTINE);
         for (Board board : boardList) {
             BoardRespDto boardRespDto = new BoardRespDto(board);
             boardRespDto.setReplySize(replyRepository.countByBoard_Id(board.getId()));
             shareRoutineList.add(boardRespDto);
         }
+
         return shareRoutineList;
     }
 
@@ -230,8 +228,9 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public void modify(BoardReqDto board) {
-        LOGGER.info("[Enter] modify ");
+
         Board getBoard = boardRepository.findById(board.getBoardId()).get();
+
         getBoard.setTitle(board.getTitle());
         getBoard.setContent(board.getContent());
         getBoard.setRegisteredTime(board.getRegisteredTime());
@@ -240,6 +239,7 @@ public class BoardServiceImpl implements BoardService{
         if(board.getCategoryId() == SHARE_ROUTINE) {
             getBoard.setRoutine(routineRepository.findById(board.getRoutineId()).get());
         }
+
         boardRepository.save(getBoard);
     }
 
@@ -256,6 +256,7 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public boolean clickLikes(String userId, long boardId) {
+
         boolean isClicked;
 
         Likes getLikes =  likesRepository.findByUserIdAndBoardId(userId, boardId);
@@ -276,6 +277,7 @@ public class BoardServiceImpl implements BoardService{
         }
         boardRepository.save(board);
 //        return new BoardRespDto(board);
+
         return isClicked;
     }
 
