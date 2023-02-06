@@ -64,7 +64,7 @@ public class User {
 
     private long mileage;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> record;
 
     @Builder

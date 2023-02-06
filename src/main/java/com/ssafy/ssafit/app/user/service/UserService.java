@@ -2,6 +2,7 @@ package com.ssafy.ssafit.app.user.service;
 
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
 import com.ssafy.ssafit.app.user.entity.User;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
@@ -33,4 +34,8 @@ public interface UserService {
     String createCode(String email);
 
     boolean checkCode(String code, String id);
+
+    void userDelete(String userId);
+
+    UserMyPageRespDto getMyPageInfo(String userId);
 }

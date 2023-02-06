@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class MirrorUpdateRecordReqDto {
+    private String userId;
+    
     private Long recordId;
 
     private Long experiencePoint;

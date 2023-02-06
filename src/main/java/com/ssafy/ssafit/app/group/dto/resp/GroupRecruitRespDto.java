@@ -44,10 +44,10 @@ public class GroupRecruitRespDto extends BoardRespDto {
         this.groupName = group.getGroupName();
         this.goal = group.getGoal();
         this.penalty = group.getPenalty();
-        this.achievementRate = group.getAchievement_rate();
-        this.startDate = group.getStart_date();
-        this.endDate = group.getEnd_date();
-        this.maximumMember = group.getMaximum_member();
-        this.currentMember = group.getCurrent_member();
+        this.achievementRate = group.getAchievementRate();
+        this.startDate = group.getStartDate();
+        this.endDate = group.getEndDate();
+        this.maximumMember = group.getMaximumMember();
+        this.currentMember = group.getCurrentMember();
     }
 }

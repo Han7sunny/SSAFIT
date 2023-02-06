@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.record.controller;
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.service.RecordService;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +55,19 @@ public class RecordController {
             LocalDate startDate = LocalDate.of(year, month, day);
             List<RecordScheduleRespDto> recordScheduleRespDtoList = recordService.getSchedule(startDate, id);
             return new ResponseEntity<List<RecordScheduleRespDto>>(recordScheduleRespDtoList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-record/{id}")
+    @ApiOperation(value = "특정 운동 루틴 정보", notes = "예약한 운동 루틴 하나의 정보를 얻어온다.\n" +
+            "id : 조회하고 싶은 record의 아이디",
+            response = RecordInfoRespDto.class)
+    public ResponseEntity<?> getRecord(@PathVariable Long id) {
+        try {
+            RecordInfoRespDto recordInfoRespDto = recordService.getRecord(id);
+            return new ResponseEntity<RecordInfoRespDto>(recordInfoRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

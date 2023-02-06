@@ -2,15 +2,24 @@ package com.ssafy.ssafit.app.reply.service;
 
 import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.board.repository.BoardRepository;
+import com.ssafy.ssafit.app.notification.entity.Notification;
+import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
 import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.dto.resp.ReplyRespDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
+import com.ssafy.ssafit.app.routine.entity.Routine;
+import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +32,18 @@ public class ReplyServiceImpl implements ReplyService{
     private BoardRepository boardRepository;
 
     private ReplyRepository replyRepository;
+    private final NotificationRepository notificationRepository;
+    private final RoutineRepository routineRepository;
 
     @Autowired
-    public ReplyServiceImpl(UserRepository userRepository, BoardRepository boardRepository, ReplyRepository replyRepository) {
+    public ReplyServiceImpl(UserRepository userRepository, BoardRepository boardRepository, ReplyRepository replyRepository,
+                            NotificationRepository notificationRepository,
+                            RoutineRepository routineRepository) {
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
         this.replyRepository = replyRepository;
+        this.notificationRepository = notificationRepository;
+        this.routineRepository = routineRepository;
     }
 
 //    작성한 댓글 조회를 위함
@@ -67,11 +82,21 @@ public class ReplyServiceImpl implements ReplyService{
     }
 
     @Override
+    @Transactional
     public void regist(ReplyReqDto reply) {
         User user = userRepository.findById(reply.getUser_id()).get();
         Board board = boardRepository.findById(reply.getBoard_id()).get();
         Reply registReply = Reply.builder().user(user).board(board).content(reply.getContent()).registered_time(reply.getRegistered_time()).build();
         replyRepository.save(registReply);
+
+        Notification notification = Notification.builder()
+                .board(board)
+                .user(board.getUser())
+                .message(board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.")
+                .notification_type(1)
+                .build();
+
+        notificationRepository.save(notification);
     }
 
     @Override
@@ -93,4 +118,5 @@ public class ReplyServiceImpl implements ReplyService{
     public List<Reply> getReplyListByUserId(String userId) {
         return replyRepository.findByUser_Id(userId);
     }
+
 }

@@ -5,6 +5,7 @@ import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -238,6 +239,37 @@ public class UserController {
         try {
             boolean check = userService.checkCode(code, id);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+//    @GetMapping
+//    @ApiOperation(value = "마이페이지용 회원 정보 반환 기능",
+//            notes = "id값을 받아서 마이페이지에 띄울 정보를 반환합니다.",
+//            response = CommonResp.class)
+
+    @DeleteMapping("/user_delete/{id}")
+    @ApiOperation(value = "회원 탈퇴 기능",
+            notes = "id값은 이메일을 보낼 때 반환받은 값, 코드는 메일에 입력된 값을 사용합니다.",
+            response = CommonResp.class)
+    private ResponseEntity<?> userDelete(@PathVariable("id") String userId) {
+        try {
+            userService.userDelete(userId);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("탈퇴 성공").build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-mypage/{id}")
+    @ApiOperation(value = "마이페이지 기능",
+            notes = "마이페이지에 보여줄 정보를 반환합니다.",
+            response = CommonResp.class)
+    private ResponseEntity<?> getMyPageInfo(@PathVariable("id") String userId) {
+        try {
+            UserMyPageRespDto userMyPageRespDto = userService.getMyPageInfo(userId);
+            return new ResponseEntity<UserMyPageRespDto>(userMyPageRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

@@ -31,28 +31,28 @@ public class Group {
 
     private String penalty;
 
-    private double achievement_rate;
+    private double achievementRate;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate start_date;
+    private LocalDate startDate;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 
-    private LocalDate end_date;
+    private LocalDate endDate;
 
 //    private int period; // ?
 
-    private int maximum_member;
+    private int maximumMember;
 
-    private int current_member;
+    private int currentMember;
 
     public Group(GroupReqDto groupReqDto){
         this.groupName = groupReqDto.getGroupName();
         this.goal = groupReqDto.getGoal();
         this.penalty = groupReqDto.getPenalty();
-        this.start_date = groupReqDto.getStartDate();
-        this.end_date = groupReqDto.getEndDate();
-        this.maximum_member = groupReqDto.getMaximumMember();
+        this.startDate = groupReqDto.getStartDate();
+        this.endDate = groupReqDto.getEndDate();
+        this.maximumMember = groupReqDto.getMaximumMember();
 
     }
 

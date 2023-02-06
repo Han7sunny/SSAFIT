@@ -1,6 +1,7 @@
 package com.ssafy.ssafit.mirror.service;
 
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
@@ -15,11 +16,13 @@ public interface MirrorService {
 
     Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
 
-    void startExercise(LocalDateTime startTime, Long recordId);
+    void startExercise(LocalDateTime startTime, Long recordId, String userId);
 
     void updateRecord(MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto);
 
     void endExercise(LocalDateTime endTime, MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto);
 
     List<MirrorRoutineRespDto> getSchedule(String id);
+
+    RecordInfoRespDto getRecord(Long id);
 }

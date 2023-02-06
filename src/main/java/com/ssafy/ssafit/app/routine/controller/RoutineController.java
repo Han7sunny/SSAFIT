@@ -99,8 +99,8 @@ public class RoutineController {
             response = List.class)
     public ResponseEntity<?> getExerciseInfo(@PathVariable("id") Long routineId) {
         try {
-            List<RoutineExerciseRespDto> routineExerciseRespDtoList = routineService.getExerciseInfo(routineId);
-            return new ResponseEntity<List<RoutineExerciseRespDto>>(routineExerciseRespDtoList, HttpStatus.OK);
+            RoutineExerciseRespDto routineExerciseRespDtoList = routineService.getExerciseInfo(routineId);
+            return new ResponseEntity<RoutineExerciseRespDto>(routineExerciseRespDtoList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

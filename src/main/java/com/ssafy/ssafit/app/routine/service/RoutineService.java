@@ -18,7 +18,7 @@ public interface RoutineService {
 
     boolean addUserRoutine(RoutineAddReqDto routineAddReqDto);
 
-    List<RoutineExerciseRespDto> getExerciseInfo(Long routineId);
+    RoutineExerciseRespDto getExerciseInfo(Long routineId);
 
     List<RoutineInfoRespDto> getUserRoutine(String userId);
 }

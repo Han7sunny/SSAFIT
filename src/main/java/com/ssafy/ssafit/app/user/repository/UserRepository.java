@@ -30,4 +30,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Modifying
     @Query(value = "update user u set u.mileage = :mileage + :mileage2 where u.user_id = :id", nativeQuery = true)
     void updateMileage(@Param("id") String id, @Param("mileage") long mileage, @Param("mileage2") Long mileage2);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user u set u.on_off = :b where u.user_id = :id", nativeQuery = true)
+    void updateOnOff(@Param("id") String id, @Param("b") boolean b);
 }

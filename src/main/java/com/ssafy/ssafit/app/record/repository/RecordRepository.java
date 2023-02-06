@@ -26,4 +26,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     void updateStartTime(@Param("startTime") LocalDateTime startTime, @Param("id") Long recordId);
 
     Optional<Record> findByUser_IdAndRoutine_RoutineIdAndStartDate(String userId, long l, LocalDate now);
+
+    List<Record> findByStartDateAndEndTimeIsNull(LocalDate now);
 }

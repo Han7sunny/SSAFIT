@@ -2,6 +2,7 @@ package com.ssafy.ssafit.mirror.controller;
 
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
@@ -40,6 +41,19 @@ public class MirrorController {
         }
     }
 
+    @GetMapping("/get-record-info/{id}")
+    @ApiOperation(value = "예약한 운동 루틴 한개의 상세정보 가져오기",
+            notes = "실행한 예약된 루틴의 상세 정보를 가져온다.",
+            response = List.class)
+    public ResponseEntity<?> getRecordInfo(@PathVariable Long id) {
+        try {
+            RecordInfoRespDto recordInfoRespDto = mirrorService.getRecord(id);
+            return new ResponseEntity<RecordInfoRespDto>(recordInfoRespDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping("/start-basic-routine")
     @ApiOperation(value = "기본 루틴을 실행하는 기능",
             notes = "오늘 예약한 루틴이 없어서 기본 루틴 중에 하나를 선택해서 실행한 경우",
@@ -73,8 +87,8 @@ public class MirrorController {
             response = CommonResp.class)
     public ResponseEntity<?> startExercise(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
         try {
-            LocalDateTime startTime = LocalDateTime.now().plusHours(9);
-            mirrorService.startExercise(startTime, mirrorUpdateRecordReqDto.getRecordId());
+            LocalDateTime startTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            mirrorService.startExercise(startTime, mirrorUpdateRecordReqDto.getRecordId(), mirrorUpdateRecordReqDto.getUserId());
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -101,7 +115,7 @@ public class MirrorController {
             response = CommonResp.class)
     public ResponseEntity<?> endExercise(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
         try {
-            LocalDateTime endTime = LocalDateTime.now().plusHours(9);
+            LocalDateTime endTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
             mirrorService.endExercise(endTime, mirrorUpdateRecordReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
         } catch (Exception e) {

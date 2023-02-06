@@ -2,14 +2,12 @@ package com.ssafy.ssafit.app.group.controller;
 
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.service.BoardService;
-import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRecruitRespDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRespDto;
 import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.group.service.GroupMemberService;
 import com.ssafy.ssafit.app.group.service.GroupService;
-import com.ssafy.ssafit.app.user.controller.UserController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -94,7 +92,7 @@ public class GroupController {
         LOGGER.info("[Enter] registGroup");
 
         Group newGroup = new Group(group);
-        newGroup.setCurrent_member(group.getGroupMemberId().size());
+        newGroup.setCurrentMember(group.getGroupMemberId().size());
 
         // 작성자 항상 첫번째 그룹원 (눈에 보이지 않아도)
         long groupId = groupService.regist(newGroup);

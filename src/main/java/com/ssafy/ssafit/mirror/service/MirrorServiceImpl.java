@@ -4,6 +4,7 @@ import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import com.ssafy.ssafit.app.record.repository.RecordDetailRepository;
@@ -58,7 +59,7 @@ public class MirrorServiceImpl implements MirrorService{
     @Transactional
     public void startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto) {
         Long recordId = recordService.registerExercise(recordRegisterReqDto, LocalDate.now(ZoneId.of("Asia/Seoul")));
-        startExercise(LocalDateTime.now().plusHours(9), recordId);
+        startExercise(LocalDateTime.now(ZoneId.of("Asia/Seoul")), recordId, recordRegisterReqDto.getUserId());
     }
 
     @Override
@@ -70,7 +71,7 @@ public class MirrorServiceImpl implements MirrorService{
                     .startDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
                     .routine(routineRepository.findById(4L).get())
                     .user(userRepository.findById(mirrorRecordGenerateReqDto.getUserId()).get())
-                    .endTime(LocalDateTime.now().plusHours(9))
+                    .endTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                     .build();
             recordRepository.save(tmpRecord);
 
@@ -92,12 +93,15 @@ public class MirrorServiceImpl implements MirrorService{
             recordDetail = Optional.ofNullable(tmpRecordDetail);
         }
 
+        userRepository.updateOnOff(mirrorRecordGenerateReqDto.getUserId(), true);
+
         return recordDetail.get().getRecordDetailId();
     }
 
     @Override
-    public void startExercise(LocalDateTime startTime, Long recordId) {
+    public void startExercise(LocalDateTime startTime, Long recordId, String userId) {
         recordRepository.updateStartTime(startTime, recordId);
+        userRepository.updateOnOff(userId, true);
     }
 
     @Override
@@ -135,6 +139,8 @@ public class MirrorServiceImpl implements MirrorService{
         recordRepository.save(record);
 
         userRepository.updateMileage(record.getUser().getId(), record.getUser().getMileage(), mirrorUpdateRecordReqDto.getMileage());
+
+        userRepository.updateOnOff(record.getUser().getId(), false);
     }
 
     @Override
@@ -155,6 +161,12 @@ public class MirrorServiceImpl implements MirrorService{
 
         return mirrorRoutineRespDtoList;
     }
+
+    @Override
+    public RecordInfoRespDto getRecord(Long id) {
+        return recordService.getRecord(id);
+    }
+
     private MirrorRoutineRespDto generateRoutineRespDto(Long recordId, Routine routine) {
         List<Exercise> exerciseList = routine.getExercise();
         List<String> nameList = new ArrayList<String>();

@@ -1,9 +1,21 @@
 package com.ssafy.ssafit.app.user.service;
 
+import com.ssafy.ssafit.app.board.entity.Board;
+import com.ssafy.ssafit.app.board.repository.BoardRepository;
 import com.ssafy.ssafit.app.config.JwtTokenProvider;
+import com.ssafy.ssafit.app.group.entity.GroupMember;
+import com.ssafy.ssafit.app.group.repository.GroupMemberRepository;
+import com.ssafy.ssafit.app.notification.entity.Notification;
+import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
+import com.ssafy.ssafit.app.record.entity.Record;
+import com.ssafy.ssafit.app.record.repository.RecordRepository;
+import com.ssafy.ssafit.app.reply.entity.Reply;
+import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
+import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
 import com.ssafy.ssafit.app.user.entity.Authentication;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.AuthenticationRepository;
@@ -15,7 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -35,13 +50,31 @@ public class UserServiceImpl implements UserService{
     private final AuthenticationRepository authenticationRepository;
 
     private final MailService mailService;
+    private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
+    private final RecordRepository recordRepository;
+    private final RoutineRepository routineRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final NotificationRepository notificationRepository;
 
-    public UserServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, AuthenticationRepository authenticationRepository, MailService mailService) {
+    public UserServiceImpl(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, AuthenticationRepository authenticationRepository, MailService mailService,
+                           BoardRepository boardRepository,
+                           ReplyRepository replyRepository,
+                           RecordRepository recordRepository,
+                           RoutineRepository routineRepository,
+                           GroupMemberRepository groupMemberRepository,
+                           NotificationRepository notificationRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
         this.authenticationRepository = authenticationRepository;
         this.mailService = mailService;
+        this.boardRepository = boardRepository;
+        this.replyRepository = replyRepository;
+        this.recordRepository = recordRepository;
+        this.routineRepository = routineRepository;
+        this.groupMemberRepository = groupMemberRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -155,6 +188,69 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean checkCode(String code, String id) {
         return authenticationRepository.existsByIdAndCodeAndExpireTimeGreaterThanEqual(id, code, LocalDateTime.now());
+    }
+
+    @Override
+    @Transactional
+    public void userDelete(String userId) {
+        boardRepository.updateUserIdNull(userId);
+        replyRepository.updateUserIdNull(userId);
+        groupMemberRepository.updateUserIdNull(userId);
+        routineRepository.deleteAllUserRoutine(userId);
+        userRepository.deleteById(userId);
+    }
+
+    @Override
+    public UserMyPageRespDto getMyPageInfo(String userId) {
+        List<GroupMember> groupMemberList = groupMemberRepository.findByUser_IdAndAcceptInvitation(userId, false);
+
+        List<UserMyPageRespDto.GroupInvitation> groupInvitationList = new ArrayList<UserMyPageRespDto.GroupInvitation>();
+        for(GroupMember groupMember : groupMemberList) {
+            groupInvitationList.add(new UserMyPageRespDto.GroupInvitation(groupMember.getGroup().getId(),
+                    groupMember.getGroup().getGroupName(),
+                    groupMember.getGroup().getGroupName() + "그룹에 초대되었습니다."));
+        }
+
+        List<Notification> notifications = notificationRepository.findByUser_Id(userId);
+
+        List<UserMyPageRespDto.Notification> notificationList = new ArrayList<UserMyPageRespDto.Notification>();
+        for(Notification notification : notifications) {
+            if(notification.getNotification_type() == 0) {
+                notificationList.add(UserMyPageRespDto.Notification.builder()
+                                .groupId(notification.getGroup().getId())
+                                .notification_type(notification.getNotification_type())
+                                .notificationId(notification.getId())
+                                .notificationMessage(notification.getMessage())
+                                .build());
+            }
+
+            else if(notification.getNotification_type() == 1) {
+                notificationList.add(UserMyPageRespDto.Notification.builder()
+                                .boardId(notification.getBoard().getId())
+                                .notification_type(notification.getNotification_type())
+                                .notificationId(notification.getId())
+                                .notificationMessage(notification.getMessage())
+                                .build());
+            }
+
+            else {
+                notificationList.add(UserMyPageRespDto.Notification.builder()
+                                .recordId(notification.getRecord().getId())
+                                .notification_type(notification.getNotification_type())
+                                .notificationId(notification.getId())
+                                .notificationMessage(notification.getMessage())
+                                .build());
+            }
+        }
+
+        UserMyPageRespDto userMyPageRespDto = UserMyPageRespDto.builder()
+                .success(true)
+                .msg("마이페이지 정보입니다.")
+                .name(userRepository.findById(userId).get().getName())
+                .groupInvitationList(groupInvitationList)
+                .notificationList(notificationList).build();
+
+        return userMyPageRespDto;
     }
 
     @Override
