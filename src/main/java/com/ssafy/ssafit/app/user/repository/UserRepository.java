@@ -9,12 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
     User findByIdAndPassword(String id, String password);
     User findByEmail(String email);
-    
+
+    List<User> findAllByNameContaining(String name);
+
     boolean existsByName(String name);
 
     boolean existsByEmail(String email);

@@ -12,6 +12,7 @@ public class GroupMemberRespDto {
 
     private String userId;
 
+
     private long groupMemberId;
 
     private long groupId;
@@ -23,4 +24,5 @@ public class GroupMemberRespDto {
     private String userName;
 
     private boolean on_off;
+
 }

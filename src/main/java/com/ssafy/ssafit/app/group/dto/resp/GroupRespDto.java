@@ -23,7 +23,7 @@ public class GroupRespDto extends CommonResp {
 
     private String name;
 
-    private String goal;
+    private double goal;
 
     private String penalty;
 
@@ -52,6 +52,7 @@ public class GroupRespDto extends CommonResp {
         this.achievement_rate = group.getAchievementRate();
         this.start_date = group.getStartDate();
         this.end_date = group.getEndDate();
+        this.period = group.getPeriod();
         this.maximum_member = group.getMaximumMember();
         this.current_member = group.getCurrentMember();
     }

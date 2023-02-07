@@ -16,12 +16,16 @@ public class GroupReqDto {
 
     private String groupName;
 
+    private String userId;
+
     // 그룹 모집글 / 그룹 생성
-    private int registGroupTypeId;
+    private long categoryId;
 
     private List<String> groupMemberId = new ArrayList<>();
 
-    private String goal;
+    private List<String> groupRoutineId = new ArrayList<>();
+
+    private double goal;
 
     private String penalty;
 
@@ -30,11 +34,23 @@ public class GroupReqDto {
     // 모집 인원
     private int maximumMember;
 
+    private int currentMember;
+
     @Column(length = 2000)
     private String content;
+
+    private LocalDate startRecruitDate;
+
+    private LocalDate endRecruitDate;
 
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private int period;
+
+    private boolean sharePost;
+
+//    private List<String> routineIdList;
 
 }

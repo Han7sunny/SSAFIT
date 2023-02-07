@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import java.util.List;
+
 public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> {
 
     GroupMember findByGroupIdAndUserId(long group_id, String user_id);
@@ -24,4 +26,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     List<GroupMember> findByGroup_Id(long id);
 
     List<GroupMember> findByUser_IdAndAcceptInvitation(String userId, boolean b);
+
+    
+    List<GroupMember> findByGroupId(long group_id);
+
+    List<GroupMember> findByUserIdAndAcceptInvitationFalse(String user_id);
 }

@@ -1,7 +1,9 @@
 package com.ssafy.ssafit.app.board.entity;
 
+import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.reply.entity.Reply;
+import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.user.entity.User;
 import lombok.*;
 
@@ -37,12 +39,13 @@ public class Board {
     @JoinColumn(name = "category_id")
     private Category category;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "routine_id")
-//    private Rontine routine;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_id")
+    private Routine routine;
 
     @Builder.Default
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+//    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true) // 07:14pm reply에서
     private List<Reply> replyList = new ArrayList<>();
 
     private String title;
@@ -50,10 +53,10 @@ public class Board {
     private String content;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime registered_time;
+    private LocalDateTime registeredTime;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime modified_time;
+    private LocalDateTime modifiedTime;
 
     private int hits;
 
@@ -61,7 +64,12 @@ public class Board {
 
     private int downloads;
 
-    private boolean share;
+    private boolean sharePost;
 
+    public Board(BoardReqDto boardReqDto){
+        this.title = boardReqDto.getTitle();
+        this.content = boardReqDto.getContent();
+        this.sharePost = boardReqDto.isSharePost();
+    }
 
 }

@@ -13,19 +13,30 @@ import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
+import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
+import com.ssafy.ssafit.app.user.entity.User;
+import com.ssafy.ssafit.app.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
 import com.ssafy.ssafit.app.user.entity.Authentication;
-import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.AuthenticationRepository;
-import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.util.MailService;
 import com.ssafy.ssafit.util.RandomString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.ssafy.ssafit.util.Sha256;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -103,9 +114,25 @@ public class UserServiceImpl implements UserService{
             return LoginResponseDto.builder().success(false).msg("비밀번호가 틀렸습니다.").build();
         }
 
-        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getName()), user.getRoles()))
+        // 2023-02-07 10:54 변경
+        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getId()), user.getRoles()))
                 .success(true).msg("로그인이 성공적으로 완료되었습니다.")
                 .build();
+
+//        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getName()), user.getRoles()))
+//                .success(true).msg("로그인이 성공적으로 완료되었습니다.")
+//                .build();
+    }
+
+    @Override
+    public List<UserInfoResp> userList() {
+
+        List<User> getUserList = userRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        List<UserInfoResp> userList = new ArrayList<>();
+        for (User user : getUserList) {
+            userList.add(UserInfoResp.builder().userId(user.getId()).userName(user.getName()).build());
+        }
+        return userList;
     }
 
     @Override
@@ -164,8 +191,9 @@ public class UserServiceImpl implements UserService{
                 .name(userJoinReqDto.getName())
                 .email(userJoinReqDto.getEmail())
                 .photo("12345")
-                .photo_encoding("12345")
-                .on_off(false)
+                .photoEncoding("12345")
+                .onOff(false)
+                .role(Role.USER).roles(Collections.singletonList("ROLE_USER")) // 회원가입하는 모든 회원 권한 : USER
                 .build();
 
         userRepository.save(user);
@@ -256,5 +284,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public boolean findPassword(String id, String email) {
         return userRepository.existsByIdAndEmail(id, email);
+    }
+
+    @Override
+    public List<UserInfoResp> searchUsers(String name) {
+        List<User> userList = userRepository.findAllByNameContaining(name);
+        List<UserInfoResp> userInfoList = new ArrayList<>();
+        for (User user : userList) {
+            userInfoList.add(UserInfoResp.builder().userId(user.getId()).userName(user.getName()).build());
+        }
+        return userInfoList;
     }
 }
