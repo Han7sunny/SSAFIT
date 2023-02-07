@@ -28,5 +28,5 @@ public interface GroupService {
 
     List<GroupRecruitRespDto> getGroupRecruitList();
 
-
+//    List<> getMyGroupList(String userId);
 }

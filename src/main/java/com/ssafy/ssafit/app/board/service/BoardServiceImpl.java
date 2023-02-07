@@ -1,5 +1,6 @@
 package com.ssafy.ssafit.app.board.service;
 
+import com.ssafy.ssafit.app.board.controller.BoardController;
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.entity.Board;
@@ -18,9 +19,11 @@ import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.app.user.service.UserServiceImpl;
+import com.ssafy.ssafit.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ import java.util.Optional;
 
 @Service
 public class BoardServiceImpl implements BoardService{
+
+    private static final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
+
 
     // 커뮤니티
     private static final long QA = 2; // 질문글
@@ -122,10 +128,11 @@ public class BoardServiceImpl implements BoardService{
         if(categoryId == QA){
             boardRespDto.setFileList(fileRepository.findAllByBoardId(boardId));
         }
+
         // 사용자 아이디 가져오기
-        String userId = "";
+        UserInfoResp user = SecurityUtil.getCurrentUserId().get(); // userId, userName
         // 해당 게시글 좋아요 눌렀는지 여부
-        Likes isClicked = likesRepository.findByUserIdAndBoardId(userId, boardId);
+        Likes isClicked = likesRepository.findByUserIdAndBoardId(user.getUserId(), boardId);
         if(isClicked == null)
             boardRespDto.setClickLikes(false);
         else
@@ -296,6 +303,5 @@ public class BoardServiceImpl implements BoardService{
         Board updatedBoard = boardRepository.save(board);
         return new BoardRespDto(updatedBoard);
     }
-
 
 }

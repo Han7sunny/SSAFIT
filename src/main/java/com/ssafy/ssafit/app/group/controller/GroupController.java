@@ -13,6 +13,7 @@ import com.ssafy.ssafit.app.group.service.GroupService;
 import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
 import com.ssafy.ssafit.app.user.controller.UserController;
+import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.service.UserService;
 import com.ssafy.ssafit.app.user.service.UserServiceImpl;
@@ -25,10 +26,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -62,19 +65,29 @@ public class GroupController {
         this.replyService = replyService;
     }
 
+    @GetMapping("/myGroupList")
+    @ApiOperation(value = "나의 운동 그룹 목록", notes = "로그인한 회원의 운동 그룹 목록을 조회한다.", response = GroupRespDto.class)
+    public ResponseEntity<List<GroupRespDto>> getMyGroupList(@AuthenticationPrincipal CustomUserDetails user){
+        LOGGER.info("[Enter] getMyGroupList");
+
+//        List<GroupRespDto> myGroupList = groupService.getMyGroupList(user.getUsername());
+        List<GroupRespDto> myGroupList = new ArrayList<>();
+        HttpStatus status = HttpStatus.NO_CONTENT;
+//        if(!myGroupList.isEmpty())
+//            status = HttpStatus.OK;
+        return new ResponseEntity<List<GroupRespDto>>(myGroupList, status);
+    }
+
         //  그룹 현황 보기
     //  그룹 초대 받았을 때 확인 가능
     @GetMapping("/{groupId}")
     @ApiOperation(value = "그룹 ID로 그룹 현황 조회", notes = "입력한 그룹 ID(groupId)에 해당하는 그룹(Group)을 조회한다.", response = GroupRespDto.class)
-    public ResponseEntity<GroupRespDto> getBoard(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId) throws Exception {
+    public ResponseEntity<GroupRespDto> getBoard(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LOGGER.info("[Enter] getBoard");
         GroupRespDto group = groupService.view(groupId);
         HttpStatus status = HttpStatus.NO_CONTENT;
 
-        //  로그인 된 정보 가져오기 userId
-        String userId = "test22";
-
-        boolean checkGroupMember = groupMemberService.findGroupMember(groupId, userId);
+        boolean checkGroupMember = groupMemberService.findGroupMember(groupId, user.getUsername());
         if(group.isSuccess() && checkGroupMember)
             status = HttpStatus.OK;
 
@@ -104,12 +117,9 @@ public class GroupController {
     @GetMapping("/recruit/{groupId}/likes")
     @ApiOperation(value = "그룹 모집글 좋아요 누르기", notes = "게시글 ID의 좋아요 클릭시 게시글의 좋아요 수가 증가한다.", response = Boolean.class)
 //    public ResponseEntity<GroupRecruitRespDto> clickLike(@PathVariable("boardId") long groupId){
-    public ResponseEntity<Boolean> clickLike(@PathVariable("groupId") long groupId){
+    public ResponseEntity<Boolean> clickLike(@PathVariable("groupId") long groupId, @AuthenticationPrincipal CustomUserDetails user){
         LOGGER.info("[Enter] clickLike");
-
-        String userId = "test123";
-        // userId 가져오기
-
+        String userId = user.getUsername();
 //        return new ResponseEntity<GroupRecruitRespDto>(groupService.clickLikesGroupRecruit(userId, groupId), HttpStatus.OK);
 
 //        boolean isClicked = groupService.clickLikesGroupRecruit(userId, groupId);
@@ -119,9 +129,10 @@ public class GroupController {
     // 그룹 생성 -> 그룹 모집글 작성 시 그룹 생성됨
     @PostMapping(value = "/regist")
     @ApiOperation(value = "그룹 생성", notes = "입력한 정보로 새로운 그룹을 생성한다. 그룹 모집글의 경우 자동으로 그룹 생성")
-    public ResponseEntity<Boolean> registGroup(@ApiParam(value = "그룹 정보", required = true) @RequestBody GroupReqDto group) throws Exception {
+    public ResponseEntity<Boolean> registGroup(@ApiParam(value = "그룹 정보", required = true) @RequestBody GroupReqDto group, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LOGGER.info("[Enter] registGroup");
-
+        String userId = user.getUsername();
+        group.setUserId(userId);
         Group newGroup = new Group(group);
         newGroup.setCurrentMember(group.getGroupMemberId().size());
 
@@ -134,7 +145,7 @@ public class GroupController {
 
         // 로그인 된 사용자 아이디, 즉 그룹 모집글 또는 그룹 생성을 한 작성자
         // 그룹 모집글 작성자 userId -> 바로 수락으로 변경
-        String userId = "test123";
+
         groupMemberService.addGroupMember(GroupMemberReqDto.builder().groupId(registedGroup.getId()).userId(userId).acceptInvitation(true).build());
 
 //        그룹 요청 메시지 알람 보내기 (Firebase ? )
@@ -155,6 +166,7 @@ public class GroupController {
     @ApiOperation(value = "그룹 모집글 수정", notes = "입력한 정보로 기존 그룹 모집글을 수정한다.")
     public ResponseEntity<Boolean> modifyGroupRecruit(@RequestBody @ApiParam(value = "게시글 정보", required = true) GroupReqDto board, @PathVariable("groupId") long groupId) throws Exception {
         LOGGER.info("Called modifyGroupRecruit. board: {}", board);
+//        board.setUserId(user.getName());
         groupService.modifyGroupRecruit(board, groupId);
 
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -170,8 +182,9 @@ public class GroupController {
 
     @PostMapping("/recruit/{groupId}/regist")
     @ApiOperation(value = "그룹 모집글 댓글 작성", notes = "입력한 정보로 그룹 모집글에 새로운 댓글을 생성한다.")
-    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply) throws Exception {
+    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LOGGER.info("Called postReply. reply: {}", reply);
+        reply.setUser_id(user.getUsername());
         replyService.regist(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -180,6 +193,7 @@ public class GroupController {
     @ApiOperation(value = "그룹 모집글 댓글 수정", notes = "입력한 정보로 기존 댓글을 수정한다.")
     public ResponseEntity<Boolean> modifyReply(@RequestBody @ApiParam(value = "수정 댓글", required = true) ReplyReqDto reply) throws Exception {
         LOGGER.info("Called modifyReply. reply: {}", reply);
+//        reply.setUser_id(user.getUsername());
         replyService.modify(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -222,9 +236,9 @@ public class GroupController {
     // 그룹 탈퇴
     @DeleteMapping("/{groupId}")
     @ApiOperation(value = "그룹 탈퇴 ", notes = "그룹 ID(groupId)에 해당하는 그룹을 탈퇴한다.", response = Boolean.class)
-    public ResponseEntity<Boolean> quitGroup(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId){
+    public ResponseEntity<Boolean> quitGroup(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId, @AuthenticationPrincipal CustomUserDetails user){
         LOGGER.info("[Enter] quitGroup");
-        String userId = "test456";
+        String userId = user.getUsername();
         // 해당 그룹에서 본인을 삭제
         groupMemberService.deleteGroupMember(GroupMemberReqDto.builder().groupId(groupId).userId(userId).build());
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);

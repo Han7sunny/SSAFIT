@@ -72,9 +72,10 @@ public class ReplyServiceImpl implements ReplyService{
     @Override
     @Transactional
     public void regist(ReplyReqDto reply) {
+
         User user = userRepository.findById(reply.getUser_id()).get();
         Board board = boardRepository.findById(reply.getBoard_id()).get();
-        Reply registReply = Reply.builder().user(user).board(board).content(reply.getContent()).registeredTime(reply.getRegistered_time()).build();
+        Reply registReply = Reply.builder().user(user).board(board).content(reply.getContent()).registeredTime(LocalDateTime.now()).build();
         replyRepository.save(registReply);
 
         Notification notification = Notification.builder()
@@ -93,7 +94,7 @@ public class ReplyServiceImpl implements ReplyService{
         Reply getReply = replyRepository.findById(reply.getReply_id()).get();
 
         getReply.setContent(reply.getContent());
-        getReply.setRegisteredTime(reply.getRegistered_time());
+        getReply.setRegisteredTime(LocalDateTime.now());
 
         replyRepository.save(getReply);
     }

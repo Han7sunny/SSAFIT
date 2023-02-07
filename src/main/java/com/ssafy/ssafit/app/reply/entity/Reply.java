@@ -5,6 +5,7 @@ import com.ssafy.ssafit.app.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -30,8 +31,8 @@ public class Reply {
 
     private String content;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date registeredTime;
+//    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime registeredTime;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 //    private Date modified_time;

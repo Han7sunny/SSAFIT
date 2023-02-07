@@ -7,6 +7,7 @@ import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.group.controller.GroupController;
 import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
+import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,8 +60,9 @@ public class NoticeController {
 
     @PostMapping("/regist")
     @ApiOperation(value = "공지사항 작성 ", notes = "입력한 정보로 공지사항을 생성한다.", response = Boolean.class)
-    public ResponseEntity<Boolean> registNotice(@ApiParam(value = "공지사항 정보", required = true) @RequestBody NoticeReqDto notice) throws Exception {
+    public ResponseEntity<Boolean> registNotice(@ApiParam(value = "공지사항 정보", required = true) @RequestBody NoticeReqDto notice, @AuthenticationPrincipal CustomUserDetails user ) throws Exception {
         LOGGER.info("Called getNotice.");
+        notice.setUserId(user.getUsername());
         noticeService.regist(notice);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -68,6 +71,7 @@ public class NoticeController {
     @ApiOperation(value = "공지사항 수정", notes = "입력한 정보로 기존 게시글을 수정한다.")
     public ResponseEntity<Boolean> modifyNotice(@RequestBody @ApiParam(value = "공지사항 정보", required = true) NoticeReqDto notice) throws Exception {
         LOGGER.info("Called modifyNotice. notice: {}", notice);
+//        notice.setUser_id(user.getUsername());
         noticeService.modify(notice);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -82,8 +86,9 @@ public class NoticeController {
 
     @PostMapping("/{boardId}/regist")
     @ApiOperation(value = "댓글 작성", notes = "입력한 정보로 새로운 댓글을 생성한다.")
-    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply) throws Exception {
+    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply,@AuthenticationPrincipal CustomUserDetails user) throws Exception {
         LOGGER.info("Called postReply. reply: {}", reply);
+        reply.setUser_id(user.getUsername());
         replyService.regist(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
@@ -92,6 +97,7 @@ public class NoticeController {
     @ApiOperation(value = "댓글 수정", notes = "입력한 정보로 기존 댓글을 수정한다.")
     public ResponseEntity<Boolean> modifyReply(@RequestBody @ApiParam(value = "수정 댓글", required = true) ReplyReqDto reply) throws Exception {
         LOGGER.info("Called modifyReply. reply: {}", reply);
+//        reply.setUser_id(user.getUsername());
         replyService.modify(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

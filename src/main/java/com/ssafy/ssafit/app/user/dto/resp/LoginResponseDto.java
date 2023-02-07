@@ -19,4 +19,6 @@ public class LoginResponseDto extends CommonResp {
     private String name;
 
     private String token;
+
+    private String role;
 }

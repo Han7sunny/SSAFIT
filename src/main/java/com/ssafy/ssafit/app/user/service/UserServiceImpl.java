@@ -117,6 +117,7 @@ public class UserServiceImpl implements UserService{
 
         // 2023-02-07 10:54 변경
         return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getId()), user.getRoles()))
+                .role(user.getRole().toString())
                 .success(true).msg("로그인이 성공적으로 완료되었습니다.")
                 .build();
 

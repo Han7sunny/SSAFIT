@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -27,7 +28,7 @@ public class ReplyRespDto extends CommonResp {
 
     private String content;
 
-    private Date registered_time;
+    private LocalDateTime registered_time;
 
     private boolean includedGroup; // 그룹 포함 여부
 

@@ -12,6 +12,7 @@ import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
 import com.ssafy.ssafit.app.routine.dto.req.RoutineAddReqDto;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
+import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -122,9 +124,9 @@ public class BoardController {
     @PostMapping(value = "/regist")
     @ApiOperation(value = "게시글 생성", notes = "입력한 정보로 새로운 게시글을 생성한다. 게시글의 카테고리(categoryId)가 3(운동 루틴 공유글)일 경우 루틴과 함께 저장(루틴 ID 1개 필수)")
 //    public ResponseEntity<Boolean> registBoard(@ApiParam(value = "게시글 정보", required = true) @RequestBody BoardReqDto board, @RequestParam(value = "files", required = false) List<MultipartFile> files, @Value("${file.path.upload-images}") String imagePath) throws Exception {
-    public ResponseEntity<Boolean> registBoard(@ApiParam(value = "게시글 정보", required = true) @RequestBody BoardReqDto board) throws Exception {
+    public ResponseEntity<Boolean> registBoard(@ApiParam(value = "게시글 정보", required = true) @RequestBody BoardReqDto board, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         logger.info("Called registBoard. board: {}", board);
-
+        board.setUserId(user.getUsername());
         Board registedBoard = boardService.regist(board);
 
 //        List<String> imgSrcList = new ArrayList<>();
@@ -186,23 +188,20 @@ public class BoardController {
     //    루틴 다운로드
     @GetMapping("/{boardId}/downloads")
     @ApiOperation(value = "운동 루틴 다운로드", notes = "게시글 ID에 첨부된 운동 루틴을 로그인 계정의 운동 루틴 목록에 추가한다.")
-    public ResponseEntity<BoardRespDto> downloadRoutine(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId, @RequestParam(value = "routineId", required = false) long routineId){
+    public ResponseEntity<BoardRespDto> downloadRoutine(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId, @AuthenticationPrincipal CustomUserDetails user){
         logger.info("Called downloadRoutine. boardId: {}", boardId);
 
-        String userId = "test123"; // 내 아이디
-        // board에 포함된 routine_id 추출 ( 다운로드 )
-        routineService.addUserRoutine(new RoutineAddReqDto(routineId, userId));
+        String userId = user.getUsername(); // 내 아이디
+        BoardRespDto board = boardService.increaseDownload(boardId);
+        routineService.addUserRoutine(new RoutineAddReqDto(board.getRoutineId(), userId));
 
-        // 해당 게시글의 downloads 증가
-        boardService.increaseDownload(boardId);
-        return new ResponseEntity<BoardRespDto>(HttpStatus.OK);
+        return new ResponseEntity<BoardRespDto>(board,HttpStatus.OK);
     }
 
     @GetMapping("/{boardId}/likes")
     @ApiOperation(value = "좋아요 누르기", notes = "게시글 ID의 좋아요 클릭시 게시글의 좋아요 수가 증가한다.", response = Boolean.class)
-    public ResponseEntity<Boolean> clickLike(@PathVariable("boardId") long boardId){
-        String userId = "test123";
-    // userId 가져오기
+    public ResponseEntity<Boolean> clickLike(@PathVariable("boardId") long boardId, @AuthenticationPrincipal CustomUserDetails user){
+        String userId = user.getUsername();
         boolean isClicked = boardService.clickLikes(userId, boardId); // boolean값으로 변경
         // return false : 좋아요 아직 안 눌렀거나 이미 좋아요 눌렀는데 한 번 더 눌러서 취소시킴
         // return true : 좋아요 이번에 새로 누름
@@ -214,16 +213,18 @@ public class BoardController {
 
     @PostMapping("/{boardId}/regist")
     @ApiOperation(value = "댓글 작성", notes = "입력한 정보로 새로운 댓글을 생성한다.")
-    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply) throws Exception {
+    public ResponseEntity<Boolean> postReply(@RequestBody @ApiParam(value = "새로운 댓글", required = true) ReplyReqDto reply, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         logger.info("Called postReply. reply: {}", reply);
+        reply.setUser_id(user.getUsername());
         replyService.regist(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.CREATED);
     }
 
     @PutMapping("/{boardId}/{replyId}")
     @ApiOperation(value = "댓글 수정", notes = "입력한 정보로 기존 댓글을 수정한다.")
-    public ResponseEntity<Boolean> modifyReply(@RequestBody @ApiParam(value = "수정 댓글", required = true) ReplyReqDto reply) throws Exception {
+    public ResponseEntity<Boolean> modifyReply(@RequestBody @ApiParam(value = "수정 댓글", required = true) ReplyReqDto reply, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
         logger.info("Called modifyReply. reply: {}", reply);
+        reply.setUser_id(user.getUsername());
         replyService.modify(reply);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }

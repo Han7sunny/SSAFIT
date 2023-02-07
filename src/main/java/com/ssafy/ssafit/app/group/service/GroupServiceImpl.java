@@ -52,7 +52,7 @@ import java.util.*;
 @Service
 public class GroupServiceImpl implements GroupService{
 
-    private final Logger LOGGER = LoggerFactory.getLogger(GroupController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(GroupServiceImpl.class);
 
     private GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
