@@ -274,4 +274,14 @@ public class UserController {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/save-face-encoding")
+    private ResponseEntity<?> saveFaceEncoding() {
+        try {
+            String res = userService.saveFaceEncoding();
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(res).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

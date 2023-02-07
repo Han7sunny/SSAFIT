@@ -38,4 +38,6 @@ public interface UserService {
     void userDelete(String userId);
 
     UserMyPageRespDto getMyPageInfo(String userId);
+
+    String saveFaceEncoding();
 }

@@ -28,6 +28,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -251,6 +253,37 @@ public class UserServiceImpl implements UserService{
                 .notificationList(notificationList).build();
 
         return userMyPageRespDto;
+    }
+
+    @Override
+    public String saveFaceEncoding() {
+        String arg1 = "C:/SSAFY/faceEncoding.py";
+        String arg2 = "C:/SSAFY/lhj.jpg";
+        ProcessBuilder builder = new ProcessBuilder("python", arg1, arg2);
+
+        try {
+            builder.redirectErrorStream(true);
+            Process process = builder.start();
+            int exitval = process.waitFor();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            while((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            if(exitval != 0) {
+                System.out.println("비정상 종료");
+            }
+
+            return sb.toString();
+
+        } catch (Exception e) {
+            System.out.println("오류");
+            return "오류";
+        }
     }
 
     @Override
