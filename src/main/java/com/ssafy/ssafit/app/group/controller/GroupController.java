@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.group.controller;
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.service.BoardService;
+import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRecruitRespDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRespDto;

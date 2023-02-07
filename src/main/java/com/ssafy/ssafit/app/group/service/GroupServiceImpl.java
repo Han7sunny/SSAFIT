@@ -59,10 +59,6 @@ public class GroupServiceImpl implements GroupService{
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    private GroupMemberRepository groupMemberRepository;
-
-    private UserRepository userRepository;
-
     private CategoryRepository categoryRepository;
 
     private BoardRepository boardRepository;
@@ -229,7 +225,7 @@ public class GroupServiceImpl implements GroupService{
                     if (period < routineIdList.size()) {
                         for (int i = 0; i < period; i++){
                             LocalDate recordDate = group.getStartDate().plusDays(i);
-                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(i))).startYear(recordDate.getYear()).startMonth(recordDate.getMonthValue()).startDay(recordDate.getDayOfMonth()).build());
+                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(i))).build(), recordDate);
                         }
                     }
                     else {
@@ -240,7 +236,7 @@ public class GroupServiceImpl implements GroupService{
                             LocalDate recordDate = group.getStartDate().plusDays(i);
 //                            recordDate = recordDate.plusDays(1);
                             LOGGER.info("{} {} {} ",recordDate.getYear(), recordDate.getMonthValue(), recordDate.getDayOfMonth());
-                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(routineIdx++))).startYear(recordDate.getYear()).startMonth(recordDate.getMonthValue()).startDay(recordDate.getDayOfMonth()).build());
+                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(routineIdx++))).build(),recordDate);
                             if(routineIdx == routineSize)
                                 routineIdx = 0;
                         }

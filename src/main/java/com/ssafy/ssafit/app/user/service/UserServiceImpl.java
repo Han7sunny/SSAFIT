@@ -12,6 +12,7 @@ import com.ssafy.ssafit.app.record.repository.RecordRepository;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
+import com.ssafy.ssafit.app.user.dto.Role;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
