@@ -1,7 +1,9 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import axios from 'axios'
-import RoutineListItem from '../../components/RoutineListItem'
+import RoutineListItem from '../../components/RoutineItem'
+import Button from '../../components/Button'
+import { useNavigation } from '@react-navigation/native'
 
 let todayRoutine = {
     exerciseId: 1,
@@ -28,12 +30,16 @@ let todayRoutine = {
 // }
 
 export default function TodayRoutine() {
+  const navigation = useNavigation()
   return(
     <View 
       style={styles.container}
       // onPress={() => navigation.navigate('RoutineDetailScreen', {})}
     >
       <Text style={styles.exercise}> 오늘의 운동 </Text>
+      <Button
+        onPress={() => navigation.navigate('MyRoutineListScreen')}
+      >나의 루틴 목록 보기</Button>
       {/* <Text style={styles.exercise}> {todayRoutine.routineName} </Text> */}
       <RoutineListItem 
         routineId={todayRoutine.exerciseId}

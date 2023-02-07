@@ -40,6 +40,7 @@ import {
   ArticleDetailScreen,
   CreateArticleScreen,
   ArticleListScreen,
+  RoutineListScreen,
 } from './src/screens/Community'
 
 import {
@@ -51,10 +52,11 @@ import {
   CancelScreen,
 } from './src/screens/My'
 
-import RoutineItem from './src/components/RoutineListItem';
+import {MyRecordScreen} from './src/screens/Record';
+
+import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
 import { Text } from 'react-native-paper';
-
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -93,6 +95,7 @@ const CommunityStackNavigator = () => {
     <CommunityStack.Screen name="ArticleDetailScreen" component={ArticleDetailScreen} options={{ headerShown: false }}/>
     <CommunityStack.Screen name="CreateArticleScreen" component={CreateArticleScreen} options={{ headerShown: false }}/>
     <CommunityStack.Screen name="ArticleListScreen" component={ArticleListScreen} options={{ headerShown: false }}/>
+    <CommunityStack.Screen name="RoutineListScreen" component={RoutineListScreen} options={{ headerShown: false }}/>
   </CommunityStack.Navigator>
   )
 }
@@ -127,8 +130,9 @@ function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={MainStackNavigator}/>
         <Tab.Screen name="Group" component={GroupStackNavigator}/>
+        <Tab.Screen name="Record" component={MyRecordScreen}/>
+        <Tab.Screen name="Home" component={MainStackNavigator}/>
         <Tab.Screen name="Community" component={CommunityStackNavigator}/>
         <Tab.Screen name="MyPage" component={MyPageStackNavigator}/>
         {/* <Tab.Screen name="Login" component={LoginStackNavigator}/> */}

@@ -1,59 +1,35 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { ScrollView, Text, TouchableOpacity, FlatList, View, StyleSheet } from 'react-native'
 import Button from '../../components/Button'
 import ArticleItem from '../../components/ArticleItem'
-import RoutineListItem from '../../components/RoutineListItem'
+import RoutineListItem from '../../components/RoutineItem'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
-import { articleDataAction } from '../../redux/actions/actionCreators'
-const articleData = useSelector(store=>store.articleData)
-// let articleData = [
-//   {
-// 	  success : true,
-// 	  board_id : 1,
-// 	  user_id: "asdf1234",
-// 	  category_id : 2,
-// 	  title : "Test title",
-// 	  content : "Test content",
-// 	  registered_time : "23-02-02",
-// 	  modified_time : "23-02-02",
-// 	  share : true, // 게시글 공개/비공개 여부
-// 	  hits : 100,
-// 	  likes : 20,
-// 	  replyList : [
-//       {
-//         id: 1,
-//         content: '1번 댓글'
-//       },
-//       {
-//         id: 2,
-//         content: '2번 댓글'
-//       },
-//       {
-//         id: 3,
-//         content: '3번 댓글'
-//       }
-//   ]
-// }]
-// let articleData = []
+import { ArticleDataAction } from '../../redux/actions/actionCreators'
+
+// 함수형 컴포넌트 내에 setState 코드를 작성하면 무한 렌더링 현상이 발생 
 
 export default function CommunityScreen({ navigation }) {
-  axios({
-    method: 'get',
-    url: 'http://70.12.246.116:8080/board/',
-  })
-  .then(function (res) {
-    // console.log(res.data)
-    const articleData = res.data
-    console.log('아티크르륻닐ㅇㄴ랑니라멓민ㅇ ' ,articleData)
-    articleDataAction.getArticleData({
-      articleData,
+  const [data, setData] = useState([])
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url: 'http://70.12.246.116:8080/board/',
     })
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
-
+    .then(function (res) {
+      // console.log(res.data)
+      const newData = res.data
+      setData(newData)
+      ArticleDataAction.getArticleData({
+        newData,
+      })
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
+  }, [])
+  // const articleData = state => state.articleData
+  
   return (
     <View>
       <Text> Welcome to Community </Text>
@@ -70,7 +46,7 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={this.articleData}
+            data={data.slice(0,4)}
             renderItem={({item}) => (
               <ArticleItem 
                 id={item.boardId}
@@ -89,7 +65,7 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={this.articleData}
+            data={data.slice(4,7)}
             renderItem={({item}) => (
             
             <RoutineListItem 

@@ -1,40 +1,50 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, Checkbox } from 'react-native-paper'
 import { SelectList } from 'react-native-dropdown-select-list'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-AsyncStorage.getItem('username', (err, result) => {
-  const UserInfo = JSON.parse(result)
-  const accessToken = UserInfo.token
-  console.log('토큰 :' , accessToken)
-})
 
 export default function CreateArticleScreen({ navigation }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [accessToken, setAccessToken] = useState('')
+  const [categoryId, setCategoryId] = useState(0)
+  const [isValid, setIsValid] = useState(false)
+  const [userId, setUserId] = useState('')
+  const [routineData, setRoutineData] = useState([])
+  const [selected, setSelected] = useState('')   // selected : 선택된 routineId가 저장됨
+  const [share, setShare] = useState(true)
 
   function onPost() {
     axios({
       method: 'post',
-      url: 'http://70.12.246.116:8080/board/post',
+      url: 'http://70.12.246.116:8080/board/regist',
       headers: {
         authorization: `${accessToken}`
       },
       data: {
         "board_id": 0,
-        "category_id": 0,
+        "category_id": categoryId,
         "content": content,
-        "modified_time": "2023-02-01T04:25:21.613Z",
+        "modified_time": "",
         "registered_time":"",
         "share": true,
         "title": title,
-        "user_id": "asdf1234"
+        "user_id": `${userId}`
       }
     })
+  }
+  const onChangeCategory = (event) => {
+    setCategoryId(event)
+    if (event === 3) {
+      setIsValid(true)
+    } else if (event === 1) {
+      setIsValid(false)
+    }
   }
 
   const onChangeTitle = (event) => {
@@ -48,13 +58,17 @@ export default function CreateArticleScreen({ navigation }) {
     setContent(event.nativeEvent.content)
     }
 
-  const [routineData, setRoutineData] = useState([])
-  const [selected, setSelected] = useState('')   // selected : 선택된 routineId가 저장됨
   useEffect(() => {
-    async function getData() {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      // console.log(UserInfo)
+      setAccessToken(UserInfo.token)
+      setUserId(UserInfo.id)
+      // console.log('게시글 작성학 ㅣ위해 필요한 토큰 :' , accessToken)
+    })
       axios({
         method: 'get',
-        url: 'http://70.12.246.116:8080/routine/get-user-routine/asdf1234'
+        url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`
       })
       .then(function (res) {
         let newData = res.data.map((item) => {
@@ -64,34 +78,29 @@ export default function CreateArticleScreen({ navigation }) {
       })
       .catch(function (error) {
         console.log(error)
-      }, [])
-    }
-    getData()
-  })
-  
-  // const data = [
-  //   {key:'1', value:'Mobiles', disabled:false},
-  //   {key:'2', value:'Appliances'},
-  //   {key:'3', value:'Cameras'},
-  //   {key:'4', value:'Computers', disabled:false},
-  //   {key:'5', value:'Vegetables'},
-  //   {key:'6', value:'Diary Products'},
-  //   {key:'7', value:'Drinks'},
-  // ]
-
-  // const [createTime, setCreateTime] = useState(new Date())
-  // const [modyfiedTime, setModyfiedTime] = useState(undefined)
-  
-  
+      })
+  }, [])
+  const category = [
+    {key: 1, value:"질문"}, 
+    {key: 3, value:"루틴 공유"}
+  ]
   return (
-    <View>
+    <View style={styles.centeredView}>
       <Text> Create Article </Text>
+      <SelectList 
+        data={category}
+        save="key"
+        placeholder='글 타입 선택'
+        setSelected={(key) => {
+          onChangeCategory(key)
+          }}
+      />
       <TextInput
         label="제목"
         value={title}
         onChange={(value) => onChangeTitle(value)}
         />
-        <View style={styles.centeredView}>
+        {isValid && <View style={styles.centeredView}>
           <SelectList 
             data={routineData}
             save="key"
@@ -99,13 +108,20 @@ export default function CreateArticleScreen({ navigation }) {
             setSelected={(key) => {setSelected(Number(key)), console.log('selected :',selected)}}
             onSelect={() => alert(selected)}
             />
-        </View>
+        </View>}
 
       <TextInput
         label="내용을 입력하세요"
         value={content}
         onChange={(value) => onChangeContent(value)}
         />
+      <Checkbox 
+        status={share ? 'checked' : 'unchecked'}
+        onPress={() => {
+          setShare(!share)
+        }}
+      />
+      
       <Button
         mode="contained"
         onPress={() => {

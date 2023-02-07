@@ -44,7 +44,7 @@ import {
   ArticleListScreen,
 } from './src/screens/Community'
 
-import RoutineItem from './src/components/RoutineListItem';
+import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
 
 

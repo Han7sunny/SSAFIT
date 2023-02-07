@@ -12,7 +12,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState({ value: '', error: ''})
 
   const onLoginPressed = () => {
-    // console.log(id.value, password.value)
     axios({
       method: 'post',
       url: `http://70.12.246.116:8080/user/login`,
@@ -22,15 +21,13 @@ export default function LoginScreen({ navigation }) {
       }
     })
     .then((response) => {
-      // console.log(response.data.msg)
-      console.log('뭔데', response.data)
       if (response.data.success === true) {
         // response.data.token 저장
         const username = response.data.name
         const token = response.data.token
         const userId = response.data.id
         AsyncStorage.setItem("username", JSON.stringify({"username": username,"id": userId, "token": token}), () =>{
-          console.log('저장 완료')
+          console.log('AsyncStorage에 유저 정보 저장 완료')
           alert(response.data.msg)
         })
       } else {

@@ -1,9 +1,11 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 // import Constants from 'expo-constants';
 import {ProgressChart} from "react-native-chart-kit";
-const screenWidth = Dimensions.get("window").width;
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
+const screenWidth = Dimensions.get("window").width;
 const chartConfig = {
   backgroundGradientFrom: "#cc14aa",
   backgroundGradientFromOpacity: 0,
@@ -23,6 +25,29 @@ const data = {
 };
 
 export default function App() {
+  const [recordData, setRecordData] = useState('')
+  const [userId, setUserId] = useState('')
+
+  useEffect(() => {
+    //  사용자 정보 가져오기
+    AsyncStorage.getItem('username', (err, result) =>{
+      const UserInfo = result
+      setUserId(UserInfo.id)
+    })
+
+    // axios 요청 보내기
+    axios({
+      method: 'get',
+      url: `http://70.12.246.102:8080/record/get-exercise-record/${userId}`
+    })
+    .then((res) => {
+      console.log(res.data)
+      // setRecordData(res.data)
+    })
+    .catch((err) =>{
+      console.log(err)
+    })
+  })
   return (
     <View style={styles.container}>
       <Text style={styles.title}> OOO 님의 운동 기록 </Text>

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Button as Btn, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-paper'
 import Button from '../../components/Button'
@@ -9,18 +9,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { useSelector } from 'react-redux'
 
 // const userData = useSelector(store=>store.userData)
-let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
-let routineName = ''
-const [accessToken, setAccessToken] = useState('')
-const [userId, setUserId] = useState('')
-
-AsyncStorage.getItem('username', (err, result) => {
-  const UserInfo = JSON.parse(result)
-  console.log(UserInfo)
-  setAccessToken(UserInfo.token)
-  setUserId(UserInfo.id)
-  console.log('토큰 :' , accessToken)
-})
+export default function CreateRoutineScreen({ navigation }) {
+  let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+  const [routineName, setRoutineName] = useState('')
+  const [accessToken, setAccessToken] = useState('')
+  const [userId, setUserId] = useState('')
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      // console.log(UserInfo)
+      setAccessToken(UserInfo.token)
+      setUserId(UserInfo.id)
+      console.log('[루틴생성] 토큰 :' , accessToken)
+    })
+  }, [])
 // axios 요청 보낼 함수
 function onPost() {
   axios({
@@ -33,7 +35,8 @@ function onPost() {
     data: {
       "routineName": `${routineName}`,
       "userId": userId,
-      "exerciseList": exerciseList
+      "exerciseList": exerciseList,
+      "routineId": 0
     }
   })
   .then(function (response) {
@@ -50,7 +53,6 @@ function onPost() {
   })
 }
 
-export default function CreateRoutineScreen({ navigation }) {
   // const [routineName, setRoutineName] = useState('')
   // RoutineInput 컴포넌트 추가 코드
 
@@ -68,7 +70,7 @@ export default function CreateRoutineScreen({ navigation }) {
     // sendData.push({"name" : "1번운동 별칭"})
     // console.log(`========== sendData : ${sendData} ============`)
     exerciseList.push(sendData)
-    // console.log('루틴 리스트 :', exerciseList)
+    console.log('저장한 루틴 리스트 :', exerciseList)
     // console.log('======================')
   }
 
@@ -79,9 +81,9 @@ export default function CreateRoutineScreen({ navigation }) {
         label="루틴 이름을 설정하세요!"
         value={routineName.value}
         onChangeText={(text) => {
-          routineName = text
+          setRoutineName(text)
         }}
-        onEndEditing={() => {console.log('routineName 외않되 : ',routineName)}}
+        // onEndEditing={() => {console.log('routineName 외않되 : ',routineName)}}
       />
       <RoutineInput countNum={countNum} routineInfo={routineInfo}/>
       <Btn onPress={onAddRoutine} title="+"
@@ -91,9 +93,9 @@ export default function CreateRoutineScreen({ navigation }) {
       <Button
         mode="contained"
         onPress={() => {
+          onPost()
           navigation.navigate('MyRoutineListScreen'); 
           // navigator 인덱스 초기화하기
-          onPost()
         }}
       >
         저장하기

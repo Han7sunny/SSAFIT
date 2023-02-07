@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, StyleSheet } from 'react-native'
 import TextInput from './TextInput'
-import SelectDropdown from 'react-native-select-dropdown'
+import { SelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios'
 
 // Trouble issue : 이 컴포넌트를 재 렌더링 시, 이전 컴포넌트의 값이 그대로 들어옴
@@ -49,43 +49,34 @@ export default function RoutineInput({countNum, routineInfo}) {
             // maxLength="20"
             // onEndEditing={() => {data.push(routineName), console.log(0, data)}}
           /> */}
-          <SelectDropdown 
+          <SelectList 
             data={exerciseArea}
-            onSelect={(selectedItem, index) => setExerciseId({ value: index })}
-            buttonTextAfterSelection={(selectedItem, index) => {
+            save="key"
+            setSelected={(key) => setExerciseId(key)}
+            onSelect={(key) => {
               // text represented after item is selected
               // console.log(selectedItem)
+              console.log(exerciseId)
               axios({
                 method: 'get',
-                url: `http://70.12.246.102:8080/exercise/get-exercise-type?area=${selectedItem}`
+                url: `http://70.12.246.102:8080/exercise/get-exercise-type?area=${exerciseId}`
               })
               .then(function (res){
+                console.log('어떤 운동 종류가 ㅣㅇㅆ는댝',res.data)
                 const rawData = res.data
                 rawData.forEach(element => {
-                  exerciseList.push([element.exerciseTypeName, element.exerciseTypeId])
+                  exerciseList.push({key: element.exerciseTypeId, value: element.exerciseTypeName})
                 })
+                console.log(exerciseList)
               })
-              return selectedItem
-            }}
-            rowTextForSelection={(item, index) => {
-              // text represented for each item in dropdown
-              return item
-            }}
-            defaultButtonText="운동 부위 선택"
+              }}
+            placeholder="운동 부위 선택"
           />
-          <SelectDropdown 
+          <SelectList 
             data={exerciseList}
-            onSelect={(selectedItem, index) => setExerciseId({ value: selectedItem[1] })}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              // text represented after item is selected
-              // console.log(selectedItem)
-              return selectedItem
-            }}
-            rowTextForSelection={(item, index) => {
-              // text represented for each item in dropdown
-              return item
-            }}
-            defaultButtonText="운동 종류 선택"
+            save="key"
+            setSelected={(value) => setExerciseId(value)}
+            placeholder="운동 종류 선택"
           />
           <TextInput
             label="세트 횟수"

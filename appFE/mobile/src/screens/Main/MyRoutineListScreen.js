@@ -2,51 +2,35 @@ import React, { useState, useEffect } from 'react'
 import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, Button as Btn } from 'react-native-paper'
 // import LogContext from '../../../contexts/LogContext'
-import RoutineListItem from '../../components/RoutineListItem'
+import RoutineListItem from '../../components/RoutineItem'
 import Button from '../../components/Button'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// const routineData = [
-//   // 리스트로 출력할 루틴 데이터
-//   // axios로 받아오기
-//   {
-//     routineId: '1',
-//     name: '오늘의 루틴'
-//   },
-//   {
-//     routineId: '2',
-//     name: '전신 운동'
-//   },
-//   {
-//     routineId: '3',
-//     name: '하체 운동'
-//   },
-// ]
-let routineData = []
 export default function MyRoutineListScreen({ navigation }) {
-  // const [routineData, setRoutineData] = useState([])
-  //   useEffect(() => {
-  //     async function getData() {
-        axios({
-          method: 'get',
-          url: 'http://70.12.246.102:8080/routine/get-user-routine/asdf1234',
-        
-        })
-        .then(function (res) {
-          // console.log('res.data :',res.data)
-          // console.log(res.data[0].routineId)
-          // console.log(res.data[0].name)
-          const newData = res.data[0]
-          routineData.push(newData)
-          // console.log('routineData :', routineData)
-          // console.log('데이터를 받아왔다~ : ', routineData)
-        })
-        .catch(function (err) {
-          console.log(err)
-        })
-      // }
-      // getData()
-    // })
+  const [routineData, setRoutineData] = useState([])
+  const [userId, setUserId] = useState('')
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      // const UserInfo = result
+      const UserInfo = JSON.parse(result)       // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id)
+    })
+    axios({
+      method: 'get',
+      url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`,
+    
+    })
+    .then(function (res) {
+      console.log('[나의 루틴 리스트] :',res.data)
+      setRoutineData(res.data)
+      // console.log('routineData :', routineData)
+      // console.log('데이터를 받아왔다~ : ', routineData)
+    })
+    .catch(function (err) {
+      console.log("나의 루틴 가져오기 실패",err)
+    })
+  }, [])
 
   return (
     <View>
@@ -67,6 +51,7 @@ export default function MyRoutineListScreen({ navigation }) {
             <RoutineListItem 
               routineId={item.routineId}
               name={item.name}
+              userId={userId}
               />
           </TouchableOpacity>
         )}
