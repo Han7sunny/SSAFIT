@@ -12,6 +12,6 @@ public class GroupMemberReqDto {
 
     private String userId;
 
-    private boolean acceptInvitation;
+    private boolean acceptInvitation; // 그룹원에 추가 또는 그룹 초대 수락 : true, 그룹원에서 제외 또는 그룹 초대 거절 : false
 
 }

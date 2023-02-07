@@ -1,11 +1,9 @@
-package com.ssafy.ssafit.app.reply.entity;
+package com.ssafy.ssafit.app.board.entity;
 
-import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Data
@@ -13,11 +11,11 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Reply {
+public class Likes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reply_id")
+    @Column(name = "likes_id")
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,13 +25,4 @@ public class Reply {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    private String content;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date registeredTime;
-
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date modified_time;
-
 }

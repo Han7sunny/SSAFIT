@@ -21,4 +21,6 @@ public interface ReplyRepository extends JpaRepository<Reply,Long> {
     @Modifying
     @Query(value = "update reply r set r.user_id = null where r.user_id = :userId", nativeQuery = true)
     void updateUserIdNull(@Param("userId") String userId);
+    
+    long countByBoard_Id(long boardId);
 }

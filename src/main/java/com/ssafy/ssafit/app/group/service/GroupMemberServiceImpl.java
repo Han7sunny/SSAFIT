@@ -31,6 +31,11 @@ public class GroupMemberServiceImpl implements GroupMemberService{
     }
 
     @Override
+    public List<GroupMember> getGroupRecruitRequest(String userId) {
+        return groupMemberRepository.findByUserIdAndAcceptInvitationFalse(userId);
+    }
+
+    @Override
     public boolean findGroupMember(long groupId, String userId) {
         GroupMember groupMember = groupMemberRepository.findByGroupIdAndUserId(groupId, userId);
         return groupMember != null;

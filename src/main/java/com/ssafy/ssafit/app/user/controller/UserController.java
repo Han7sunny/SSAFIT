@@ -6,6 +6,7 @@ import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -109,18 +110,39 @@ public class UserController {
         return new ResponseEntity<Boolean>(true, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/testLogin")
-    public ResponseEntity<Boolean> testStillLogin(@AuthenticationPrincipal CustomUserDetails user){
+//    @GetMapping("/testLoginAnnotation")
+//    public ResponseEntity<Boolean> testLoginAnnotation(@AuthenticationPrincipal CustomUserDetails user){
+//
+//        LOGGER.info("[Enter] testStillLogin");
+//        // 현재 로그인 된 사용자의 정보 가져오기
+//        if(user == null) {
+//            LOGGER.info("[Error] cannot find user information");
+//            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+//        }
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUser().getId()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 username: {}", user.getUser().getName());
+//        LOGGER.info("현재 로그인 된 사용자 정보 role: {}", user.getUser().getRole());
+//
+//        return new ResponseEntity<>(true, HttpStatus.OK);
+//    }
 
-            LOGGER.info("[Enter] testStillLogin");
-        // 현재 로그인 된 사용자의 정보 가져오기
-        if(user == null) {
-            LOGGER.info("[Error] cannot find user information");
-            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
-        }
-        LOGGER.info("현재 로그인 된 사용자 정보 : {}", user.toString());
-        return new ResponseEntity<>(true, HttpStatus.OK);
-    }
+//    @GetMapping("/testStillLogin")
+//    public ResponseEntity<Boolean> testStillLogin(@AuthenticationPrincipal CustomUserDetails user){
+//
+//            LOGGER.info("[Enter] testStillLogin");
+//        // 현재 로그인 된 사용자의 정보 가져오기
+//        if(user == null) {
+//            LOGGER.info("[Error] cannot find user information");
+//            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+//        }
+//
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUsername()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUser().getId()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 username: {}", user.getUser().getName());
+//        LOGGER.info("현재 로그인 된 사용자 정보 role: {}", user.getUser().getRole());
+//
+//        return new ResponseEntity<>(true, HttpStatus.OK);
+//    }
 
     @GetMapping("/id-check")
     @ApiOperation(value = "아이디 유효성 검사",
@@ -209,6 +231,7 @@ public class UserController {
             notes = "회원가입 기능",
             response = CommonResp.class)
     public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
+
         try {
             userService.userJoin(userJoinReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
@@ -270,16 +293,6 @@ public class UserController {
         try {
             UserMyPageRespDto userMyPageRespDto = userService.getMyPageInfo(userId);
             return new ResponseEntity<UserMyPageRespDto>(userMyPageRespDto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/save-face-encoding")
-    private ResponseEntity<?> saveFaceEncoding() {
-        try {
-            String res = userService.saveFaceEncoding();
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(res).build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

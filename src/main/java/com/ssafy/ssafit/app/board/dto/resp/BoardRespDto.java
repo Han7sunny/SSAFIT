@@ -2,7 +2,9 @@ package com.ssafy.ssafit.app.board.dto.resp;
 
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.entity.Board;
+import com.ssafy.ssafit.app.board.entity.File;
 import com.ssafy.ssafit.app.common.CommonResp;
+import com.ssafy.ssafit.app.reply.dto.resp.ReplyRespDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -29,25 +31,37 @@ public class BoardRespDto extends CommonResp {
         this.content = boardReqDto.getContent();
         this.registeredTime = boardReqDto.getRegisteredTime();
         this.modifiedTime = boardReqDto.getModifiedTime();
-        this.share = boardReqDto.isShare();
+        this.sharePost = boardReqDto.isSharePost();
     }
 
     public BoardRespDto(Board board){
         this.boardId = board.getId();
         this.userId = board.getUser().getId();
-//        this.category_id = board.getCategory().getId();
+        this.userName = board.getUser().getName();
+        this.categoryId = board.getCategory().getId();
+        if(board.getCategory().getId() == 3) { // 운동 루틴 공유글
+            this.routineId = board.getRoutine().getRoutineId();
+        }
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.registeredTime = board.getRegistered_time();
-        this.modifiedTime = board.getModified_time();
-        this.share = board.isShare();
+        this.registeredTime = board.getRegisteredTime();
+        this.modifiedTime = board.getModifiedTime();
+        this.sharePost = board.isSharePost();
+        this.hits = board.getHits();
+        this.downloads = board.getDownloads();
+        this.likes = board.getLikes();
+//        this.replyList = board.getReplyList();
     }
 
     private long boardId;
 
     private String userId;
 
+    private String userName;
+
     private long categoryId;
+
+    private long routineId;
 
     private String title;
 
@@ -61,9 +75,15 @@ public class BoardRespDto extends CommonResp {
 
     private int likes;
 
+    private boolean clickLikes; // 좋아요 이미 눌렀는지 안 눌렀는지
+
     private int downloads;
 
-    private boolean share;
+    private boolean sharePost;
 
-    private List<Reply> replyList;
+    private long replySize;
+
+    private List<ReplyRespDto> replyList;
+
+    private List<File> fileList;
 }
