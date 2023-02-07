@@ -1,10 +1,6 @@
 package com.ssafy.ssafit.mirror.controller;
 
 import com.ssafy.ssafit.app.common.CommonResp;
-<<<<<<< HEAD
-import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
-import com.ssafy.ssafit.mirror.service.MirrorService;
-=======
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
@@ -12,19 +8,14 @@ import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.mirror.service.MirrorService;
 import io.swagger.annotations.ApiOperation;
->>>>>>> dev_kkw
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-<<<<<<< HEAD
-import java.time.format.DateTimeFormatter;
-=======
 import java.time.ZoneId;
 import java.util.List;
->>>>>>> dev_kkw
 
 @RestController
 @RequestMapping("/mirror")
@@ -38,17 +29,6 @@ public class MirrorController {
     }
 
     @GetMapping("/get-schedule/{id}")
-<<<<<<< HEAD
-
-
-    @PostMapping("/start-exercise")
-    public ResponseEntity<?> startExercise(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
-        try {
-            String time = mirrorUpdateRecordReqDto.getTime();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime startTime = LocalDateTime.parse(time, formatter).plusHours(9);
-            mirrorService.startExercise(startTime, mirrorUpdateRecordReqDto.getRecordId());
-=======
     @ApiOperation(value = "오늘 예약한 운동 루틴 목록 가져오기",
             notes = "유저가 오늘 하기로 예약한 운동 루틴들을 가져온다.",
             response = List.class)
@@ -109,7 +89,6 @@ public class MirrorController {
         try {
             LocalDateTime startTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
             mirrorService.startExercise(startTime, mirrorUpdateRecordReqDto.getRecordId(), mirrorUpdateRecordReqDto.getUserId());
->>>>>>> dev_kkw
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -117,13 +96,10 @@ public class MirrorController {
     }
 
     @PostMapping("/update-record")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "운동 하나 종료 후 count 기록 기능",
             notes = "루틴에 등록된 운동 중 하나를 끝낸 후 해당 운동의 count를 record_detail에 기록합니다.\n" +
                     "특정 운동 하나를 하는 경우에도 끝난 후 이 기능을 실행",
             response = CommonResp.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> updateRecord(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
         try {
             mirrorService.updateRecord(mirrorUpdateRecordReqDto);
@@ -134,20 +110,12 @@ public class MirrorController {
     }
 
     @PostMapping("/end-exercise")
-<<<<<<< HEAD
-    public ResponseEntity<?> endExercise(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
-        try {
-            String time = mirrorUpdateRecordReqDto.getTime();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime endTime = LocalDateTime.parse(time, formatter);
-=======
     @ApiOperation(value = "운동 루틴 종료 후 실행 기능",
             notes = "운동이 완전히 종료된 후 record에 상세 정보를 기록합니다.",
             response = CommonResp.class)
     public ResponseEntity<?> endExercise(@RequestBody MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
         try {
             LocalDateTime endTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
->>>>>>> dev_kkw
             mirrorService.endExercise(endTime, mirrorUpdateRecordReqDto);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
         } catch (Exception e) {

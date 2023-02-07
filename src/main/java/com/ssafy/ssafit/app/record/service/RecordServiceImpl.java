@@ -2,31 +2,17 @@ package com.ssafy.ssafit.app.record.service;
 
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
-<<<<<<< HEAD
-import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
-=======
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
->>>>>>> dev_kkw
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import com.ssafy.ssafit.app.record.repository.RecordDetailRepository;
 import com.ssafy.ssafit.app.record.repository.RecordRepository;
-<<<<<<< HEAD
-import com.ssafy.ssafit.app.routine.entity.Routine;
-import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
-import com.ssafy.ssafit.app.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-=======
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import com.ssafy.ssafit.app.routine.entity.Routine;
@@ -41,7 +27,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
->>>>>>> dev_kkw
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +38,6 @@ public class RecordServiceImpl implements RecordService{
     RoutineRepository routineRepository;
     UserRepository userRepository;
     ExerciseRepository exerciseRepository;
-<<<<<<< HEAD
-    @Autowired
-    public RecordServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository, RoutineRepository routineRepository, UserRepository userRepository, ExerciseRepository exerciseRepository) {
-=======
     ExerciseTypeRepository exerciseTypeRepository;
     private final NotificationRepository notificationRepository;
 
@@ -67,20 +48,11 @@ public class RecordServiceImpl implements RecordService{
                              ExerciseTypeRepository exerciseTypeRepository,
                              NotificationRepository notificationRepository,
                              RoutineService routineService) {
->>>>>>> dev_kkw
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
         this.userRepository = userRepository;
         this.exerciseRepository = exerciseRepository;
-<<<<<<< HEAD
-    }
-
-    @Override
-    public void registerExercise(RecordRegisterReqDto recordRegisterReqDto) {
-        LocalDate startDate = LocalDate.of(recordRegisterReqDto.getStartYear(), recordRegisterReqDto.getStartMonth(), recordRegisterReqDto.getStartDay());
-
-=======
         this.exerciseTypeRepository = exerciseTypeRepository;
         this.notificationRepository = notificationRepository;
         this.routineService = routineService;
@@ -88,7 +60,6 @@ public class RecordServiceImpl implements RecordService{
 
     @Override
     public Long registerExercise(RecordRegisterReqDto recordRegisterReqDto, LocalDate startDate) {
->>>>>>> dev_kkw
         Routine routine = routineRepository.findById(recordRegisterReqDto.getRoutineId()).get();
 
         Record record = Record.builder()
@@ -105,23 +76,15 @@ public class RecordServiceImpl implements RecordService{
         for (Exercise exercise: exerciseList) {
             RecordDetail recordDetail = RecordDetail.builder()
                     .record(record)
-<<<<<<< HEAD
-                    .exercise(exerciseRepository.findById(exercise.getId()).get())
-                    .count(0L)
-=======
                     .exerciseType(exercise.getExerciseType())
                     .count(0L)
                     .countRez(exercise.getExerciseSet() * exercise.getReps())
->>>>>>> dev_kkw
                     .build();
 
             recordDetailRepository.save(recordDetail);
         }
-<<<<<<< HEAD
-=======
 
         return record.getId();
->>>>>>> dev_kkw
     }
 
     @Override
@@ -144,8 +107,6 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-<<<<<<< HEAD
-=======
     public RecordInfoRespDto getRecord(Long id) {
         Record record = recordRepository.findById(id).get();
         Routine routine = record.getRoutine();
@@ -164,7 +125,6 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
->>>>>>> dev_kkw
     public void removeSchedule(Long recordId) {
         recordRepository.deleteById(recordId);
     }
@@ -181,13 +141,8 @@ public class RecordServiceImpl implements RecordService{
             List<RecordDetail> recordDetailList = record.getRecordDetails();
 
             for (RecordDetail recordDetail: recordDetailList) {
-<<<<<<< HEAD
-                String exerciseName = recordDetail.getExercise().getExerciseType().getExerciseTypeName();
-                Long countRez = recordDetail.getExercise().getExerciseSet() * recordDetail.getExercise().getReps();
-=======
                 String exerciseName = recordDetail.getExerciseType().getExerciseTypeName();
                 Long countRez = recordDetail.getCountRez();
->>>>>>> dev_kkw
                 tmpList.add(new RecordExerciseRecordRespDto.ExerciseDetail(exerciseName, recordDetail.getCount(), countRez));
             }
 
@@ -201,8 +156,6 @@ public class RecordServiceImpl implements RecordService{
 
         return exerciseRecordList;
     }
-<<<<<<< HEAD
-=======
 
     @Scheduled(cron = "0 0 21 1/1 * ?", zone = "Asia/Seoul")
     @Transactional
@@ -223,5 +176,4 @@ public class RecordServiceImpl implements RecordService{
             notificationRepository.save(notification);
         }
     }
->>>>>>> dev_kkw
 }

@@ -1,25 +1,14 @@
 package com.ssafy.ssafit.mirror.service;
 
-<<<<<<< HEAD
-=======
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
->>>>>>> dev_kkw
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import com.ssafy.ssafit.app.record.repository.RecordDetailRepository;
 import com.ssafy.ssafit.app.record.repository.RecordRepository;
-<<<<<<< HEAD
-import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-=======
 import com.ssafy.ssafit.app.record.service.RecordService;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
@@ -39,25 +28,12 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
->>>>>>> dev_kkw
 
 @Service
 public class MirrorServiceImpl implements MirrorService{
 
     RecordRepository recordRepository;
     RecordDetailRepository recordDetailRepository;
-<<<<<<< HEAD
-
-    @Autowired
-    public MirrorServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository) {
-        this.recordRepository = recordRepository;
-        this.recordDetailRepository = recordDetailRepository;
-    }
-
-    @Override
-    public void startExercise(LocalDateTime startTime, Long recordId) {
-        recordRepository.updateStartTime(startTime, recordId);
-=======
     RoutineRepository routineRepository;
     UserRepository userRepository;
     ExerciseRepository exerciseRepository;
@@ -126,7 +102,6 @@ public class MirrorServiceImpl implements MirrorService{
     public void startExercise(LocalDateTime startTime, Long recordId, String userId) {
         recordRepository.updateStartTime(startTime, recordId);
         userRepository.updateOnOff(userId, true);
->>>>>>> dev_kkw
     }
 
     @Override
@@ -143,21 +118,14 @@ public class MirrorServiceImpl implements MirrorService{
         double achievementRate = 0.0;
         for (RecordDetail recordDetail : recordDetailList) {
             long count = recordDetail.getCount();
-<<<<<<< HEAD
-            long countRez = recordDetail.getExercise().getExerciseSet() * recordDetail.getExercise().getReps();
-=======
             long countRez = recordDetail.getCountRez();
->>>>>>> dev_kkw
 
             achievementRate += (double)count / countRez;
         }
         achievementRate /= recordDetailList.size();
 
         record = Record.builder()
-<<<<<<< HEAD
-=======
                 .id(record.getId())
->>>>>>> dev_kkw
                 .routine(record.getRoutine())
                 .mileage(mirrorUpdateRecordReqDto.getMileage())
                 .experiencePoint(mirrorUpdateRecordReqDto.getExperiencePoint())
@@ -169,9 +137,6 @@ public class MirrorServiceImpl implements MirrorService{
                 .build();
 
         recordRepository.save(record);
-<<<<<<< HEAD
-    }
-=======
 
         userRepository.updateMileage(record.getUser().getId(), record.getUser().getMileage(), mirrorUpdateRecordReqDto.getMileage());
 
@@ -219,5 +184,4 @@ public class MirrorServiceImpl implements MirrorService{
         return mirrorRoutineRespDto;
     }
 
->>>>>>> dev_kkw
 }

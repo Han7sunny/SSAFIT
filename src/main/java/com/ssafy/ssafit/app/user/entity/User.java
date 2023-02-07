@@ -1,14 +1,11 @@
 package com.ssafy.ssafit.app.user.entity;
 
-<<<<<<< HEAD
-=======
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.ssafit.app.user.dto.Role;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
->>>>>>> dev_kkw
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.record.entity.Record;
 import lombok.AccessLevel;
@@ -22,40 +19,25 @@ import java.util.List;
 
 @Entity
 @Getter
-<<<<<<< HEAD
-@NoArgsConstructor(access= AccessLevel.PROTECTED)
-=======
 @AllArgsConstructor
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @Builder
->>>>>>> dev_kkw
 public class User {
 
     @Id  @Column(length = 20, name = "user_id", nullable = false)
     private String id;
 
-<<<<<<< HEAD
-    @Column(length = 20, nullable = false)
-    private String name;
-
-    @Column(length = 64, nullable = false)
-=======
     @Column(length = 20, unique = true, nullable = false)
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false) // length = 64,
->>>>>>> dev_kkw
     private String password;
 
     @Column(length = 40, nullable = false)
     private String email;
 
-<<<<<<< HEAD
-    @Column(length = 100, nullable = false)
-=======
     @Column(length = 100, nullable = false, columnDefinition = "MEDIUMTEXT")
->>>>>>> dev_kkw
     private String photo;
 
     @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
@@ -64,9 +46,6 @@ public class User {
     @Column(nullable = false)
     private boolean on_off;
 
-<<<<<<< HEAD
-    @OneToMany(mappedBy = "user")
-=======
 //    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 //    @Builder.Default
 //    private List<Authority> roles = new ArrayList<>();
@@ -86,7 +65,6 @@ public class User {
     private long mileage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
->>>>>>> dev_kkw
     private List<Record> record;
 
     @Builder
@@ -99,8 +77,4 @@ public class User {
         this.photo_encoding = photo_encoding;
         this.on_off = on_off;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev_kkw

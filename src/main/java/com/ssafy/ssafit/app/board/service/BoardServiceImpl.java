@@ -1,8 +1,5 @@
 package com.ssafy.ssafit.app.board.service;
 
-<<<<<<< HEAD
-public class BoardServiceImpl implements BoardService{
-=======
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.entity.Board;
@@ -182,5 +179,4 @@ public class BoardServiceImpl implements BoardService{
         board.setHits(board.getHits() + 1);
         boardRepository.save(board);
     }
->>>>>>> dev_kkw
 }

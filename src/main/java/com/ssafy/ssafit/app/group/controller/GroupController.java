@@ -1,11 +1,5 @@
 package com.ssafy.ssafit.app.group.controller;
 
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class GroupController {
-=======
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.service.BoardService;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
@@ -127,5 +121,4 @@ public class GroupController {
     //  모집 기한 지났으면 삭제해버리기...?
     //  근데 group_id로 묶여있어서 같이 날라가는 거 아냐?
 
->>>>>>> dev_kkw
 }

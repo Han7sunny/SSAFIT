@@ -1,11 +1,5 @@
 package com.ssafy.ssafit.app.reply.controller;
 
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class ReplyController {
-=======
 import com.ssafy.ssafit.app.reply.dto.req.ReplyReqDto;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.service.ReplyService;
@@ -66,5 +60,4 @@ public class ReplyController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
->>>>>>> dev_kkw
 }

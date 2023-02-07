@@ -20,11 +20,6 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-<<<<<<< HEAD
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-=======
 	implementation 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.1'
@@ -38,7 +33,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.swagger/swagger-annotations
 //	implementation group: 'io.swagger', name: 'swagger-annotations', version: '1.6.9'
 
->>>>>>> dev_kkw
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -47,14 +41,9 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.8'
-<<<<<<< HEAD
-	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
-	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
-=======
 //	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
 //	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
->>>>>>> dev_kkw
 
 }
 

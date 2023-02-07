@@ -7,22 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-<<<<<<< HEAD
-@Builder
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class RoutineExerciseRespDto {
-    private Long exerciseId;
-    private Long exerciseTypeId;
-    private String exerciseTypeName;
-    private String exerciseArea;
-    private Long exerciseSet;
-    private Long reps;
-    private Long restTimeMinutes;
-    private Long restTimeSeconds;
-    private String name;
-=======
 import java.util.List;
 
 @SuperBuilder
@@ -52,5 +36,4 @@ public class RoutineExerciseRespDto extends CommonResp{
         private Long restTimeSeconds;
         private String name;
     }
->>>>>>> dev_kkw
 }

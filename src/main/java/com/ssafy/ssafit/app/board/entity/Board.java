@@ -1,11 +1,5 @@
 package com.ssafy.ssafit.app.board.entity;
 
-<<<<<<< HEAD
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-public class Board {
-=======
 import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.user.entity.User;
@@ -70,5 +64,4 @@ public class Board {
     private boolean share;
 
 
->>>>>>> dev_kkw
 }

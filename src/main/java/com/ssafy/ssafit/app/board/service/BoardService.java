@@ -1,8 +1,5 @@
 package com.ssafy.ssafit.app.board.service;
 
-<<<<<<< HEAD
-public interface BoardService {
-=======
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.entity.Board;
@@ -28,5 +25,4 @@ public interface BoardService {
     BoardRespDto increaseLike(long boardId);
 
     void hit(long boardId);
->>>>>>> dev_kkw
 }

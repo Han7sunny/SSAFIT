@@ -7,10 +7,7 @@ import com.ssafy.ssafit.app.routine.dto.req.RoutineGenerateReqDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
-<<<<<<< HEAD
-=======
 import io.swagger.annotations.ApiOperation;
->>>>>>> dev_kkw
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,12 +28,9 @@ public class RoutineController {
     }
 
     @PostMapping("/generate-routine")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "루틴을 생성하는 기능",
             notes = "운동 정보 배열, 루틴 이름, 유저의 아이디를 보내섯 루틴을 등록함 (루틴 아이디는 X)",
             response = CommonResp.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> generateRoutine(@RequestBody RoutineGenerateReqDto routineGenerateReqDto) {
         try {
             routineService.generateRoutine(routineGenerateReqDto);
@@ -47,12 +41,9 @@ public class RoutineController {
     }
 
     @DeleteMapping("/delete-routine")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "특정 루틴을 내 루틴에서 제거하는 기능",
             notes = "루틴의 아이디와 내 아아디를 통해 해당 루틴을 내 루틴에서 제거",
             response = CommonResp.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> deleteRoutine(@RequestParam("userId") String userId, @RequestParam("routineId") Long routineId) {
         try {
             routineService.deleteRoutine(userId, routineId);
@@ -62,12 +53,9 @@ public class RoutineController {
         }
     }
     @PostMapping("/modify-routine")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "루틴을 수정하는 기능",
             notes = "내 루틴에 등록된 루틴 중 하나를 수정하는 기능",
             response = CommonResp.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> modifyRoutine(@RequestBody RoutineGenerateReqDto routineGenerateReqDto) {
         try {
             routineService.modifyRoutine(routineGenerateReqDto);
@@ -78,12 +66,9 @@ public class RoutineController {
     }
 
     @PostMapping("/add-routine")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "다른 유저의 루틴을 내 루틴으로 추가하는 기능",
             notes = "루틴의 아이디와 내 아이디를 보내 다른 유저의 루틴을 내 루틴으로 추가한다.",
             response = CommonResp.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> addUserRoutine(@RequestBody RoutineAddReqDto routineAddReqDto) {
         try {
             if(!routineService.addUserRoutine(routineAddReqDto))
@@ -96,12 +81,9 @@ public class RoutineController {
     }
 
     @GetMapping("/get-user-routine/{id}")
-<<<<<<< HEAD
-=======
     @ApiOperation(value = "특정 유저의 루틴 정보를 가져오는 기능",
             notes = "유저의 아이디를 통해 해당 유저의 루틴 정보를 가져옴",
             response = List.class)
->>>>>>> dev_kkw
     public ResponseEntity<?> getUserRoutine(@PathVariable("id") String userId) {
         try {
             List<RoutineInfoRespDto> routineInfoRespDtoList = routineService.getUserRoutine(userId);
@@ -112,12 +94,6 @@ public class RoutineController {
     }
 
     @GetMapping("/get-exercise-info/{id}")
-<<<<<<< HEAD
-    public ResponseEntity<?> getExerciseInfo(@PathVariable("id") Long routineId) {
-        try {
-            List<RoutineExerciseRespDto> routineExerciseRespDtoList = routineService.getExerciseInfo(routineId);
-            return new ResponseEntity<List<RoutineExerciseRespDto>>(routineExerciseRespDtoList, HttpStatus.OK);
-=======
     @ApiOperation(value = "특정 루틴의 상세정보를 가져오는 기능",
             notes = "루틴의 아이디를 통해 해당 루틴의 상세정보를 가져온다.",
             response = List.class)
@@ -125,7 +101,6 @@ public class RoutineController {
         try {
             RoutineExerciseRespDto routineExerciseRespDtoList = routineService.getExerciseInfo(routineId);
             return new ResponseEntity<RoutineExerciseRespDto>(routineExerciseRespDtoList, HttpStatus.OK);
->>>>>>> dev_kkw
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

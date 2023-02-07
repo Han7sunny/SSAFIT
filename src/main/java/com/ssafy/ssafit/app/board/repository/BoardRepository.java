@@ -1,13 +1,5 @@
 package com.ssafy.ssafit.app.board.repository;
 
-<<<<<<< HEAD
-import com.ssafy.ssafit.app.board.entity.Board;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-
-public interface BoardRepository  {//extends JpaRepository<Board,Long>
-=======
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.entity.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,5 +32,4 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     @Modifying
     @Query(value = "update board b set b.user_id = null where b.user_id = :userId", nativeQuery = true)
     void updateUserIdNull(@Param("userId") String userId);
->>>>>>> dev_kkw
 }

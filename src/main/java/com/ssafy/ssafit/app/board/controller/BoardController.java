@@ -1,11 +1,5 @@
 package com.ssafy.ssafit.app.board.controller;
 
-<<<<<<< HEAD
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class BoardController {
-=======
 import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
 import com.ssafy.ssafit.app.board.entity.Board;
@@ -185,5 +179,4 @@ public class BoardController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
->>>>>>> dev_kkw
 }
