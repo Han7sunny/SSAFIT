@@ -1,15 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native'
-import styled from 'styled-components/native'
-import Button from '../../components/Button'
+import { View, StyleSheet, FlatList } from 'react-native'
+import { Button, Text  } from 'react-native-paper'
 import MyGroupSimple from './MyGroupSimple'
-
-const Title = styled.Text`
-  font-size: 40px;
-  font-weight: 600;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
 
 export default function MyGroupListScreen({navigation}) {
   const Lists = [
@@ -21,105 +13,47 @@ export default function MyGroupListScreen({navigation}) {
 
   return (
     <View>
-      <Title> OOO님의 그룹 목록 </Title>
-      <FlatList
-        data={Lists}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({item}) => (
-          <MyGroupSimple 
-            item={item}
-            navigation = {navigation}/>
-        )}
-        keyExtractor={item => item.title.toString()}
-      />
+      <Text variant="headlineLarge" style={{fontWeight:'bold', margin:10, marginBottom: 30}}> OOO님의 그룹 목록 </Text>
+      <View style={{maxHeight:570, minHeight: 570}}>
+        <FlatList
+          data={Lists}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          renderItem={({item}) => (
+            <MyGroupSimple 
+              item={item}
+              navigation = {navigation}/>
+          )}
+          keyExtractor={item => item.title.toString()}
+        />
+
+      </View>
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('CreateGroupScreen')}
-      >
+        buttonColor='black'
+        style={styles.button}
+        labelStyle={styles.label}
+        onPress={() => navigation.navigate('CreateGroupScreen')}>
         그룹 생성하기
-      </Button> 
+      </Button>
     </View>
   )
 }
 
 
 const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-  },
   separator: {
     backgroundColor: '#e0e0e0',
     height: 1,
   },
-  item: {
-    flexDirection: 'row',
-    padding: 16,
-    alignItems: 'center',
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    borderColor: '#26a69a',
-    borderWidth: 1,
-    marginRight: 16,
-  },
-  text: {
-    flex: 1,
-    fontSize: 16,
-    color: '#212121',
-  },
-  filled: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#26a69a',
-  },
-  lineThrough: {
-    color: '#9e9e9e',
-    textDecorationLine: 'line-through',
-  },
-  container: {
-    flex: 1,
-    flexWrap: 'wrap',
-    marginTop: 8,
-    backgroundColor: 'aliceblue',
-    maxHeight: 400,
-  },
-  box: {
-    height: 40,
-    fontWeight: 'bold', 
-    fontSize:25
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
   button: {
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 4,
-    backgroundColor: 'oldlace',
-    alignSelf: 'flex-start',
-    marginHorizontal: '1%',
-    marginBottom: 6,
-    minWidth: '48%',
-    textAlign: 'center',
+    width:350, 
+    height: 50,
+    borderRadius:10,
+    alignSelf: 'center'
   },
-  selected: {
-    backgroundColor: 'coral',
-    borderWidth: 0,
-  },
-  buttonLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'coral',
-  },
-  selectedLabel: {
-    color: 'white',
-  },
-  label: {
-    textAlign: 'center',
-    marginBottom: 10,
-    fontSize: 24,
+    label:{
+      fontSize:18, 
+      fontWeight: 'bold',
+      marginTop:17
   },
 });

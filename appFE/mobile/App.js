@@ -11,6 +11,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 import { 
   StartScreen,
@@ -147,8 +149,32 @@ const LoginSideNavigator = () =>{
 function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={MainSideNavigator}/>
+      <Tab.Navigator initialRouteName='Home'
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Group'){
+            iconName = focused ? 'group' : 'account-multiple-outline';
+          } else if (route.name === 'Community'){
+            iconName = focused ? 'community' : 'settings-outline';
+          } else if (route.name === 'Community'){
+            iconName = focused ? 'settings' : 'settings-outline';
+          } else if (route.name === 'Community'){
+            iconName = focused ? 'settings' : 'settings-outline';
+          }
+
+          // You can return any component that you like here!
+          return <Icon name={iconName} size={size}  color={color}/>;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'black',
+        inactiveTintColor: 'gray',
+      }}>
+        <Tab.Screen name="Home" component={MainSideNavigator} icon='zodiac-leo'/>
         <Tab.Screen name="Group" component={GroupSideNavigator}/>
         <Tab.Screen name="Community" component={CommunitySideNavigator}/>
         <Tab.Screen name="MyPage" component={MyPageSideNavigator}/>

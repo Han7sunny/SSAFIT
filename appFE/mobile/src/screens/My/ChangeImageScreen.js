@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native'
-import Button from '../../components/Button'
+import { View, Image, StyleSheet } from 'react-native'
 import UploadModeModal from "./UploadModeModal";
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
+import { Text, Button, IconButton, MD3Colors } from 'react-native-paper';
 
 const imagePickerOption = {
    mediaType: "photo",
@@ -23,12 +23,13 @@ export default function ChangeImageScreen({navigation}) {
     if (res.didCancel || !res) {
       return;
     }
-    const localUri = res.assets[0].uri;
-    const uriPath = localUri.split("//").pop();
-    const imageName = localUri.split("/").pop();
-    setPhoto("file://"+uriPath);
-    console.log(localUri)
-    console.log(res.assets[0])
+    console.log(res)
+    // const localUri = res.assets[0].uri;
+    // const uriPath = localUri.split("//").pop();
+    // const imageName = localUri.split("/").pop();
+    // setPhoto("file://"+uriPath);
+    // console.log(localUri)
+    // console.log(res.assets[0])
 };
   
   // 카메라 촬영
@@ -54,23 +55,28 @@ export default function ChangeImageScreen({navigation}) {
   }
 
  return (
-  <View style={{alignItems: 'center'}}>
-    <Text> 얼굴 인식 재등록</Text>
-    <Text> 사진을 재등록하고 싶으신가요?</Text>
-    <View style={{alignItems: 'center'}}>
+  <View style={{alignItems: 'center', marginTop:100}}>
+    <Text variant="displaySmall" style={{margin: 20}}> 얼굴 인식 재등록</Text>
+    <Text variant="headlineSmall"> 사진을 재등록하고 싶으신가요?</Text>
+    <View style={{alignItems: 'center', margin: 30}}>
         <View style={{position: 'relative', margin:0}}>
-            { photo == undefined && <Image source={require('../Group/icon.png')} style={{width: 100, height: 100}}/> }
-            { photo != undefined && <Image source={{uri:photo}}  style={{width: 100, height: 100}}/>}
-            <Pressable 
-                style={{width: 20, height: 20, bottom: 30, left: 70, zIndex: 1}}
-                onPress={modalOpen}>
-                <Image source={require('../Group/plus.png')} />
-            </Pressable>
+            { photo == undefined && <Image source={require('../Group/icon.png')} style={{width: 150, height: 150}}/> }
+            { photo != undefined && <Image source={{uri:photo}}  style={{width: 150, height: 150}}/>}
+            <IconButton
+                    icon="plus-circle-outline"
+                    iconColor={MD3Colors.error50}
+                    size={50}
+                    style={{bottom: 65, right: -75, zIndex: 1}}
+                    onPress={modalOpen}
+                />
         </View>
     </View>
     <Button
         mode="contained"
         onPress={() => navigation.navigate('MainMyPageScreen')}
+        buttonColor='black'
+        style={styles.button}
+        labelStyle={styles.label}
       >
         등록
       </Button>
@@ -83,3 +89,17 @@ export default function ChangeImageScreen({navigation}) {
  ) 
 
 }
+
+const styles = StyleSheet.create({
+  button: {
+      width:350, 
+      height: 50,
+      margin: 10,
+      borderRadius:10
+  },
+  label:{
+      fontSize:18, 
+      fontWeight: 'bold',
+      marginTop:17
+  },
+});

@@ -1,73 +1,123 @@
+import axios from "axios";
 import React, { useState, useRef } from "react";
-import { View, Text, Switch, ScrollView, SafeAreaView, TouchableOpacity, Image } from 'react-native'
-import { TextInput } from 'react-native-paper'
-import styled from 'styled-components/native'
-import Button from '../../components/Button'
+import { View, ScrollView, SafeAreaView, TouchableOpacity, Image, StyleSheet } from 'react-native'
+import { TextInput, Button, Text, Switch, Modal  } from 'react-native-paper'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-const Title = styled.Text`
-  font-size: 40px;
-  font-weight: 600;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
+import SelectMultiple from 'react-native-select-multiple'
 
 export default function CreateGroupScreen({navigation}) {
+  const my = {memberid: 'lhj', isMember: false, userId: 'test123'}
   const [isEnabled, setIsEnabled] = useState(false);
-
-  const [groupTitle, setgroupTitle] = useState('');
-  const [groupName, setgroupName] = useState('');
-  const [groupMember, setgroupMember] = useState('');
-  const [groupPeopleNum, setgroupPeopleNum] = useState('');
-  const [groupStartDate, setgroupStartDate] = useState('');
-  const [groupEndDate, setgroupEndDate] = useState('');
-  // const [groupStartDate, setgroupStartDate] = useState('');
-  // const [groupEndDate, setgroupEndDate] = useState('');
-  const [groupGoal, setgroupGoal] = useState('');
-  const [groupPenalty, setgroupPenalty] = useState('');
-  const [groupContent, setgroupContent] = useState('');
-
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selectDate, setselectDate] = useState('');
 
-  const Name = useRef();
-  const Member = useRef();
-  const PeopleNum = useRef();
-  const StartDate = useRef();
-  const EndDate = useRef();
-  const Goal = useRef();
-  const Penalty = useRef();
-  const content = useRef();
-  const showDatePicker = () => {
+  const [Data,setData] = useState({
+    title: '',
+    name: '',
+    member: [],
+    maxMemberNum: 0,
+    startDate: '',
+    endDate: '',
+    startRecruitDate: '',
+    endRecruitDate: '',
+    goal: '',
+    penalty: '',
+    content: '',
+  });
+
+  const showDatePicker = (date) => {
     setDatePickerVisibility(true);
-    console.log('af')
+    setselectDate(date);
   };
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
+  const hideDatePicker = () =>setDatePickerVisibility(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   const handleConfirm = (date) => {
     console.warn("A date has been picked: ", date);
-    setgroupStartDate(date.toLocaleDateString());
-    Goal.current.focus()
+    let day = date.toLocaleDateString().split('/');
+    day = `${day[2]}-${day[0].padStart(2,'0')}-${day[1].padStart(2,'0')}`
+    switch (selectDate) {
+      case 'startDate': setData(pre => Object.assign({}, pre, {startDate: day})); break;
+      case 'endDate':   setData(pre => Object.assign({}, pre, {endDate: day})); break;
+      case 'startRecruitDate': setData(pre => Object.assign({}, pre, {startRecruitDate: day})); break;
+      case 'endRecruitDate':   setData(pre => Object.assign({}, pre, {endRecruitDate: day})); break;
+    }
     hideDatePicker();
   };
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+  const createGroup = async () => {
+    const result = await axios.post(`http://70.12.246.116:8080/group/regist`,{
+      "categoryId": Number(0),
+      "content": Data.content,
+      "currentMember": Number(Data.member ? Data.member.length : 0),
+      "endDate": Data.endDate,
+      "endRecruitDate": Data.endRecruitDate,
+      "goal": Number(Data.goal),
+      "groupMemberId": Data.member,
+      "groupName": Data.name,
+      "groupRoutineId": [
+        "string"
+      ],
+      "maximumMember": Number(Data.maxMemberNum),
+      "penalty": Data.penalty,
+      "period": Number(0),
+      "sharePost": isEnabled,
+      "startDate": Data.startDate,
+      "startRecruitDate": Data.startRecruitDate,
+      "title": Data.title,
+      "userId": my.userId
+    })
+    console.log(result);
+    if(result) navigation.navigate('GroupListScreen')
+  }
+
+  const [Lists, setLists] = useState([{"userId": "david1235", "userName": "아뇽"}, {"userId": "dkdlel", "userName": "notfound"}, {"userId": "dkdlel1", "userName": "username1"}, {"userId": "gkfrpdjqtk", "userName": "slrspdla"}, {"userId": "test123", "userName": "test123"}, {"userId": "test1xoa", "userName": "서니"}, {"userId": "test22", "userName": "투투"}, {"userId": "test456", "userName": "test456"}, {"userId": "testlogin", "userName": "로그인테스트용"}, {"userId": "testLoginTest", "userName": "testName"}, {"userId": "xoa1235", "userName": "서니사라ㅇ"}]);
+  //useState([]);
+  const [selectLists, setSelectLists] = useState([]);
+  const [findUser, setFindUser] = useState('');
+
+  const showModal = async () => {
+    // const data = (await axios.get(`http://70.12.246.116:8080/group/search?name=${findUser}`)).data;
+    // setLists(data);
+    // console.log(data);
+    setIsOpenModal(true);
+  }
+  const hideModal = () => setIsOpenModal(false);
+  onSelectionsChange = (selectLists) => {
+    setSelectLists(selectLists)
+    // setData(pre => Object.assign({}, pre, {member: value}))
+    console.log(selectLists)
+  }
+  onDeletionsChange = (value) => {
+    const filter = selectLists.filter(e => e.value !== value)
+    setSelectLists(filter)
+    console.log(filter)
+  }
+  const renderLabel = (label, style) => {
+    console.log(label)
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{marginLeft: 10}}>
+          <Text style={style}>{label}</Text>
+        </View>
+      </View>
+    )
+  }
 
   return (
     <SafeAreaView >
-      <Title> 그룹 생성 </Title>
-      <View>
-        <Text>그룹 공개여부</Text>
+      { !isEnabled && <Text variant="headlineLarge" style={{fontWeight:'bold', margin:10, marginBottom: 30}}> 그룹 생성 </Text> }
+      { isEnabled && <Text variant="headlineLarge" style={{fontWeight:'bold', margin:10, marginBottom: 30}}> 그룹 게시글 작성 </Text>}
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+        <Text variant="headlineSmall">그룹 공개여부</Text>
         <Switch
-          trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
           value={isEnabled}
         />
       </View>
-
+      <View style={{maxHeight:550, minHeight: 550}}>
       <ScrollView
         keyboardDismissMode = 'on-drag'
         scrollToOverflowEnabled = 'true'
@@ -75,167 +125,129 @@ export default function CreateGroupScreen({navigation}) {
         { isEnabled && <View>
           <Text>제목</Text>
           <TextInput 
-              value={groupTitle}
-              // autoFocus={isEnabled &&true}
-              onChangeText={(value) => setgroupTitle(value)}
-              onSubmitEditing={()=>{
-                console.log(groupTitle);
-                Name.current.focus()
-              }}
+              value={Data.title}
+              mode="outlined"
               returnKeyType="next"
+              onChangeText={value => setData(pre => Object.assign({}, pre, {title: value}))}
+              onSubmitEditing={()=>{
+                console.log(Data.title);
+              }}
             />
         </View>
         }
         <View>
           <Text>그룹명</Text>
           <TextInput 
-              value={groupName}
-              autoFocus={ true}
-              onChangeText={(value) => setgroupName(value)}
-              onSubmitEditing={()=>{
-                console.log(groupName);
-                Member.current.focus()
-              }}
+              value={Data.name}
+              mode="outlined"
               returnKeyType="next"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {name: value}))}
+              onSubmitEditing={()=>{
+                console.log(Data.name);
+              }}
             />
         </View>
         <View>
           <Text>그룹원</Text>
           <TextInput 
-              value={groupMember}
-              onChangeText={(value) => setgroupMember(value)}
+              value={findUser}
+              mode="outlined"
               returnKeyType="next"
-              right={<TextInput.Icon icon='eye' onPress={() => navigation.navigate('MyGroupListScreen')}/>}
-              ref={Member}
+              onChangeText={(value) => setFindUser(value)}
+              right={<TextInput.Icon icon='plus-circle-outline' onPress={showModal}/>}
               onSubmitEditing={()=>{
-                console.log(groupMember);
-                if(isEnabled) PeopleNum.current.focus()
-                else StartDate.current.focus()
+                console.log(findUser);
               }}
             />
         </View>
         { isEnabled && <View>
           <Text>모집인원</Text>
           <TextInput 
-              value={groupPeopleNum}
-              autoFocus={true}
-              onChangeText={(value) => setgroupPeopleNum(value)}
-              onSubmitEditing={()=>{
-                console.log(groupPeopleNum);
-                StartDate.current.focus()
-              }}
+              value={Data.maxMemberNum}
+              mode="outlined"
               returnKeyType="next"
-              ref={PeopleNum}
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {maxMemberNum: value}))}
+              onSubmitEditing={()=>{
+                console.log(Data.maxMemberNum);
+              }}
               
             />
         </View>
         }
         { isEnabled && <View>
           <Text>모집 기간</Text>
-          <View>
-            <View>
-              
+            <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <TextInput
-                value={groupStartDate}
-                onChangeText={(value) => setgroupStartDate(value)}
+                value={Data.startRecruitDate}
+                mode="outlined"
+                onChangeText={(value) => setData(pre => Object.assign({}, pre, {startRecruitDate: value}))}
                 returnKeyType="next"
-                right={ <TextInput.Icon icon="eye" />}
-              //   <TouchableOpacity onPress={showDatePicker}>
-              //   <Image source={require('./icon.png')} />
-              // </TouchableOpacity>    }
-                ref={StartDate}
+                right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('startRecruitDate')} />}
+                style={{width: 185}}
                 onSubmitEditing={()=>{
-                  console.log(groupName);
-                  StartDate.current.focus()
-                }}
-                
-              />
-              <TouchableOpacity onPress={showDatePicker}>
-                <Image source={require('./icon.png')} />
-              </TouchableOpacity>
-            </View>
-            {/* <TextInput 
-                value={groupStartDate}
-                onChangeText={(value) => setgroupStartDate(value)}
+                  console.log(Data.startRecruitDate);
+                }}/>
+              <Text variant="headlineMedium"> ~ </Text>
+              <TextInput
+                value={Data.endRecruitDate}
+                mode="outlined"
+                onChangeText={(value) => setData(pre => Object.assign({}, pre, {endRecruitDate: value}))}
                 returnKeyType="next"
-                right={ <TextInput.Icon icon="eye" />}
-              //   <TouchableOpacity onPress={showDatePicker}>
-              //   <Image source={require('./icon.png')} />
-              // </TouchableOpacity>    }
-                ref={StartDate}
+                right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('endRecruitDate')} />}
+                style={{width: 185}}
                 onSubmitEditing={()=>{
-                  console.log(groupName);
-                  StartDate.current.focus()
-                }}
-              /> */}
-              {/* <Text>~</Text>
-              <TextInput 
-                value={groupEndDate}
-                onChangeText={(value) => setgroupEndDate(value)}
-                returnKeyType="next"
-                right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
-              /> */}
-          </View>
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
+                  console.log(Data.endRecruitDate);
+                }}/>
+            </View>          
         </View>
         }
         <View>
           <Text>그룹 운동 기간</Text>
-          <View>
-            <TextInput 
-                value={groupStartDate}
-                onChangeText={(value) => setgroupStartDate(value)}
-                returnKeyType="next"
-                right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
-                ref={StartDate}
-                onSubmitEditing={()=>{
-                  console.log(groupName);
-                  Goal.current.focus()
-                }}
-              />
-              {/* <Text>~</Text>
-              <TextInput 
-                value={groupEndDate}
-                onChangeText={(value) => setgroupEndDate(value)}
-                returnKeyType="next"
-                right={<TextInput.Icon icon='calendar' onPress={showDatePicker}/>}
-              /> */}
+          <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <TextInput
+              value={Data.startDate}
+              mode="outlined"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {startDate: value}))}
+              returnKeyType="next"
+              right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('startDate')} />}
+              style={{width: 185}}
+              onSubmitEditing={()=>{
+                console.log(Data.startDate);
+              }}/>
+            <Text variant="headlineMedium"> ~ </Text>
+            <TextInput
+              value={Data.endDate}
+              mode="outlined"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {endDate: value}))}
+              returnKeyType="next"
+              right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('endDate')} />}
+              style={{width: 185}}
+              onSubmitEditing={()=>{
+                console.log(Data.endDate);
+              }}/>
           </View>
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
         </View>
         <View>
           <Text>그룹 목표</Text>
           <TextInput 
-              value={groupGoal}
-              onChangeText={(value) => setgroupGoal(value)}
+              value={Data.goal}
               returnKeyType="next"
-              ref={Goal}
+              mode="outlined"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {goal: value}))}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                Penalty.current.focus()
+                console.log(Data.goal);
               }}
             />
         </View>
         <View>
           <Text>그룹 패널티</Text>
           <TextInput 
-              value={groupPenalty}
-              onChangeText={(value) => setgroupPenalty(value)}
+              value={Data.penalty}
               returnKeyType="next"
-              ref={Penalty}
+              mode="outlined"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {penalty: value}))}
               onSubmitEditing={()=>{
-                console.log(groupName);
-                if(isEnabled) content.current.focus()
+                console.log(Data.penalty);
               }}
             />
         </View>
@@ -243,26 +255,61 @@ export default function CreateGroupScreen({navigation}) {
         { isEnabled && <View>
           <Text>내용</Text>
           <TextInput 
-              value={groupContent}
-              autoFocus={true}
-              onChangeText={(value) => setgroupContent(value)}
+              value={Data.content}
+              mode="outlined"
+              onChangeText={(value) => setData(pre => Object.assign({}, pre, {content: value}))}
               onSubmitEditing={()=>{
-                console.log(groupContent);
+                console.log(Data.content);
               }}
-              ref={content}
             />
         </View>
         }
-       <Button
+
+        </ScrollView>
+      </View>
+      <Button
         mode="contained"
-        onPress={() => navigation.navigate('GroupListScreen')}
-        style={{marginBottom: 150}}
-      >
+        buttonColor='black'
+        style={styles.button}
+        labelStyle={styles.label}
+        onPress={createGroup}>
         등록
       </Button>
-
-      </ScrollView>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
+      <Modal presentationStyle={"FullScreen"} visible={isOpenModal} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
+      <SelectMultiple
+        hideTags
+        uniqueKey='userId'
+        items={Lists}
+        renderLabel={renderLabel}
+        selectedItems={selectLists}
+        onSelectionsChange={onSelectionsChange} />
+      </Modal>
+      
     </SafeAreaView >
   )
 }
 
+const styles = StyleSheet.create({
+  separator: {
+    backgroundColor: '#e0e0e0',
+    height: 1,
+  },
+  button: {
+    width:350, 
+    height: 50,
+    borderRadius:10,
+    alignSelf: 'center',
+    marginTop: 20
+  },
+    label:{
+      fontSize:18, 
+      fontWeight: 'bold',
+      marginTop:17
+  },
+});

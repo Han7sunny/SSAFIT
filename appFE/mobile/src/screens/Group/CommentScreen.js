@@ -13,13 +13,13 @@ export default function CommentScreen({comment}) {
     <View style={styles.container}> 
         <View style={{ flexDirection: 'row', alignContent: 'center'}}>
             <Image source={require('./icon.png')}/>
-            <Text>{comment.memberid}</Text>
+            <Text>{comment.userName}</Text>
             <TouchableOpacity  onPress={addMember}>
                 {isMember && <Image source={require('./heartred.png')}/>}
                 {!isMember && <Image source={require('./heart.png')}/>}
             </TouchableOpacity>
         </View>
-        <Text style={[styles.routineName, {marginLeft: 20}]}>{comment.commentText}</Text>
+        <Text style={[styles.routineName, {marginLeft: 20}]}>{comment.content}</Text>
     </View>
   )
 }
