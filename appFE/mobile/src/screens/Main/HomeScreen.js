@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-paper'
 import Button from '../../components/Button'
 import TodayRoutine from "./TodayRoutine";
@@ -8,7 +8,7 @@ import MyGroup from "./MyGroup";
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View>
+    <ScrollView>
       <Text style={styles.text}> 운동 시작한지 N일 </Text>
       <RecordScreen />
       <TodayRoutine />
@@ -31,7 +31,7 @@ export default function HomeScreen({ navigation }) {
       >
         나의 그룹
       </Button>
-    </View>
+    </ScrollView>
   )
 }
 

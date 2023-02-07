@@ -25,6 +25,7 @@ import {
   MyRoutineListScreen,
   RoutineDetailScreen,
   MyGroup,
+  RoutineReservationScreen,
 } from './src/screens/Main';
 
 import {
@@ -73,6 +74,7 @@ const MainStackNavigator = () => {
     <MainStack.Screen name="CreateRoutineScreen" component={CreateRoutineScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="MyRoutineListScreen" component={MyRoutineListScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="RoutineDetailScreen" component={RoutineDetailScreen} options={{ headerShown: false }}/>
+    <MainStack.Screen name="RoutineReservationScreen" component={RoutineReservationScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="MyGroup" component={MyGroup}/>
   </MainStack.Navigator>
   )

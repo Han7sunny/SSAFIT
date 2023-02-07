@@ -40,6 +40,9 @@ export default function TodayRoutine() {
       <Button
         onPress={() => navigation.navigate('MyRoutineListScreen')}
       >나의 루틴 목록 보기</Button>
+      <Button
+        onPress={() => navigation.navigate('RoutineReservationScreen')}
+      >루틴 예약하러 가기</Button>
       {/* <Text style={styles.exercise}> {todayRoutine.routineName} </Text> */}
       <RoutineListItem 
         routineId={todayRoutine.exerciseId}
