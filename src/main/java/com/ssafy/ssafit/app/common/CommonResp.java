@@ -12,4 +12,8 @@ public class CommonResp {
 
     private boolean success;
     private String msg;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dev_kkw

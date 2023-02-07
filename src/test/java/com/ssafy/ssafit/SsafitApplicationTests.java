@@ -1,5 +1,6 @@
 package com.ssafy.ssafit;
 
+<<<<<<< HEAD
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,19 @@ class SsafitApplicationTests {
 
 	@Autowired
 	ExerciseTypeRepository exerciseTypeRepository;
+=======
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class SsafitApplicationTests {
+
+>>>>>>> dev_kkw
 	@Test
 	void contextLoads() {
 	}
 
+<<<<<<< HEAD
 	@Test
 	void exerciseType_테이블_값_입력() {
 		exerciseTypeRepository.save(ExerciseType.builder().
@@ -30,4 +40,6 @@ class SsafitApplicationTests {
 		System.out.println(exerciseType.get().getExerciseTypeName());
 		System.out.println(exerciseType.get().getExerciseArea());
 	}
+=======
+>>>>>>> dev_kkw
 }

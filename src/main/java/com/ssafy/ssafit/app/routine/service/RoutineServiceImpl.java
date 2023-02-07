@@ -90,17 +90,31 @@ public class RoutineServiceImpl implements RoutineService {
     }
 
     @Override
+<<<<<<< HEAD
     public List<RoutineExerciseRespDto> getExerciseInfo(Long routineId) {
         List<Exercise> exerciseList = exerciseRepository.findByRoutine_RoutineId(routineId);
 
         List<RoutineExerciseRespDto> routineExerciseRespDtoList = new ArrayList<RoutineExerciseRespDto>();
+=======
+    public RoutineExerciseRespDto getExerciseInfo(Long routineId) {
+
+        Routine routine = routineRepository.findById(routineId).get();
+
+        List<Exercise> exerciseList = exerciseRepository.findByRoutine(routine);
+
+        List<RoutineExerciseRespDto.ExerciseInfo> exerciseInfoList = new ArrayList<RoutineExerciseRespDto.ExerciseInfo>();
+>>>>>>> dev_kkw
 
         int sz = exerciseList.size();
         for(int i = 0; i < sz; i++) {
             Exercise tmp_exercise = exerciseList.get(i);
             ExerciseType exerciseType = exerciseTypeRepository.findById(tmp_exercise.getExerciseType().getExerciseTypeId()).get();
 
+<<<<<<< HEAD
             routineExerciseRespDtoList.add(RoutineExerciseRespDto.builder()
+=======
+            exerciseInfoList.add(RoutineExerciseRespDto.ExerciseInfo.builder()
+>>>>>>> dev_kkw
                             .exerciseId(tmp_exercise.getId())
                             .exerciseTypeId(exerciseType.getExerciseTypeId())
                             .exerciseTypeName(exerciseType.getExerciseTypeName())
@@ -113,7 +127,19 @@ public class RoutineServiceImpl implements RoutineService {
                             .build());
         }
 
+<<<<<<< HEAD
         return  routineExerciseRespDtoList;
+=======
+        RoutineExerciseRespDto routineExerciseRespDto = RoutineExerciseRespDto.builder()
+                                                        .success(true)
+                                                        .msg("루틴의 상세정보입니다.")
+                                                        .exerciseInfoList(exerciseInfoList)
+                                                        .routineId(routineId)
+                                                        .routineName(routine.getName())
+                                                        .build();
+
+        return  routineExerciseRespDto;
+>>>>>>> dev_kkw
     }
 
     @Override

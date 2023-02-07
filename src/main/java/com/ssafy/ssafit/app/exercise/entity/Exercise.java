@@ -28,8 +28,11 @@ public class Exercise {
     @JoinColumn(name="routine_id")
     private Routine routine;
 
+<<<<<<< HEAD
     @OneToMany(mappedBy = "exercise")
     private List<RecordDetail> recordDetails;
+=======
+>>>>>>> dev_kkw
     @Column(length = 45, nullable = false)
     private String name;
 
@@ -43,11 +46,18 @@ public class Exercise {
     private Long restTime;
 
     @Builder
+<<<<<<< HEAD
     public Exercise(Long id, ExerciseType exerciseType, Routine routine, List<RecordDetail> recordDetails, String name, Long reps, Long exerciseSet, Long restTime) {
         this.id = id;
         this.exerciseType = exerciseType;
         this.routine = routine;
         this.recordDetails = recordDetails;
+=======
+    public Exercise(Long id, ExerciseType exerciseType, Routine routine, String name, Long reps, Long exerciseSet, Long restTime) {
+        this.id = id;
+        this.exerciseType = exerciseType;
+        this.routine = routine;
+>>>>>>> dev_kkw
         this.name = name;
         this.reps = reps;
         this.exerciseSet = exerciseSet;
