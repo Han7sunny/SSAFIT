@@ -31,6 +31,7 @@ public class JwtTokenProvider {
 
 //    @Value("${springboot.jwt.secret}")
     private String secretKey = "secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey";
+//    private final long tokenValidMillisecond = 1000L * 60; // 1분 토큰 유효
     private final long tokenValidMillisecond = 1000L * 60 * 60; // 1시간 토큰 유효
 
     /**
@@ -46,7 +47,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String name, List<String> roles) {
+    public String createToken(String name, List<String> roles) { // name을 id로 변경 .. 추후 ...
         LOGGER.info("[createToken] 토큰 생성 시작");
         Claims claims = Jwts.claims().setSubject(name);
         claims.put("roles", roles);
@@ -55,7 +56,7 @@ public class JwtTokenProvider {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidMillisecond))
+                .setExpiration(new Date(now.getTime() + tokenValidMillisecond)) // 1시간 유효
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret 값 세팅
                 .compact();
 
@@ -67,7 +68,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 시작");
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
-        LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails UserName : {}",
+        LOGGER.info("[getAuthentication] 토큰 인증 정보 조회 완료, UserDetails UserId : {}",
                 userDetails.getUsername());
         return new UsernamePasswordAuthenticationToken(userDetails, "",
                 userDetails.getAuthorities());

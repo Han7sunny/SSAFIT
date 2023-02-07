@@ -1,6 +1,7 @@
 package com.ssafy.ssafit.app.user.service;
 
 import com.ssafy.ssafit.app.config.JwtTokenProvider;
+import com.ssafy.ssafit.app.user.dto.Role;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
@@ -12,9 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
 import com.ssafy.ssafit.app.user.entity.Authentication;
@@ -24,7 +23,6 @@ import com.ssafy.ssafit.util.RandomString;
 import com.ssafy.ssafit.util.Sha256;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,9 +75,14 @@ public class UserServiceImpl implements UserService{
             return LoginResponseDto.builder().success(false).msg("비밀번호가 틀렸습니다.").build();
         }
 
-        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getName()), user.getRoles()))
+        // 2023-02-07 10:54 변경
+        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getId()), user.getRoles()))
                 .success(true).msg("로그인이 성공적으로 완료되었습니다.")
                 .build();
+
+//        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getName()), user.getRoles()))
+//                .success(true).msg("로그인이 성공적으로 완료되었습니다.")
+//                .build();
     }
 
     @Override
@@ -151,6 +154,7 @@ public class UserServiceImpl implements UserService{
                 .photo("12345")
                 .photoEncoding("12345")
                 .onOff(false)
+                .role(Role.USER).roles(Collections.singletonList("ROLE_USER")) // 회원가입하는 모든 회원 권한 : USER
                 .build();
 
         userRepository.save(user);

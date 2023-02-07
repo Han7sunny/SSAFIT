@@ -203,11 +203,11 @@ public class BoardController {
     public ResponseEntity<Boolean> clickLike(@PathVariable("boardId") long boardId){
         String userId = "test123";
     // userId 가져오기
-//        boardService.clickLikes(userId, boardId); // boolean값으로 변경
+        boolean isClicked = boardService.clickLikes(userId, boardId); // boolean값으로 변경
         // return false : 좋아요 아직 안 눌렀거나 이미 좋아요 눌렀는데 한 번 더 눌러서 취소시킴
         // return true : 좋아요 이번에 새로 누름
-
-        return new ResponseEntity<Boolean>(boardService.clickLikes(userId, boardId), HttpStatus.OK);
+        logger.info("[clickLikes] likes return : {}", isClicked);
+        return new ResponseEntity<Boolean>(isClicked, HttpStatus.OK);
     }
 
 

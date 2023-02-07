@@ -112,8 +112,8 @@ public class GroupController {
 
 //        return new ResponseEntity<GroupRecruitRespDto>(groupService.clickLikesGroupRecruit(userId, groupId), HttpStatus.OK);
 
-        groupService.clickLikesGroupRecruit(userId, groupId);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+//        boolean isClicked = groupService.clickLikesGroupRecruit(userId, groupId);
+        return new ResponseEntity<Boolean>(groupService.clickLikesGroupRecruit(userId, groupId), HttpStatus.OK);
     }
 
     // 그룹 생성 -> 그룹 모집글 작성 시 그룹 생성됨

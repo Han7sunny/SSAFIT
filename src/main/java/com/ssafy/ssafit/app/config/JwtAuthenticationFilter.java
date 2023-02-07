@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse servletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = jwtTokenProvider.resolveToken(servletRequest);
-        LOGGER.info("[doFilterInternal] token 값 추출 완료. token : {}", token); // null
+        LOGGER.info("[doFilterInternal] token 값 추출 완료. token : {}", token); // header : X-AUTH-TOKEN
 
         LOGGER.info("[doFilterInternal] token 값 유효성 체크 시작");
         if (token != null && jwtTokenProvider.validateToken(token)) {

@@ -1,10 +1,8 @@
 package com.ssafy.ssafit.app.user.controller;
 
-import com.ssafy.ssafit.app.board.dto.resp.BoardRespDto;
-import com.ssafy.ssafit.app.config.JwtTokenProvider;
-import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.app.user.dto.req.LoginRequestDto;
 import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
+import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.service.UserService;
 
@@ -118,18 +116,39 @@ public class UserController {
         return new ResponseEntity<Boolean>(true, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/testLogin")
-    public ResponseEntity<Boolean> testStillLogin(@AuthenticationPrincipal CustomUserDetails user){
+//    @GetMapping("/testLoginAnnotation")
+//    public ResponseEntity<Boolean> testLoginAnnotation(@AuthenticationPrincipal CustomUserDetails user){
+//
+//        LOGGER.info("[Enter] testStillLogin");
+//        // 현재 로그인 된 사용자의 정보 가져오기
+//        if(user == null) {
+//            LOGGER.info("[Error] cannot find user information");
+//            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+//        }
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUser().getId()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 username: {}", user.getUser().getName());
+//        LOGGER.info("현재 로그인 된 사용자 정보 role: {}", user.getUser().getRole());
+//
+//        return new ResponseEntity<>(true, HttpStatus.OK);
+//    }
 
-            LOGGER.info("[Enter] testStillLogin");
-        // 현재 로그인 된 사용자의 정보 가져오기
-        if(user == null) {
-            LOGGER.info("[Error] cannot find user information");
-            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
-        }
-        LOGGER.info("현재 로그인 된 사용자 정보 : {}", user.toString());
-        return new ResponseEntity<>(true, HttpStatus.OK);
-    }
+//    @GetMapping("/testStillLogin")
+//    public ResponseEntity<Boolean> testStillLogin(@AuthenticationPrincipal CustomUserDetails user){
+//
+//            LOGGER.info("[Enter] testStillLogin");
+//        // 현재 로그인 된 사용자의 정보 가져오기
+//        if(user == null) {
+//            LOGGER.info("[Error] cannot find user information");
+//            return new ResponseEntity<>(false, HttpStatus.NO_CONTENT);
+//        }
+//
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUsername()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 id: {}", user.getUser().getId()); // id 추출 성공
+//        LOGGER.info("현재 로그인 된 사용자 정보 username: {}", user.getUser().getName());
+//        LOGGER.info("현재 로그인 된 사용자 정보 role: {}", user.getUser().getRole());
+//
+//        return new ResponseEntity<>(true, HttpStatus.OK);
+//    }
 
     @GetMapping("/id-check")
     public ResponseEntity<?> idCheck(@RequestParam String id) {

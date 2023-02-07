@@ -305,6 +305,7 @@ public class GroupServiceImpl implements GroupService{
         GroupRecruitRespDto groupRecruitRespDto = new GroupRecruitRespDto(group);
         groupRecruitRespDto.setSuccess(true);
         groupRecruitRespDto.setTitle(board.getTitle());
+        groupRecruitRespDto.setBoardId(board.getId());
         groupRecruitRespDto.setContent(board.getContent());
         groupRecruitRespDto.setUserId(board.getUser().getId());
         groupRecruitRespDto.setRegisteredTime(board.getRegisteredTime());
