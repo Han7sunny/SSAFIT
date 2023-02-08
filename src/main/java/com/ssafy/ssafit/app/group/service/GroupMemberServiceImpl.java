@@ -64,6 +64,12 @@ public class GroupMemberServiceImpl implements GroupMemberService{
 //        deleteByGroupIdAndUserId ?
     }
 
+    @Override
+    public void acceptInvitation(long groupId, String userId) {
+        GroupMember groupMember = groupMemberRepository.findByGroupIdAndUserId(groupId, userId);
+        groupMember.setAcceptInvitation(true);
+        groupMemberRepository.save(groupMember);
+    }
 
 
 }

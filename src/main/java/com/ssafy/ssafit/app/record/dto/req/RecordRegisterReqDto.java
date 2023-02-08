@@ -17,4 +17,5 @@ public class RecordRegisterReqDto {
     private int startDay;
     private Long routineId;
 
+    private Long groupId;
 }

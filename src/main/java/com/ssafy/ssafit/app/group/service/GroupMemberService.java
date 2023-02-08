@@ -4,6 +4,7 @@ import com.ssafy.ssafit.app.board.dto.req.BoardReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.group.entity.GroupMember;
+import com.ssafy.ssafit.app.user.entity.User;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface GroupMemberService {
     void addGroupMember(GroupMemberReqDto groupMember);
 
     void deleteGroupMember(GroupMemberReqDto groupMember);
+
+    void acceptInvitation(long groupId, String userId);
 }

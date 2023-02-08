@@ -6,6 +6,7 @@ import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRecruitRespDto;
 import com.ssafy.ssafit.app.group.dto.resp.GroupRespDto;
 import com.ssafy.ssafit.app.group.entity.Group;
+import com.ssafy.ssafit.app.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,4 +30,5 @@ public interface GroupService {
     List<GroupRecruitRespDto> getGroupRecruitList();
 
     List<GroupRespDto> getMyGroupList(String userId);
+
 }

@@ -3,6 +3,7 @@ package com.ssafy.ssafit.app.record.service;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
+import com.ssafy.ssafit.app.group.repository.GroupRepository;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
@@ -33,6 +34,7 @@ import java.util.List;
 @Service
 public class RecordServiceImpl implements RecordService{
 
+    private final GroupRepository groupRepository;
     RecordRepository recordRepository;
     RecordDetailRepository recordDetailRepository;
     RoutineRepository routineRepository;
@@ -47,7 +49,7 @@ public class RecordServiceImpl implements RecordService{
     public RecordServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository, RoutineRepository routineRepository, UserRepository userRepository, ExerciseRepository exerciseRepository,
                              ExerciseTypeRepository exerciseTypeRepository,
                              NotificationRepository notificationRepository,
-                             RoutineService routineService) {
+                             RoutineService routineService, GroupRepository groupRepository) {
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
@@ -56,6 +58,7 @@ public class RecordServiceImpl implements RecordService{
         this.exerciseTypeRepository = exerciseTypeRepository;
         this.notificationRepository = notificationRepository;
         this.routineService = routineService;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -68,6 +71,9 @@ public class RecordServiceImpl implements RecordService{
                 .startDate(startDate)
                 .achievementRate(0.0)
                 .build();
+
+        if(recordRegisterReqDto.getGroupId() != 0)
+            record.setGroup(groupRepository.findById(recordRegisterReqDto.getGroupId()).get());
 
         recordRepository.save(record);
 

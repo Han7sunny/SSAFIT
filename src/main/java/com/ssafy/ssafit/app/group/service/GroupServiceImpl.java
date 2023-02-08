@@ -40,13 +40,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.*;
 
 @Service
@@ -156,7 +153,7 @@ public class GroupServiceImpl implements GroupService{
 
     @Override
     public void modifyGroupRecruit(GroupReqDto group, long groupId) {
-
+// 그룹 모집글을 수정하면 그룹도 수정해야함ㅋㅋ;
         Group getGroup = groupRepository.findById(groupId).get();
         Board getBoard = boardRepository.findByGroupId(groupId);
         getBoard.setTitle(group.getTitle());
@@ -202,6 +199,12 @@ public class GroupServiceImpl implements GroupService{
         groupMemberList.add(groupRegister);
         getGroup.setGroupMember(groupMemberList);
 
+        getGroup.setStartRecruitDate(group.getStartRecruitDate());
+        getGroup.setEndRecruitDate(group.getEndRecruitDate());
+        getGroup.setStartDate(group.getStartDate());
+        getGroup.setEndDate(group.getEndDate());
+        getGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays());
+
         groupMemberRepository.save(groupRegister);
         groupRepository.save(getGroup); // 여기서 에러 삭제된 값을 가져올 수 없어서
         boardRepository.save(getBoard);
@@ -211,6 +214,7 @@ public class GroupServiceImpl implements GroupService{
     // scheduler annotation
     @Override
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 매일 0시 0분 0초 그룹 멤버 확정
+    @Transactional
     public void startGroupConfirm() {
         List<Group> groupList = groupRepository.findAllByStartDate(LocalDate.now());
         for (Group group : groupList) {
@@ -225,7 +229,7 @@ public class GroupServiceImpl implements GroupService{
                     if (period < routineIdList.size()) {
                         for (int i = 0; i < period; i++){
                             LocalDate recordDate = group.getStartDate().plusDays(i);
-                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(i))).build(), recordDate);
+                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).groupId(group.getId()).routineId(Long.valueOf(routineIdList.get(i))).build(), recordDate);
                         }
                     }
                     else {
@@ -236,7 +240,7 @@ public class GroupServiceImpl implements GroupService{
                             LocalDate recordDate = group.getStartDate().plusDays(i);
 //                            recordDate = recordDate.plusDays(1);
                             LOGGER.info("{} {} {} ",recordDate.getYear(), recordDate.getMonthValue(), recordDate.getDayOfMonth());
-                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).routineId(Long.valueOf(routineIdList.get(routineIdx++))).build(),recordDate);
+                            recordService.registerExercise(RecordRegisterReqDto.builder().userId(groupMember.getUser().getId()).groupId(group.getId()).routineId(Long.valueOf(routineIdList.get(routineIdx++))).build(),recordDate);
                             if(routineIdx == routineSize)
                                 routineIdx = 0;
                         }
@@ -407,6 +411,7 @@ public class GroupServiceImpl implements GroupService{
 
         return myGroupList;
     }
+
 
     @Scheduled(cron = "10 0 0 1/1 * ?", zone = "Asia/Seoul")
     public void findStartGroup() {

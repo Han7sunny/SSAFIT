@@ -5,10 +5,7 @@ import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.user.entity.User;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -17,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 public class Record {
 

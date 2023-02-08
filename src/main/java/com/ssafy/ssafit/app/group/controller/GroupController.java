@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +134,7 @@ public class GroupController {
         String userId = user.getUsername();
         group.setUserId(userId);
         Group newGroup = new Group(group);
+        newGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays());
         newGroup.setCurrentMember(group.getGroupMemberId().size());
 
         // 그룹 생성  ( + 루틴 설정)
@@ -239,6 +241,22 @@ public class GroupController {
         String userId = user.getUsername();
         // 해당 그룹에서 본인을 삭제
         groupMemberService.deleteGroupMember(GroupMemberReqDto.builder().groupId(groupId).userId(userId).build());
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/invitation/accept/{groupId}")
+    @ApiOperation(value = "그룹 초대 요청 수락", notes = "그룹 초대 요청을 수락한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> acceptInvitation(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+        LOGGER.info("Called acceptInvitation. ");
+        groupMemberService.acceptInvitation(groupId, user.getUsername());
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @GetMapping("/invitation/deny/{groupId}")
+    @ApiOperation(value = "그룹 초대 요청 거절", notes = "그룹 초대 요청을 거절한다.", response = Boolean.class)
+    public ResponseEntity<Boolean> denyInvitation(@PathVariable("groupId") @ApiParam(value = "그룹 ID", required = true) long groupId, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
+        LOGGER.info("Called acceptInvitation. ");
+        groupMemberService.deleteGroupMember(GroupMemberReqDto.builder().userId(user.getUsername()).groupId(groupId).build());
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 }
