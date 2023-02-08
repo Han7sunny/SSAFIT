@@ -1,18 +1,38 @@
-import axios from "axios";
-import React, { useState, useRef } from "react";
-import { View, ScrollView, SafeAreaView, TouchableOpacity, Image, StyleSheet } from 'react-native'
-import { TextInput, Button, Text, Switch, Modal  } from 'react-native-paper'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import SelectMultiple from 'react-native-select-multiple'
+import axios from 'axios';
+import React, {useState, useRef, useEffect} from 'react';
+import {
+  View,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
+import {
+  TextInput,
+  Button,
+  Text,
+  Switch,
+  Modal,
+  IconButton,
+  RadioButton,
+} from 'react-native-paper';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import MultiSelect from 'react-native-multiple-select';
 
 export default function CreateGroupScreen({navigation}) {
-  const my = {memberid: 'lhj', isMember: false, userId: 'test123'}
+  const token =
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
+
+  const my = {memberid: 'lhj', isMember: false, userId: 'test123'};
   const [isEnabled, setIsEnabled] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectDate, setselectDate] = useState('');
+  const [checked, setChecked] = React.useState('id');
 
-  const [Data,setData] = useState({
+  const [Data, setData] = useState({
     title: '',
     name: '',
     member: [],
@@ -26,250 +46,390 @@ export default function CreateGroupScreen({navigation}) {
     content: '',
   });
 
-  const showDatePicker = (date) => {
+  const showDatePicker = date => {
     setDatePickerVisibility(true);
     setselectDate(date);
   };
 
-  const hideDatePicker = () =>setDatePickerVisibility(false);
+  const hideDatePicker = () => setDatePickerVisibility(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-  const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
+  const handleConfirm = date => {
+    console.warn('A date has been picked: ', date);
     let day = date.toLocaleDateString().split('/');
-    day = `${day[2]}-${day[0].padStart(2,'0')}-${day[1].padStart(2,'0')}`
+    day = `${day[2]}-${day[0].padStart(2, '0')}-${day[1].padStart(2, '0')}`;
     switch (selectDate) {
-      case 'startDate': setData(pre => Object.assign({}, pre, {startDate: day})); break;
-      case 'endDate':   setData(pre => Object.assign({}, pre, {endDate: day})); break;
-      case 'startRecruitDate': setData(pre => Object.assign({}, pre, {startRecruitDate: day})); break;
-      case 'endRecruitDate':   setData(pre => Object.assign({}, pre, {endRecruitDate: day})); break;
+      case 'startDate':
+        setData(pre => Object.assign({}, pre, {startDate: day}));
+        break;
+      case 'endDate':
+        setData(pre => Object.assign({}, pre, {endDate: day}));
+        break;
+      case 'startRecruitDate':
+        setData(pre => Object.assign({}, pre, {startRecruitDate: day}));
+        break;
+      case 'endRecruitDate':
+        setData(pre => Object.assign({}, pre, {endRecruitDate: day}));
+        break;
     }
     hideDatePicker();
   };
 
   const createGroup = async () => {
-    const result = await axios.post(`http://70.12.246.116:8080/group/regist`,{
-      "categoryId": Number(0),
-      "content": Data.content,
-      "currentMember": Number(Data.member ? Data.member.length : 0),
-      "endDate": Data.endDate,
-      "endRecruitDate": Data.endRecruitDate,
-      "goal": Number(Data.goal),
-      "groupMemberId": Data.member,
-      "groupName": Data.name,
-      "groupRoutineId": [
-        "string"
-      ],
-      "maximumMember": Number(Data.maxMemberNum),
-      "penalty": Data.penalty,
-      "period": Number(0),
-      "sharePost": isEnabled,
-      "startDate": Data.startDate,
-      "startRecruitDate": Data.startRecruitDate,
-      "title": Data.title,
-      "userId": my.userId
-    })
+    setData(pre => Object.assign({}, pre, {title: ''}));
+    const result = await axios.post(
+      `http://70.12.246.116:8080/group/regist`,
+      {
+        categoryId: Number(0),
+        content: Data.content,
+        currentMember: Number(Data.member ? Data.member.length : 0),
+        endDate: Data.endDate,
+        endRecruitDate: Data.endRecruitDate,
+        goal: Number(Data.goal),
+        groupMemberId: Data.member,
+        groupName: Data.name,
+        groupRoutineId: ['string'],
+        maximumMember: Number(Data.maxMemberNum),
+        penalty: Data.penalty,
+        period: Number(0),
+        sharePost: isEnabled,
+        startDate: Data.startDate,
+        startRecruitDate: Data.startRecruitDate,
+        title: Data.title,
+        userId: my.userId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-AUTH-TOKEN': `${token}`,
+        },
+      },
+    );
     console.log(result);
-    if(result) navigation.navigate('GroupListScreen')
-  }
+    if (result)
+      navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen');
+  };
 
-  const [Lists, setLists] = useState([{"userId": "david1235", "userName": "아뇽"}, {"userId": "dkdlel", "userName": "notfound"}, {"userId": "dkdlel1", "userName": "username1"}, {"userId": "gkfrpdjqtk", "userName": "slrspdla"}, {"userId": "test123", "userName": "test123"}, {"userId": "test1xoa", "userName": "서니"}, {"userId": "test22", "userName": "투투"}, {"userId": "test456", "userName": "test456"}, {"userId": "testlogin", "userName": "로그인테스트용"}, {"userId": "testLoginTest", "userName": "testName"}, {"userId": "xoa1235", "userName": "서니사라ㅇ"}]);
+  const [Lists, setLists] = useState([
+    // {userId: 'david1235', userName: '아뇽'},
+    // {userId: 'dkdlel', userName: 'notfound'},
+    // {userId: 'dkdlel1', userName: 'username1'},
+    // {userId: 'gkfrpdjqtk', userName: 'slrspdla'},
+    // {userId: 'test123', userName: 'test123'},
+    // {userId: 'test1xoa', userName: '서니'},
+    // {userId: 'test22', userName: '투투'},
+    // {userId: 'test456', userName: 'test456'},
+    // {userId: 'testlogin', userName: '로그인테스트용'},
+    // {userId: 'testLoginTest', userName: 'testName'},
+    // {userId: 'xoa1235', userName: '서니사라ㅇ'},
+  ]);
   //useState([]);
-  const [selectLists, setSelectLists] = useState([]);
+  const [selecUsers, setSelectUsers] = useState([]);
   const [findUser, setFindUser] = useState('');
+  onSelectedUsersChange = selecUsers => {
+    setSelectUsers(selecUsers);
+  };
 
   const showModal = async () => {
     // const data = (await axios.get(`http://70.12.246.116:8080/group/search?name=${findUser}`)).data;
     // setLists(data);
     // console.log(data);
+    // console.log(Lists);
     setIsOpenModal(true);
-  }
-  const hideModal = () => setIsOpenModal(false);
-  onSelectionsChange = (selectLists) => {
-    setSelectLists(selectLists)
-    // setData(pre => Object.assign({}, pre, {member: value}))
-    console.log(selectLists)
-  }
-  onDeletionsChange = (value) => {
-    const filter = selectLists.filter(e => e.value !== value)
-    setSelectLists(filter)
-    console.log(filter)
-  }
+  };
+  const hideModal = () => {
+    setData(pre => Object.assign({}, pre, {member: selecUsers}));
+    setIsOpenModal(false);
+  };
+  // onSelectionsChange = (selectLists) => {
+  //   setSelectLists(selectLists)
+  //   // setData(pre => Object.assign({}, pre, {member: value}))
+  //   console.log(selectLists)
+  // }
+  // onDeletionsChange = (value) => {
+  //   const filter = selectLists.filter(e => e.value !== value)
+  //   setSelectLists(filter)
+  //   console.log(filter)
+  // }
   const renderLabel = (label, style) => {
-    console.log(label)
+    console.log(label);
     return (
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <View style={{marginLeft: 10}}>
           <Text style={style}>{label}</Text>
         </View>
       </View>
-    )
-  }
+    );
+  };
+
+  const getMember = () => {
+    console.log(1);
+    if (findUser.length === 1) {
+      const getData = async () => {
+        const data = (
+          await axios.get(
+            `http://70.12.246.102:8080/group/search?name=${findUser}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'X-AUTH-TOKEN': `${token}`,
+              },
+            },
+          )
+        ).data;
+        setLists(data);
+      };
+    }
+  };
 
   return (
-    <SafeAreaView >
-      { !isEnabled && <Text variant="headlineLarge" style={{fontWeight:'bold', margin:10, marginBottom: 30}}> 그룹 생성 </Text> }
-      { isEnabled && <Text variant="headlineLarge" style={{fontWeight:'bold', margin:10, marginBottom: 30}}> 그룹 게시글 작성 </Text>}
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+    <SafeAreaView>
+      {!isEnabled && (
+        <Text
+          variant="headlineLarge"
+          style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
+          {' '}
+          그룹 생성{' '}
+        </Text>
+      )}
+      {isEnabled && (
+        <Text
+          variant="headlineLarge"
+          style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
+          {' '}
+          그룹 게시글 작성{' '}
+        </Text>
+      )}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
         <Text variant="headlineSmall">그룹 공개여부</Text>
-        <Switch
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
+        <Switch onValueChange={toggleSwitch} value={isEnabled} />
       </View>
-      <View style={{maxHeight:550, minHeight: 550}}>
-      <ScrollView
-        keyboardDismissMode = 'on-drag'
-        scrollToOverflowEnabled = 'true'
-      >
-        { isEnabled && <View>
-          <Text>제목</Text>
-          <TextInput 
-              value={Data.title}
-              mode="outlined"
-              returnKeyType="next"
-              onChangeText={value => setData(pre => Object.assign({}, pre, {title: value}))}
-              onSubmitEditing={()=>{
-                console.log(Data.title);
-              }}
-            />
-        </View>
-        }
-        <View>
-          <Text>그룹명</Text>
-          <TextInput 
+      <View style={{maxHeight: 550, minHeight: 550}}>
+        <ScrollView
+          keyboardDismissMode="on-drag"
+          scrollToOverflowEnabled="true">
+          {isEnabled && (
+            <View>
+              <Text>제목</Text>
+              <TextInput
+                value={Data.title}
+                mode="outlined"
+                returnKeyType="next"
+                onChangeText={value =>
+                  setData(pre => Object.assign({}, pre, {title: value}))
+                }
+                onSubmitEditing={() => {
+                  console.log(Data.title);
+                }}
+                clearButtonMode="always"
+              />
+            </View>
+          )}
+          <View>
+            <Text>그룹명</Text>
+            <TextInput
               value={Data.name}
               mode="outlined"
               returnKeyType="next"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {name: value}))}
-              onSubmitEditing={()=>{
+              onChangeText={value =>
+                setData(pre => Object.assign({}, pre, {name: value}))
+              }
+              onSubmitEditing={() => {
                 console.log(Data.name);
               }}
             />
-        </View>
-        <View>
-          <Text>그룹원</Text>
-          <TextInput 
-              value={findUser}
+          </View>
+          <View>
+            <Text>그룹원</Text>
+            <View>
+              <IconButton icon={'plus-circle-outline'} onPress={showModal} />
+            </View>
+            {/* <TextInput
+              value={Data.member}
               mode="outlined"
               returnKeyType="next"
-              onChangeText={(value) => setFindUser(value)}
-              right={<TextInput.Icon icon='plus-circle-outline' onPress={showModal}/>}
-              onSubmitEditing={()=>{
+              onChangeText={value => setFindUser(value)}
+              right={
+                <TextInput.Icon
+                  icon="plus-circle-outline"
+                  onPress={showModal}
+                />
+              }
+              onSubmitEditing={() => {
                 console.log(findUser);
               }}
-            />
-        </View>
-        { isEnabled && <View>
-          <Text>모집인원</Text>
-          <TextInput 
-              value={Data.maxMemberNum}
-              mode="outlined"
-              returnKeyType="next"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {maxMemberNum: value}))}
-              onSubmitEditing={()=>{
-                console.log(Data.maxMemberNum);
-              }}
-              
-            />
-        </View>
-        }
-        { isEnabled && <View>
-          <Text>모집 기간</Text>
-            <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            /> */}
+          </View>
+          {isEnabled && (
+            <View>
+              <Text>모집인원</Text>
               <TextInput
-                value={Data.startRecruitDate}
+                value={Data.maxMemberNum}
                 mode="outlined"
-                onChangeText={(value) => setData(pre => Object.assign({}, pre, {startRecruitDate: value}))}
                 returnKeyType="next"
-                right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('startRecruitDate')} />}
+                onChangeText={value =>
+                  setData(pre => Object.assign({}, pre, {maxMemberNum: value}))
+                }
+                onSubmitEditing={() => {
+                  console.log(Data.maxMemberNum);
+                }}
+              />
+            </View>
+          )}
+          {isEnabled && (
+            <View>
+              <Text>모집 기간</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <TextInput
+                  value={Data.startRecruitDate}
+                  mode="outlined"
+                  onChangeText={value =>
+                    setData(pre =>
+                      Object.assign({}, pre, {startRecruitDate: value}),
+                    )
+                  }
+                  returnKeyType="next"
+                  right={
+                    <TextInput.Icon
+                      icon="calendar"
+                      onPress={() => showDatePicker('startRecruitDate')}
+                    />
+                  }
+                  style={{width: 185}}
+                  onSubmitEditing={() => {
+                    console.log(Data.startRecruitDate);
+                  }}
+                />
+                <Text variant="headlineMedium"> ~ </Text>
+                <TextInput
+                  value={Data.endRecruitDate}
+                  mode="outlined"
+                  onChangeText={value =>
+                    setData(pre =>
+                      Object.assign({}, pre, {endRecruitDate: value}),
+                    )
+                  }
+                  returnKeyType="next"
+                  right={
+                    <TextInput.Icon
+                      icon="calendar"
+                      onPress={() => showDatePicker('endRecruitDate')}
+                    />
+                  }
+                  style={{width: 185}}
+                  onSubmitEditing={() => {
+                    console.log(Data.endRecruitDate);
+                  }}
+                />
+              </View>
+            </View>
+          )}
+          <View>
+            <Text>그룹 운동 기간</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <TextInput
+                value={Data.startDate}
+                mode="outlined"
+                onChangeText={value =>
+                  setData(pre => Object.assign({}, pre, {startDate: value}))
+                }
+                returnKeyType="next"
+                right={
+                  <TextInput.Icon
+                    icon="calendar"
+                    onPress={() => showDatePicker('startDate')}
+                  />
+                }
                 style={{width: 185}}
-                onSubmitEditing={()=>{
-                  console.log(Data.startRecruitDate);
-                }}/>
+                onSubmitEditing={() => {
+                  console.log(Data.startDate);
+                }}
+              />
               <Text variant="headlineMedium"> ~ </Text>
               <TextInput
-                value={Data.endRecruitDate}
+                value={Data.endDate}
                 mode="outlined"
-                onChangeText={(value) => setData(pre => Object.assign({}, pre, {endRecruitDate: value}))}
+                onChangeText={value =>
+                  setData(pre => Object.assign({}, pre, {endDate: value}))
+                }
                 returnKeyType="next"
-                right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('endRecruitDate')} />}
+                right={
+                  <TextInput.Icon
+                    icon="calendar"
+                    onPress={() => showDatePicker('endDate')}
+                  />
+                }
                 style={{width: 185}}
-                onSubmitEditing={()=>{
-                  console.log(Data.endRecruitDate);
-                }}/>
-            </View>          
-        </View>
-        }
-        <View>
-          <Text>그룹 운동 기간</Text>
-          <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <TextInput
-              value={Data.startDate}
-              mode="outlined"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {startDate: value}))}
-              returnKeyType="next"
-              right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('startDate')} />}
-              style={{width: 185}}
-              onSubmitEditing={()=>{
-                console.log(Data.startDate);
-              }}/>
-            <Text variant="headlineMedium"> ~ </Text>
-            <TextInput
-              value={Data.endDate}
-              mode="outlined"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {endDate: value}))}
-              returnKeyType="next"
-              right={ <TextInput.Icon icon="calendar"  onPress={()=>showDatePicker('endDate')} />}
-              style={{width: 185}}
-              onSubmitEditing={()=>{
-                console.log(Data.endDate);
-              }}/>
+                onSubmitEditing={() => {
+                  console.log(Data.endDate);
+                }}
+              />
+            </View>
           </View>
-        </View>
-        <View>
-          <Text>그룹 목표</Text>
-          <TextInput 
+          <View>
+            <Text>그룹 목표</Text>
+            <TextInput
               value={Data.goal}
               returnKeyType="next"
               mode="outlined"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {goal: value}))}
-              onSubmitEditing={()=>{
+              onChangeText={value =>
+                setData(pre => Object.assign({}, pre, {goal: value}))
+              }
+              onSubmitEditing={() => {
                 console.log(Data.goal);
               }}
             />
-        </View>
-        <View>
-          <Text>그룹 패널티</Text>
-          <TextInput 
+          </View>
+          <View>
+            <Text>그룹 패널티</Text>
+            <TextInput
               value={Data.penalty}
               returnKeyType="next"
               mode="outlined"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {penalty: value}))}
-              onSubmitEditing={()=>{
+              onChangeText={value =>
+                setData(pre => Object.assign({}, pre, {penalty: value}))
+              }
+              onSubmitEditing={() => {
                 console.log(Data.penalty);
               }}
             />
-        </View>
-        
-        { isEnabled && <View>
-          <Text>내용</Text>
-          <TextInput 
-              value={Data.content}
-              mode="outlined"
-              onChangeText={(value) => setData(pre => Object.assign({}, pre, {content: value}))}
-              onSubmitEditing={()=>{
-                console.log(Data.content);
-              }}
-            />
-        </View>
-        }
+          </View>
 
+          {isEnabled && (
+            <View>
+              <Text>내용</Text>
+              <TextInput
+                value={Data.content}
+                mode="outlined"
+                onChangeText={value =>
+                  setData(pre => Object.assign({}, pre, {content: value}))
+                }
+                onSubmitEditing={() => {
+                  console.log(Data.content);
+                }}
+              />
+            </View>
+          )}
         </ScrollView>
       </View>
       <Button
         mode="contained"
-        buttonColor='black'
+        buttonColor="black"
         style={styles.button}
         labelStyle={styles.label}
         onPress={createGroup}>
@@ -281,18 +441,50 @@ export default function CreateGroupScreen({navigation}) {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-      <Modal presentationStyle={"FullScreen"} visible={isOpenModal} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
-      <SelectMultiple
-        hideTags
-        uniqueKey='userId'
-        items={Lists}
-        renderLabel={renderLabel}
-        selectedItems={selectLists}
-        onSelectionsChange={onSelectionsChange} />
+      <Modal
+        presentationStyle={'FullScreen'}
+        visible={isOpenModal}
+        onDismiss={hideModal}>
+        <View>
+          <RadioButton
+            value="ID"
+            status={checked === 'id' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('id')}
+          />
+          <RadioButton
+            value="NAME"
+            status={checked === 'name' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('name')}
+          />
+        </View>
+        <MultiSelect
+          hideTags
+          items={Lists}
+          displayKey={checked === 'id' ? 'userId' : 'userName'}
+          uniqueKey="userId"
+          onSelectedItemsChange={onSelectedUsersChange}
+          selectedItems={selecUsers}
+          selectText="Pick Items"
+          searchInputPlaceholderText="Search Items..."
+          onChangeInput={text => {
+            setFindUser(text);
+            console.log(findUser);
+          }}
+          altFontFamily="ProximaNova-Light"
+          tagRemoveIconColor="#CCC"
+          tagBorderColor="#CCC"
+          tagTextColor="#fff"
+          selectedItemTextColor="#CCC"
+          selectedItemIconColor="#CCC"
+          itemTextColor="#000"
+          searchInputStyle={{color: '#CCC'}}
+          submitButtonColor="#CCC"
+          submitButtonText="Submit"
+          fixedHeight={true}
+        />
       </Modal>
-      
-    </SafeAreaView >
-  )
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -301,15 +493,20 @@ const styles = StyleSheet.create({
     height: 1,
   },
   button: {
-    width:350, 
+    width: 350,
     height: 50,
-    borderRadius:10,
+    borderRadius: 10,
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
-    label:{
-      fontSize:18, 
-      fontWeight: 'bold',
-      marginTop:17
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 17,
   },
+  // containerStyle: {
+  //   backgroundColor: 'red',
+  //   padding: 20,
+  //   height: 400
+  // },
 });

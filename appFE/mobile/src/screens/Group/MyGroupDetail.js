@@ -1,59 +1,87 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { View, Image, FlatList, StyleSheet } from 'react-native'
-import { Button, IconButton, MD3Colors, Text, Avatar  } from 'react-native-paper'
-import MemberScreen from './MemberScreen'
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {View, Image, FlatList, StyleSheet} from 'react-native';
+import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import MemberScreen from './MemberScreen';
 
 export default function MyGroupSimple({navigation, route}) {
+  const token =
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
+
   const id = route.params.id;
-  const [item, setItem] = useState({
-    "achievement_rate": 0,
-    "current_member": 0,
-    "end_date": "string",
-    "goal": 0,
-    "groupId": 0,
-    "groupMemberList": [
-      {
-        "acceptInvitation": true,
-        "achievementRate": 0,
-        "groupId": 0,
-        "groupMemberId": 0,
-        "on_off": true,
-        "userId": "string",
-        "userName": "string"
-      }
-    ],
-    "maximum_member": 0,
-    "msg": "string",
-    "name": "string",
-    "penalty": "string",
-    "period": 0,
-    "routineList": [
-      {
-        "name": "string",
-        "routineId": 0
-      }
-    ],
-    "start_date": "string",
-    "success": true
-  })
-  // useState({});
-  // useEffect( async () =>{
-  //   const data = (await axios.get(`http://70.12.246.116:8080/group/${id}`)).data;
-  //   setItem(data);
-  //   console.log(data);
-  // }, []);
-  console.log(route.params.id)
+  const [item, setItem] =
+    // useState({
+    //   "achievement_rate": 0,
+    //   "current_member": 0,
+    //   "end_date": "string",
+    //   "goal": 0,
+    //   "groupId": 0,
+    //   "groupMemberList": [
+    //     {
+    //       "acceptInvitation": true,
+    //       "achievementRate": 0,
+    //       "groupId": 0,
+    //       "groupMemberId": 0,
+    //       "on_off": true,
+    //       "userId": "string",
+    //       "userName": "string"
+    //     }
+    //   ],
+    //   "maximum_member": 0,
+    //   "msg": "string",
+    //   "name": "string",
+    //   "penalty": "string",
+    //   "period": 0,
+    //   "routineList": [
+    //     {
+    //       "name": "string",
+    //       "routineId": 0
+    //     }
+    //   ],
+    //   "start_date": "string",
+    //   "success": true
+    // })
+    useState({});
+  useEffect(() => {
+    console.log(id);
+    const getData = async () => {
+      const data = (
+        await axios.get(`http://70.12.246.116:8080/group/` + Number(id), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-AUTH-TOKEN': `${token}`,
+          },
+        })
+      ).data;
+      setItem(data);
+      console.log(data);
+    };
+    getData();
+  }, [id]);
   const deleteGroup = async () => {
-    const result = (await axios.delete(`http://70.12.246.116:8080/group/${id}`)).data;
-    if(result) navigation.navigate('MainMyPageScreen')
-  }
+    const result = (
+      await axios.delete(`http://70.12.246.116:8080/group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-AUTH-TOKEN': `${token}`,
+        },
+      })
+    ).data;
+    if (result) navigation.navigate('MainMyPageScreen');
+  };
   return (
     <View>
-      <Text variant="displayLarge" style={{fontWeight: 'bold', margin: 20, marginBottom:0}}>{item.name}</Text>
+      <Text
+        variant="displayLarge"
+        style={{fontWeight: 'bold', margin: 20, marginBottom: 0}}>
+        {item.name}
+      </Text>
       <View style={styles.container}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image source={require('./icon.png')} style={{width: 70, height: 70,margin: 10}}/>
+          <Image
+            source={require('./icon.png')}
+            style={{width: 70, height: 70, margin: 10}}
+          />
           <View>
             <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
             <Text>sfg</Text>
@@ -62,7 +90,9 @@ export default function MyGroupSimple({navigation, route}) {
 
         <View>
           <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
-          <Text>{item.start_date} ~ {item.end_date}</Text>
+          <Text>
+            {item.start_date} ~ {item.end_date}
+          </Text>
         </View>
 
         <View>
@@ -85,22 +115,20 @@ export default function MyGroupSimple({navigation, route}) {
           data={item.groupMemberList}
           style={{height: 290}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => (
-            <MemberScreen member={item}/>
-          )}
+          renderItem={({item}) => <MemberScreen member={item} />}
           keyExtractor={item => item.userName.toString()}
         />
       </View>
       <Button
         mode="contained"
-        buttonColor='red'
+        buttonColor="red"
         style={styles.button}
         labelStyle={styles.label}
         onPress={deleteGroup}>
         그룹 탈퇴
-    </Button>
+      </Button>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -116,19 +144,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,
-    margin:20
+    margin: 20,
   },
   button: {
-    width:370, 
+    width: 370,
     height: 50,
-    borderRadius:10,
-    alignSelf: 'center'
+    borderRadius: 10,
+    alignSelf: 'center',
   },
-  label:{
-      fontSize:18, 
-      fontWeight: 'bold',
-      marginTop:17
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 17,
   },
-})
-
-
+});
