@@ -203,7 +203,7 @@ public class GroupServiceImpl implements GroupService{
         getGroup.setEndRecruitDate(group.getEndRecruitDate());
         getGroup.setStartDate(group.getStartDate());
         getGroup.setEndDate(group.getEndDate());
-        getGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays());
+        getGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays() + 1);
 
         groupMemberRepository.save(groupRegister);
         groupRepository.save(getGroup); // 여기서 에러 삭제된 값을 가져올 수 없어서

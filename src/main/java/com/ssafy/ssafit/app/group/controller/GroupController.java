@@ -134,7 +134,7 @@ public class GroupController {
         String userId = user.getUsername();
         group.setUserId(userId);
         Group newGroup = new Group(group);
-        newGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays());
+        newGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays() + 1);
         newGroup.setCurrentMember(group.getGroupMemberId().size());
 
         // 그룹 생성  ( + 루틴 설정)
