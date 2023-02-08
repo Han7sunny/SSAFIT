@@ -1,102 +1,161 @@
-import React, { useState }from 'react';
-import { View, Text, Image, FlatList, StyleSheet, TouchableOpacity, Button } from 'react-native'
-import { Modal, IconButton, MD3Colors } from 'react-native-paper'
-import styled from 'styled-components/native'
-import GroupListSimpleScreen from './GroupListSimpleScreen'
-
-
-const Title = styled.Text`
-  font-size: 40px;
-  font-weight: 600;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {View, FlatList, StyleSheet} from 'react-native';
+import {
+  Modal,
+  Button,
+  Text,
+  IconButton,
+  Provider,
+  Portal,
+} from 'react-native-paper';
+import SelectMultiple from 'react-native-select-multiple';
+import MultiSelect from 'react-native-multiple-select';
+import GroupListSimpleScreen from './GroupListSimpleScreen';
 
 export default function GroupListScreen({navigation}) {
-  const [FilterList, setFilterList] = useState([12]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [isSelectA, setIsSelectA] = useState(false);
-  const [isSelectB, setIsSelectB] = useState(false);
-  const [isSelectC, setIsSelectC] = useState(false);
-  const Filters = ['a', 'b','c']
-  const now = [isSelectA, isSelectB, isSelectC]
-  const change = [setIsSelectA, setIsSelectB,setIsSelectC]
-  const Lists = [
-    {id: 0, title: 'a', content: 'asdfasdf', nowNum: 2, totalNum: 10, heart: 5, comment: 3},
-    {id: 1, title: 'b', content: 'fdhjg324', nowNum: 1, totalNum:  3, heart: 1, comment: 5},
-    {id: 2, title: 'c', content: 'fghjmgjkfvdh5432', nowNum: 10, totalNum:  20, heart: 10, comment: 15},
-    {id: 3, title: 'd', content: '3457646 8fgd', nowNum: 1, totalNum:  8, heart: 1, comment: 5},
-  ]
+  const [SelectFilter, setSelectFilter] = useState([]);
+  const [Lists, setLists] = useState([]);
+  const Filters = [
+    {id: 1, name: '인원'},
+    {id: 2, name: '패널티'},
+    {id: 3, name: '모집인원'},
+    {id: 4, name: '운동기간'},
+  ];
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = (await axios.get('http://70.12.246.116:8080/group/recruit'))
+        .data;
+      setLists(data);
+      console.log(data);
+    };
+    getData();
+  }, []);
 
   const showModal = () => setIsOpenModal(true);
   const hideModal = () => setIsOpenModal(false);
-  const click = (idx)  =>{
-    change[idx](!now[idx]);
-
-
-  }   // function click(idx){
-  //   console.log('click')
-  // }
-  
-
- return (
-  <View style={{flex: 1}}>
-    <View>
-      <Title> 그룹 모집 </Title>
-      <View style={{padding: 10, flexDirection: 'row-reverse'}}>
-        <TouchableOpacity onPress={() => navigation.navigate('CreateGroupScreen')}>
-          <Image source={require('./plus.png')} style={{width:50, height: 50}}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={showModal}>
-          <Image source={require('./icon.png')} style={{width:50, height: 50}}/>
-        </TouchableOpacity>
+  onSelectionsChange = SelectFilter => {
+    setSelectFilter(SelectFilter);
+    console.log(SelectFilter);
+  };
+  onDeletionsChange = value => {
+    const filter = SelectFilter.filter(e => e.value !== value);
+    setSelectFilter(filter);
+    Filters.push('asdf');
+    console.log(filter);
+  };
+  const renderLabel = (label, style) => {
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{marginLeft: 10}}>
+          <Text style={style}>{label}</Text>
+        </View>
       </View>
-      <View style={{flexDirection: 'row'}}>
-        {now.map((item,idx) =>
-          item && <View style={{width:30, flexDirection: 'row', margin:10}}>
-            <Text>{Filters[idx]}</Text>
-            <Button 
-            title={Filters[idx]} 
-            onPress = {()=>click(idx)}/> 
+    );
+  };
 
-          </View>        
-        )}
+  return (
+    <Provider style={{flex: 1}}>
+      <View
+        style={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <Text
+          variant="headlineLarge"
+          style={{fontWeight: 'bold', marginTop: 10}}>
+          {' '}
+          그룹 모집{' '}
+        </Text>
+        <View style={{padding: 10, flexDirection: 'row-reverse'}}>
+          <IconButton
+            icon="plus-circle-outline"
+            iconColor="black"
+            size={50}
+            onPress={() => navigation.navigate('CreateGroupScreen')}
+            style={styles.iconButton}
+          />
+          <IconButton
+            icon="tune-variant"
+            iconColor="black"
+            size={50}
+            onPress={showModal}
+            style={styles.iconButton}
+          />
+        </View>
       </View>
-      <FlatList
+      <View
+        style={{
+          flexDirection: 'row',
+          minHeight: 50,
+          maxHeight: 50,
+          backgroundColor: 'red',
+          padding: 0,
+        }}>
+        {/* {SelectFilter.map((item, idx) => (
+          <Button
+            mode="contained"
+            style={[
+              styles.button,
+              {width: Math.max((item.label.length + 1) * 29, 100)},
+            ]}
+            labelStyle={styles.label}
+            onPress={() => onDeletionsChange(item.value)}>
+            {item.label} X
+          </Button>
+        ))} */}
+      </View>
+      <View style={{minHeight: 550, maxHeight: 550}}>
+        <FlatList
           data={Lists}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
-            <GroupListSimpleScreen 
-              item={item}
-              navigation={navigation}/>
+            <GroupListSimpleScreen item={item} navigation={navigation} />
           )}
-          keyExtractor={item => item.title.toString()}
+          keyExtractor={item => item.boardId.toString()}
         />
-    </View>
-    <Modal presentationStyle={"FullScreen"} visible={isOpenModal} onDismiss={hideModal}>
-    <View style={{flexDirection: 'row'}}>
-        {now.map((item,idx) =>
-          item && <View style={{width:30, flexDirection: 'row', margin:10}}>
-            <Text>{Filters[idx]}</Text>
-            <Button 
-            title={Filters[idx]} 
-            onPress = {()=>click(idx)}/> 
-
-          </View>        
-        )}
       </View>
-      {Filters.map((item,idx) =>(
-        // console.log(idx)
-        <View key={idx}>
-          <Button 
-            title={item} 
-            onPress = {()=>click(idx)}
-            /> 
-        </View>
-      ))}
-    </Modal>
-  </View>
- ) 
+
+      <Portal>
+        <Modal
+          presentationStyle={'FullScreen'}
+          visible={isOpenModal}
+          onDismiss={hideModal}
+          contentContainerStyle={styles.containerStyle}>
+          {/* <SelectMultiple
+            items={Filters}
+            renderLabel={renderLabel}
+            selectedItems={SelectFilter}
+            onSelectionsChange={onSelectionsChange}
+          /> */}
+          <MultiSelect
+            // hideTags
+            items={Filters}
+            uniqueKey="name"
+            onSelectedItemsChange={onSelectionsChange}
+            selectedItems={SelectFilter}
+            selectText="Pick Items"
+            searchInputPlaceholderText="Search Items..."
+            onChangeInput={text => console.log(text)}
+            altFontFamily="ProximaNova-Light"
+            tagRemoveIconColor="#999"
+            tagBorderColor="#999"
+            tagTextColor="#999"
+            selectedItemTextColor="#999"
+            selectedItemIconColor="#999"
+            itemTextColor="#000"
+            displayKey="name"
+            searchInputStyle={{color: '#999'}}
+            submitButtonColor="#999"
+            submitButtonText="Submit"
+          />
+        </Modal>
+      </Portal>
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -104,16 +163,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     height: 1,
   },
-  container: {
-    flex: 1,
-    flexWrap: 'wrap',
-    marginTop: 8,
-    backgroundColor: 'aliceblue',
-    maxHeight: 400,
+  iconButton: {
+    margin: 0,
   },
-  box: {
-    height: 40,
-    fontWeight: 'bold', 
-    fontSize:25
+  containerStyle: {
+    backgroundColor: 'white',
+    padding: 20,
+    height: 400,
+  },
+  button: {
+    width: 130,
+    flexDirection: 'row',
+    margin: 5,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

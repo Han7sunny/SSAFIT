@@ -1,34 +1,87 @@
-import React from "react";
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
-import styled from 'styled-components/native'
-import MemberScreen from './MemberScreen'
-import Button from '../../components/Button'
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {View, Image, FlatList, StyleSheet} from 'react-native';
+import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import MemberScreen from './MemberScreen';
 
-const Title = styled.Text`
-  font-size: 60px;
-  font-weight: 800;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
+export default function MyGroupSimple({navigation, route}) {
+  const token =
+    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
 
-export default function MyGroupSimple({route}) {
   const id = route.params.id;
-  const item = {title: 'A', startDate: '2023/01/01', endDate: '2023/05/01', goal: '열심히 하자', penalty: '벌금', totalResult: 40,
-                member:[
-                  {id: 0, name: 'a', state: false, result: 80},
-                  {id: 1, name: 'b', state: true, result: 20},
-                  {id: 2, name: 'c', state: false, result: 50},
-                  {id: 3, name: 'd', state: true, result: 90},
-                ]
-              };
-  console.log(route.params.id)
+  const [item, setItem] =
+    // useState({
+    //   "achievement_rate": 0,
+    //   "current_member": 0,
+    //   "end_date": "string",
+    //   "goal": 0,
+    //   "groupId": 0,
+    //   "groupMemberList": [
+    //     {
+    //       "acceptInvitation": true,
+    //       "achievementRate": 0,
+    //       "groupId": 0,
+    //       "groupMemberId": 0,
+    //       "on_off": true,
+    //       "userId": "string",
+    //       "userName": "string"
+    //     }
+    //   ],
+    //   "maximum_member": 0,
+    //   "msg": "string",
+    //   "name": "string",
+    //   "penalty": "string",
+    //   "period": 0,
+    //   "routineList": [
+    //     {
+    //       "name": "string",
+    //       "routineId": 0
+    //     }
+    //   ],
+    //   "start_date": "string",
+    //   "success": true
+    // })
+    useState({});
+  useEffect(() => {
+    console.log(id);
+    const getData = async () => {
+      const data = (
+        await axios.get(`http://70.12.246.116:8080/group/` + Number(id), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-AUTH-TOKEN': `${token}`,
+          },
+        })
+      ).data;
+      setItem(data);
+      console.log(data);
+    };
+    getData();
+  }, [id]);
+  const deleteGroup = async () => {
+    const result = (
+      await axios.delete(`http://70.12.246.116:8080/group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'X-AUTH-TOKEN': `${token}`,
+        },
+      })
+    ).data;
+    if (result) navigation.navigate('MainMyPageScreen');
+  };
   return (
     <View>
-      <Title>{item.title}</Title>
-      <View>
-
+      <Text
+        variant="displayLarge"
+        style={{fontWeight: 'bold', margin: 20, marginBottom: 0}}>
+        {item.name}
+      </Text>
+      <View style={styles.container}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image source={require('./icon.png')} style={{width: 70, height: 70,margin: 10}}/>
+          <Image
+            source={require('./icon.png')}
+            style={{width: 70, height: 70, margin: 10}}
+          />
           <View>
             <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
             <Text>sfg</Text>
@@ -37,7 +90,9 @@ export default function MyGroupSimple({route}) {
 
         <View>
           <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
-          <Text>{item.startDate} ~ {item.endDate}</Text>
+          <Text>
+            {item.start_date} ~ {item.end_date}
+          </Text>
         </View>
 
         <View>
@@ -57,22 +112,23 @@ export default function MyGroupSimple({route}) {
 
         <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
         <FlatList
-          data={item.member}
+          data={item.groupMemberList}
           style={{height: 290}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => (
-            <MemberScreen member={item}/>
-          )}
-          keyExtractor={item => item.name.toString()}
+          renderItem={({item}) => <MemberScreen member={item} />}
+          keyExtractor={item => item.userName.toString()}
         />
       </View>
       <Button
-          mode="contained"
-          onPress={() => navigation.navigate('MainMyPageScreen')}>
-          그룹 탈퇴
+        mode="contained"
+        buttonColor="red"
+        style={styles.button}
+        labelStyle={styles.label}
+        onPress={deleteGroup}>
+        그룹 탈퇴
       </Button>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -80,6 +136,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     height: 1,
   },
-})
-
-
+  container: {
+    marginTop: 8,
+    backgroundColor: 'aliceblue',
+    minHeight: 550,
+    maxHeight: 550,
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
+    margin: 20,
+  },
+  button: {
+    width: 370,
+    height: 50,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 17,
+  },
+});

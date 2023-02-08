@@ -1,14 +1,7 @@
 import React from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
-import Button from '../../components/Button'
-import styled from 'styled-components/native'
+import { View, Image, FlatList, StyleSheet } from 'react-native'
+import { Button, Text } from 'react-native-paper'
 
-const Title = styled.Text`
-  font-size: 60px;
-  font-weight: 800;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
 
 export default function AddGroupScreen({navigation, route}) {
  console.log(route.params.id);
@@ -23,10 +16,8 @@ export default function AddGroupScreen({navigation, route}) {
               };
  return (
   <View>
-    <Text> 그룹 초대 요청 </Text>
-    <Title>{item.title}</Title>
-      <View>
-
+    <Text variant="displayLarge" style={{fontWeight: 'bold', margin: 20, marginBottom:0}}>{item.title}</Text>
+      <View style={styles.container}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image source={require('../Group/icon.png')} style={{width: 70, height: 70,margin: 10}}/>
           <View>
@@ -61,23 +52,48 @@ export default function AddGroupScreen({navigation, route}) {
           keyExtractor={item => item.name.toString()}
         />
       </View>
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('AddScreen', {id: id})}>
-        수락
-    </Button>
-    <Button
-        mode="contained"
-        onPress={() => navigation.navigate('CancelScreen', {id: id})}>
-        거절
-    </Button>
+      <View style={{alignItems: 'center'}}>
+        <Button
+            mode="contained"
+            buttonColor='black'
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={() => navigation.navigate('AddScreen', {id: id})}>
+            수락
+        </Button>
+        <Button
+            mode="contained"
+            buttonColor='red'
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={() => navigation.navigate('CancelScreen', {id: id})}>
+            거절
+        </Button>
+    </View>
   </View>
  ) 
 }
 
 const styles = StyleSheet.create({
-    separator: {
-      backgroundColor: '#e0e0e0',
-      height: 1,
-    },
-  })
+  separator: {
+    backgroundColor: '#e0e0e0',
+    height: 1,
+  },
+  button: {
+    width:350, 
+    height: 50,
+    margin: 10,
+    borderRadius:10
+  },
+  label:{
+      fontSize:18, 
+      fontWeight: 'bold',
+      marginTop:17
+  },
+  container:{
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
+    margin:20
+  }
+});

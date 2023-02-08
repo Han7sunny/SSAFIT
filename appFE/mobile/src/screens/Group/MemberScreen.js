@@ -12,10 +12,10 @@ const Title = styled.Text`
 export default function MemberScreen({member}) {
   return (
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-      {member.state && <Image source={require('./on.png')} style={{width:50, height: 50}}/>}
-      {!member.state && <Image source={require('./off.png')} style={{width:50, height: 50}}/>}
-      <Title>{member.name}</Title>
-      <Text>{member.result}</Text>
+      {member.on_off && <Image source={require('./on.png')} style={{width:50, height: 50}}/>}
+      {!member.on_off && <Image source={require('./off.png')} style={{width:50, height: 50}}/>}
+      <Title>{member.userName}</Title>
+      <Text>{member.achievementRate}</Text>
     </View>
   )
 }
