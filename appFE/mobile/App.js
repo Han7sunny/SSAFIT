@@ -25,6 +25,7 @@ import {
   MyRoutineListScreen,
   RoutineDetailScreen,
   MyGroup,
+  RoutineReservationScreen,
 } from './src/screens/Main';
 
 import {
@@ -40,6 +41,7 @@ import {
   ArticleDetailScreen,
   CreateArticleScreen,
   ArticleListScreen,
+  RoutineListScreen,
 } from './src/screens/Community'
 
 import {
@@ -51,10 +53,11 @@ import {
   CancelScreen,
 } from './src/screens/My'
 
-import RoutineItem from './src/components/RoutineListItem';
+import {MyRecordScreen} from './src/screens/Record';
+
+import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
 import { Text } from 'react-native-paper';
-
 
 const Tab = createBottomTabNavigator();
 const MainStack = createNativeStackNavigator();
@@ -65,11 +68,14 @@ const LoginStack = createNativeStackNavigator();
 
 const MainStackNavigator = () => {
   return(
-  <MainStack.Navigator initialRouteName='HomeScreen'>
+  <MainStack.Navigator initialRouteName='LoginScreen'>
     <MainStack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
+    <MainStack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }}/>
+    <MainStack.Screen name="RegisterScreen" component={RegisterScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="CreateRoutineScreen" component={CreateRoutineScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="MyRoutineListScreen" component={MyRoutineListScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="RoutineDetailScreen" component={RoutineDetailScreen} options={{ headerShown: false }}/>
+    <MainStack.Screen name="RoutineReservationScreen" component={RoutineReservationScreen} options={{ headerShown: false }}/>
     <MainStack.Screen name="MyGroup" component={MyGroup}/>
   </MainStack.Navigator>
   )
@@ -92,6 +98,7 @@ const CommunityStackNavigator = () => {
     <CommunityStack.Screen name="ArticleDetailScreen" component={ArticleDetailScreen} options={{ headerShown: false }}/>
     <CommunityStack.Screen name="CreateArticleScreen" component={CreateArticleScreen} options={{ headerShown: false }}/>
     <CommunityStack.Screen name="ArticleListScreen" component={ArticleListScreen} options={{ headerShown: false }}/>
+    <CommunityStack.Screen name="RoutineListScreen" component={RoutineListScreen} options={{ headerShown: false }}/>
   </CommunityStack.Navigator>
   )
 }
@@ -126,14 +133,13 @@ function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={MainStackNavigator}/>
         <Tab.Screen name="Group" component={GroupStackNavigator}/>
+        <Tab.Screen name="Record" component={MyRecordScreen}/>
+        <Tab.Screen name="Home" component={MainStackNavigator}/>
         <Tab.Screen name="Community" component={CommunityStackNavigator}/>
         <Tab.Screen name="MyPage" component={MyPageStackNavigator}/>
-        <Tab.Screen name="Login" component={LoginStackNavigator}/>
+        {/* <Tab.Screen name="Login" component={LoginStackNavigator}/> */}
       
-       
-
         {/* components */}
         {/* <Stack.Screen name='RoutineItem' component={RoutineItem} />
         <Stack.Screen name='ArticleItem' component={ArticleItem} /> */}

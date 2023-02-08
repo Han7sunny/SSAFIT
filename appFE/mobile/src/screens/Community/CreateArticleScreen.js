@@ -1,19 +1,70 @@
 import React, { useState, useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
+<<<<<<< HEAD
+import { Text, Checkbox } from 'react-native-paper'
+=======
 import { Text } from 'react-native-paper'
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 import { SelectList } from 'react-native-dropdown-select-list'
 import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import axios from 'axios'
+<<<<<<< HEAD
+import AsyncStorage from '@react-native-async-storage/async-storage'
+=======
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 
 
 export default function CreateArticleScreen({ navigation }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+<<<<<<< HEAD
+  const [accessToken, setAccessToken] = useState('')
+  const [categoryId, setCategoryId] = useState(0)
+  const [isValid, setIsValid] = useState(false)
+  const [userId, setUserId] = useState('')
+  const [routineData, setRoutineData] = useState([])
+  const [selected, setSelected] = useState(0)   // selected : 선택된 routineId가 저장됨
+  const [share, setShare] = useState(true)
+=======
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 
   function onPost() {
     axios({
       method: 'post',
+<<<<<<< HEAD
+      url: 'http://70.12.246.102:8080/board/regist',
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      },
+      data: {
+        "board_id": 0,
+        "category_id": categoryId,
+        "content": content,
+        "groupId": 0,
+        "modifiedTime": "",
+        "registeredTime":"",
+        "routineId": selected,
+        "sharePost": true,
+        "title": title,
+        "user_id": `${userId}`
+      }
+    })
+  }
+  const onChangeCategory = (event) => {
+    setCategoryId(event)
+    if (event === 3) {
+      setIsValid(true)
+    } else if (event === 1) {
+      setIsValid(false)
+    }
+  }
+
+  const onChangeTitle = (event) => {
+    event.persist()
+    // console.log(event.nativeEvent)
+=======
       url: 'http://70.12.246.102:8080/board/post',
       headers: {
         authorization: `${123435689}`
@@ -34,10 +85,28 @@ export default function CreateArticleScreen({ navigation }) {
   const onChangeTitle = (event) => {
     event.persist()
     console.log(event.nativeEvent)
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
     setTitle(event.nativeEvent.title)
   }
   const onChangeContent = (event) => {
     event.persist()
+<<<<<<< HEAD
+    // console.log(event.nativeEvent)
+    setContent(event.nativeEvent.content)
+    }
+
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      // console.log(UserInfo)
+      setAccessToken(UserInfo.token)
+      setUserId(UserInfo.id)
+      // console.log('게시글 작성학 ㅣ위해 필요한 토큰 :' , accessToken)
+    })
+      axios({
+        method: 'get',
+        url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`
+=======
     console.log(event.nativeEvent)
     setContent(event.nativeEvent.content)
     }
@@ -49,6 +118,7 @@ export default function CreateArticleScreen({ navigation }) {
       axios({
         method: 'get',
         url: 'http://70.12.246.102:8080/routine/get-user-routine/asdf1234'
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
       })
       .then(function (res) {
         let newData = res.data.map((item) => {
@@ -58,6 +128,26 @@ export default function CreateArticleScreen({ navigation }) {
       })
       .catch(function (error) {
         console.log(error)
+<<<<<<< HEAD
+      })
+  }, [])
+  const category = [
+    {key: 2, value:"질문"}, 
+    {key: 3, value:"루틴 공유"}
+  ]
+  return (
+    <View style={styles.centeredView}>
+      <Text> Create Article </Text>
+      <SelectList 
+        data={category}
+        save="key"
+        placeholder='글 타입 선택'
+        setSelected={(value) => {
+          setCategoryId(value),
+          console.log('?????',categoryId)
+          }}
+      />
+=======
       }, [])
     }
     getData()
@@ -80,12 +170,17 @@ export default function CreateArticleScreen({ navigation }) {
   return (
     <View>
       <Text> Create Article </Text>
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
       <TextInput
         label="제목"
         value={title}
         onChange={(value) => onChangeTitle(value)}
         />
+<<<<<<< HEAD
+        {isValid && <View style={styles.centeredView}>
+=======
         <View style={styles.centeredView}>
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
           <SelectList 
             data={routineData}
             save="key"
@@ -93,13 +188,27 @@ export default function CreateArticleScreen({ navigation }) {
             setSelected={(key) => {setSelected(Number(key)), console.log('selected :',selected)}}
             onSelect={() => alert(selected)}
             />
+<<<<<<< HEAD
+        </View>}
+=======
         </View>
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 
       <TextInput
         label="내용을 입력하세요"
         value={content}
         onChange={(value) => onChangeContent(value)}
         />
+<<<<<<< HEAD
+      <Checkbox 
+        status={share ? 'checked' : 'unchecked'}
+        onPress={() => {
+          setShare(!share)
+        }}
+      />
+      
+=======
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
       <Button
         mode="contained"
         onPress={() => {

@@ -4,6 +4,11 @@ import TextInput from '../../components/TextInput'
 import Button from '../../components/Button'
 import { emailValidator } from '../../components/AuthValidator'
 
+<<<<<<< HEAD
+// 비밀번호 찾기 컴포넌트 
+
+=======
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: ''})
 
