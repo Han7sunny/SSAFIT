@@ -10,6 +10,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function LoginScreen({ navigation }) {
   const [id, setId] = useState({ value: '', error: ''})
   const [password, setPassword] = useState({ value: '', error: ''})
+  useEffect(() => {
+    async function isLogin() {
+      AsyncStorage.getItem('username', (err, result) => {
+        const UserInfo = JSON.parse(result)
+        if (UserInfo) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen'}]
+          })
+        }
+      })
+    }
+    isLogin()
+  })
 
   const onLoginPressed = () => {
     axios({

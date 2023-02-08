@@ -12,15 +12,14 @@ export default function MyRoutineListScreen({ navigation }) {
   const [userId, setUserId] = useState('')
   const [accessToken, setAccessToken] = useState('')
   useEffect(() => {
-    console.log(1111111111)
-    AsyncStorage.getItem('username', (err, result) => {
-      // const UserInfo = result
-      const UserInfo = JSON.parse(result)       // JSON.parse를 꼭 해줘야 한다!
-      setAccessToken(UserInfo.token)
-      setUserId(UserInfo.id)
-      // console.log('더 빨리 나와야 되는댕...',UserInfo.token)
-    })
-  console.log(222222222)
+    async function getUserInfo() {
+      await AsyncStorage.getItem('username', (err, result) => {
+        const UserInfo = JSON.parse(result)
+        setAccessToken(UserInfo.token)
+        setUserId(UserInfo.id)
+      })
+    }
+    getUserInfo()
   // console.log(accessToken)
   const getData = async() => {
     // console.log('my routine list screen : ', accessToken)
