@@ -12,6 +12,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   StartScreen,
@@ -74,116 +75,11 @@ const GroupSide = createDrawerNavigator();
 const CommunitySide = createDrawerNavigator();
 const MyPageSide = createDrawerNavigator();
 const LoginSide = createDrawerNavigator();
-
 const Notice = createNativeStackNavigator();
-const MainStackNavigator = () => {
-  return (
-    <MainStack.Navigator initialRouteName="LoginScreen">
-      <MainStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="CreateRoutineScreen"
-        component={CreateRoutineScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="MyRoutineListScreen"
-        component={MyRoutineListScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="RoutineDetailScreen"
-        component={RoutineDetailScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen
-        name="RoutineReservationScreen"
-        component={RoutineReservationScreen}
-        options={{headerShown: false}}
-      />
-      <MainStack.Screen name="MyGroup" component={MyGroup} />
-    </MainStack.Navigator>
-  );
-};
-const GroupStackNavigator = () => {
-  return (
-    <GroupStack.Navigator initialRouteName="GroupListScreen">
-      <GroupStack.Screen
-        name="GroupListScreen"
-        component={GroupListScreen}
-        options={{headerShown: false}}
-      />
-      <GroupStack.Screen
-        name="GroupListDetailScreen"
-        component={GroupListDetailScreen}
-        options={{headerShown: false}}
-      />
-      <GroupStack.Screen
-        name="MyGroupListScreen"
-        component={MyGroupListScreen}
-        options={{headerShown: false}}
-      />
-      <GroupStack.Screen
-        name="MyGroupDetail"
-        component={MyGroupDetail}
-        options={{headerShown: false}}
-      />
-      <GroupStack.Screen
-        name="CreateGroupScreen"
-        component={CreateGroupScreen}
-        options={{headerShown: false}}
-      />
-    </GroupStack.Navigator>
-  );
-};
-const CommunityStackNavigator = () => {
-  return (
-    <CommunityStack.Navigator initialRouteName="CommunityScreen">
-      <CommunityStack.Screen
-        name="CommunityScreen"
-        component={CommunityScreen}
-        options={{headerShown: false}}
-      />
-      <CommunityStack.Screen
-        name="ArticleDetailScreen"
-        component={ArticleDetailScreen}
-        options={{headerShown: false}}
-      />
-      <CommunityStack.Screen
-        name="CreateArticleScreen"
-        component={CreateArticleScreen}
-        options={{headerShown: false}}
-      />
-      <CommunityStack.Screen
-        name="ArticleListScreen"
-        component={ArticleListScreen}
-        options={{headerShown: false}}
-      />
-      <CommunityStack.Screen
-        name="RoutineListScreen"
-        component={RoutineListScreen}
-        options={{headerShown: false}}
-      />
-    </CommunityStack.Navigator>
-  );
-};
 
 const MainSideNavigator = () => {
   return (
-    <MainSide.Navigator initialRouteName="HomeScreen">
+    <MainSide.Navigator initialRouteName={false ? 'HomeScreen' : 'LoginScreen'}>
       <MainSide.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -206,6 +102,26 @@ const MainSideNavigator = () => {
       />
       <MainSide.Screen name="MyGroup" component={MyGroup} />
       <MainSide.Screen name="RoutineItem" component={RoutineItem} />
+      <MainSide.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="MyGroupListScreen"
+        component={MyGroupListScreen}
+        options={{headerShown: false}}
+      />
     </MainSide.Navigator>
   );
 };
@@ -363,6 +279,7 @@ function App() {
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName="Home"
+        unmountOnBlur={true}
         screenOptions={({route}) => ({
           tabBarIcon: ({focused, color, size}) => {
             let iconName;

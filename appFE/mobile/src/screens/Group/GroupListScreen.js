@@ -9,7 +9,6 @@ import {
   Provider,
   Portal,
 } from 'react-native-paper';
-import SelectMultiple from 'react-native-select-multiple';
 import MultiSelect from 'react-native-multiple-select';
 import GroupListSimpleScreen from './GroupListSimpleScreen';
 
@@ -41,19 +40,9 @@ export default function GroupListScreen({navigation}) {
     console.log(SelectFilter);
   };
   onDeletionsChange = value => {
-    const filter = SelectFilter.filter(e => e.value !== value);
+    const filter = SelectFilter.filter(e => e !== value);
     setSelectFilter(filter);
-    Filters.push('asdf');
     console.log(filter);
-  };
-  const renderLabel = (label, style) => {
-    return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{marginLeft: 10}}>
-          <Text style={style}>{label}</Text>
-        </View>
-      </View>
-    );
   };
 
   return (
@@ -95,18 +84,18 @@ export default function GroupListScreen({navigation}) {
           backgroundColor: 'red',
           padding: 0,
         }}>
-        {/* {SelectFilter.map((item, idx) => (
+        {SelectFilter.map((item, idx) => (
           <Button
             mode="contained"
             style={[
               styles.button,
-              {width: Math.max((item.label.length + 1) * 29, 100)},
+              {width: Math.max((item.length + 1) * 29, 100)},
             ]}
             labelStyle={styles.label}
-            onPress={() => onDeletionsChange(item.value)}>
-            {item.label} X
+            onPress={() => onDeletionsChange(item)}>
+            {item} X
           </Button>
-        ))} */}
+        ))}
       </View>
       <View style={{minHeight: 550, maxHeight: 550}}>
         <FlatList
@@ -125,12 +114,6 @@ export default function GroupListScreen({navigation}) {
           visible={isOpenModal}
           onDismiss={hideModal}
           contentContainerStyle={styles.containerStyle}>
-          {/* <SelectMultiple
-            items={Filters}
-            renderLabel={renderLabel}
-            selectedItems={SelectFilter}
-            onSelectionsChange={onSelectionsChange}
-          /> */}
           <MultiSelect
             // hideTags
             items={Filters}

@@ -1,14 +1,6 @@
 import axios from 'axios';
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import {View, ScrollView, SafeAreaView, StyleSheet} from 'react-native';
 import {
   TextInput,
   Button,
@@ -20,12 +12,19 @@ import {
 } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import MultiSelect from 'react-native-multiple-select';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateGroupScreen({navigation}) {
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
-
-  const my = {memberid: 'lhj', isMember: false, userId: 'test123'};
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
+  const my = {memberid: 'lhj', isMember: false, userId: {userId}};
   const [isEnabled, setIsEnabled] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -100,8 +99,8 @@ export default function CreateGroupScreen({navigation}) {
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'X-AUTH-TOKEN': `${token}`,
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
       },
     );
@@ -151,34 +150,26 @@ export default function CreateGroupScreen({navigation}) {
   //   setSelectLists(filter)
   //   console.log(filter)
   // }
-  const renderLabel = (label, style) => {
-    console.log(label);
-    return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{marginLeft: 10}}>
-          <Text style={style}>{label}</Text>
-        </View>
-      </View>
-    );
-  };
 
   const getMember = text => {
-    console.log(text);
     if (text.length === 1) {
+      console.log(text);
       const getData = async () => {
         const data = (
           await axios.get(
-            `http://70.12.246.102:8080/group/search?name=${text}`,
+            `http://70.12.246.116:8080/group/search?name=${text}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
-                'X-AUTH-TOKEN': `${token}`,
+                Authorization: `Bearer ${accessToken}`,
+                'X-AUTH-TOKEN': `${accessToken}`,
               },
             },
           )
         ).data;
         setLists(data);
+        console.log(data);
       };
+      getData();
     }
   };
 
@@ -444,40 +435,45 @@ export default function CreateGroupScreen({navigation}) {
       <Modal
         presentationStyle={'FullScreen'}
         visible={isOpenModal}
-        onDismiss={hideModal}>
-        <View>
-          <RadioButton
-            value="ID"
-            status={checked === 'id' ? 'checked' : 'unchecked'}
-            onPress={() => setChecked('id')}
-          />
-          <RadioButton
-            value="NAME"
-            status={checked === 'name' ? 'checked' : 'unchecked'}
-            onPress={() => setChecked('name')}
-          />
+        onDismiss={hideModal}
+        contentContainerStyle={{backgroundColor: 'white'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', margin: 10}}>
+            <RadioButton
+              value="ID"
+              status={checked === 'id' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('id')}
+            />
+            <Text>ID</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <RadioButton
+              value="NAME"
+              status={checked === 'name' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('name')}
+            />
+            <Text>NAME</Text>
+          </View>
         </View>
         <MultiSelect
-          hideTags
-          items={Lists}
+          // hideTags
+          items={Lists ? Lists : [{userId: '1', userName: '1'}]}
           displayKey={checked === 'id' ? 'userId' : 'userName'}
           uniqueKey="userId"
           onSelectedItemsChange={onSelectedUsersChange}
           selectedItems={selecUsers}
           selectText="Pick Items"
           searchInputPlaceholderText="Search Items..."
-          onChangeInput={text => {
-            getMember(text);
-          }}
+          onChangeInput={text => getMember(text)}
           altFontFamily="ProximaNova-Light"
-          tagRemoveIconColor="#CCC"
-          tagBorderColor="#CCC"
-          tagTextColor="#fff"
-          selectedItemTextColor="#CCC"
-          selectedItemIconColor="#CCC"
+          tagRemoveIconColor="#999"
+          tagBorderColor="#999"
+          tagTextColor="#000"
+          selectedItemTextColor="#999"
+          selectedItemIconColor="#999"
           itemTextColor="#000"
-          searchInputStyle={{color: '#CCC'}}
-          submitButtonColor="#CCC"
+          searchInputStyle={{color: '#999'}}
+          submitButtonColor="#bbb"
           submitButtonText="Submit"
           fixedHeight={true}
         />

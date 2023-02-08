@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {View, Image, FlatList, StyleSheet} from 'react-native';
 import {Button, TextInput, IconButton, Text} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function GroupDetailScreen({route}) {
   const id = route.params.id;
@@ -11,18 +12,34 @@ export default function GroupDetailScreen({route}) {
   const [isClickHeart, setIsClickHeart] = useState(0);
   const [text, setText] = useState('');
   const [item, setItem] = useState({});
+
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
   // useState({"achievementRate": 0, "boardId": 0, "categoryId": 0, "clickLikes": false, "content": "내용 바꿈ㅋㅋ", "currentMember": 2, "downloads": 0, "endDate": "2023-03-07", "endRecruitDate": null, "fileList": null, "goal": 89.24, "groupId": 1, "groupMemberList": [{"acceptInvitation": false, "achievementRate": 0, "groupId": 1, "groupMemberId": 2, "on_off": false, "userId": "test123", "userName": "test123"}], "groupName": "공주들", "groupRecruitReplyList": [{"board_id": 1, "content": "저를 받아주십시오.", "includedGroup": false, "msg": null, "registered_time": "2023-02-06T00:55:18.777+00:00", "reply_id": 1, "success": true, "userName": "test456", "user_id": "test456"}], "hits": 10, "likes": 0, "maximumMember": 5, "modifiedTime": "2023-02-06T11:21:30.166614", "msg": null, "penalty": "대가리 박박 밀기", "period": 5, "registeredTime": "2023-02-06T09:38:04.421357", "replyList": null, "replySize": 1, "routineId": 0, "routineList": [{"name": "루틴 1 _ test22", "routineId": 3}], "sharePost": true, "startDate": "2023-03-03", "startRecruitDate": null, "success": true, "title": "제목도 바꿔부러", "userId": "test1xoa", "userName": null});
   const [Reply, setReply] = useState([]);
-  useEffect(async () => {
-    const data = (
-      await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`)
-    ).data;
-    console.log(data);
-    setItem(data);
-    setReply(data.groupRecruitReplyList);
-    setIsHeartCnt(data.likes);
-    setIsClickHeart(data.clickLikes);
-  }, []);
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+    });
+    const getData = async () => {
+      const data = (
+        await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        })
+      ).data;
+      // console.log(data);
+      setItem(data);
+      setReply(data.groupRecruitReplyList);
+      setIsHeartCnt(data.likes);
+      setIsClickHeart(data.clickLikes);
+    };
+    getData();
+  }, [id]);
   const clickHeart = async () => {
     const data = await axios.get(
       `http://70.12.246.116:8080/group/recruit/${id}/likes`,
@@ -33,9 +50,15 @@ export default function GroupDetailScreen({route}) {
   };
   const deleteRecruit = async () => {
     const result = (
-      await axios.delete(`http://70.12.246.116:8080/group/recruit/${id}`)
+      await axios.delete(`http://70.12.246.116:8080/group/recruit/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
     ).data;
     if (result) navigation.navigate('MainMyPageScreen');
+    console.log(result);
   };
 
   const addReply = async () => {
@@ -51,6 +74,12 @@ export default function GroupDetailScreen({route}) {
         reply_id: Number(0),
         user_id: my.userId,
       },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      },
     );
     // setReply(Reply.push({memberid: my.memberid, commentText: text, isMember: my.isMember}));
     console.log(uploadReply);
@@ -62,20 +91,54 @@ export default function GroupDetailScreen({route}) {
     const result = (
       await axios.delete(
         `http://70.12.246.116:8080/group/recruit/${id}/${replyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        },
       )
     ).data;
+    console.log(result);
   };
 
   return (
-    <View style={{flex: 1}}>
-      <Text variant="headlineLarge" style={{fontWeight: 'bold', marginTop: 10}}>
-        {' '}
-        {item.title}{' '}
-      </Text>
-      <View style={{margin: 20}}>
-        <Title style={{fontSize: 25}}> {item.name} </Title>
+    <View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignContent: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text
+          variant="headlineLarge"
+          style={{fontWeight: 'bold', marginTop: 10}}>
+          {' '}
+          {item.title}{' '}
+        </Text>
+        <View style={{flexDirection: 'row'}}>
+          <Button
+            mode="contained"
+            buttonColor="black"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={{}}>
+            수정
+          </Button>
+          <Button
+            mode="contained"
+            buttonColor="red"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={deleteRecruit}>
+            삭제
+          </Button>
+        </View>
+      </View>
+      <View style={styles.container}>
+        <Text style={{fontSize: 25}}> {item.name} </Text>
         <Text style={[styles.box, {fontSize: 15, alignItems: 'flex-end'}]}>
-          <Title style={{fontSize: 15}}> 인원 </Title>
+          <Text style={{fontSize: 15}}> 인원 </Text>
           {item.currentMember}/{item.maximumMember} 명
         </Text>
         <Text style={{marginBottom: 20}}>{item.content}</Text>
@@ -94,19 +157,21 @@ export default function GroupDetailScreen({route}) {
         <Image source={require('./comment.png')} />
         <Text>{Reply ? Reply.length : 0}</Text>
       </View>
+      {/* <ReplyScreen reply={Reply} groupId={id} /> */}
       <FlatList
         data={Reply}
-        ItemSeparatorComponent={() => <View />}
-        renderItem={({item}) => {
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        renderItem={({item}) => (
+          // console.log(item);
           <View>
             <ReplyScreen reply={item} groupId={id} />
             <Button onPress={() => deleteReply(item.reply_id)}>
               댓글 삭제하기
             </Button>
-          </View>;
-        }}
-        keyExtractor={item => item.id}
-        style={{flex: 2}}
+          </View>
+        )}
+        keyExtractor={item => item.reply_id.toString()}
+        style={{height: 115, padding: 0}}
       />
       <View>
         <TextInput
@@ -125,11 +190,14 @@ const styles = StyleSheet.create({
     height: 1,
   },
   container: {
-    flex: 1,
-    flexWrap: 'wrap',
     marginTop: 8,
     backgroundColor: 'aliceblue',
+    minHeight: 400,
     maxHeight: 400,
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
+    margin: 20,
   },
   box: {
     height: 40,
