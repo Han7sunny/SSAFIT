@@ -3,21 +3,31 @@ import { View, StyleSheet } from 'react-native'
 import TextInput from './TextInput'
 import { SelectList } from 'react-native-dropdown-select-list'
 import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Trouble issue : 이 컴포넌트를 재 렌더링 시, 이전 컴포넌트의 값이 그대로 들어옴
 //                 즉, useState로 세팅해 둔 초기값이 적용이 안됨.
 
 const exerciseArea = ["전신", "상체", "하체",]
-let exerciseList = []
+// let exerciseList = []
 
 export default function RoutineInput({countNum, routineInfo}) {
   // const [routineName, setRoutineName] = useState('')
   const [exerciseId, setExerciseId] = useState(0)
   const [exerciseSet, setExerciseSet] = useState(0)
+  const [exerciseList, setExerciseList] = useState([])
   const [reps, setReps] = useState(0)
   const [restTimeMinutes, setRestTimeMinutes] = useState(0)
   const [restTimeSeconds, setRestTimeSeconds] = useState(0)
+  const [accessToken, setAccessToken] = useState('')
 
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      setAccessToken(UserInfo.token)
+
+    })
+  })
   const setRepsChangeHandler = (e) => {
     e.persist()
     setReps(Number(e.nativeEvent.text))
@@ -36,7 +46,7 @@ export default function RoutineInput({countNum, routineInfo}) {
     // console.log('마지막 data :', data)
   }
 
-  let data = {"exerciseId": exerciseId.value, "exerciseSet": exerciseSet, "reps": reps, "restTimeMinutes": restTimeMinutes, "restTimeSeconds": restTimeSeconds, "name": ""}
+  let data = {"exerciseId": exerciseId, "exerciseSet": exerciseSet, "reps": reps, "restTimeMinutes": restTimeMinutes, "restTimeSeconds": restTimeSeconds, "name": "exercise"}
   let sendData = undefined
 
   return (
@@ -59,15 +69,20 @@ export default function RoutineInput({countNum, routineInfo}) {
               console.log(exerciseId)
               axios({
                 method: 'get',
-                url: `http://70.12.246.102:8080/exercise/get-exercise-type?area=${exerciseId}`
+                url: `http://70.12.246.116:8080/exercise/get-exercise-type?area=${exerciseId}`,
+                headers: {
+                  "authorization": `Bearer ${accessToken}`,
+                  "X-AUTH-TOKEN":`${accessToken}`
+                }
               })
               .then(function (res){
                 console.log('어떤 운동 종류가 ㅣㅇㅆ는댝',res.data)
-                const rawData = res.data
-                rawData.forEach(element => {
-                  exerciseList.push({key: element.exerciseTypeId, value: element.exerciseTypeName})
+                let rawData = []
+                res.data.forEach(element => {
+                  rawData.push({key: element.exerciseTypeId, value: element.exerciseTypeName})
                 })
-                console.log(exerciseList)
+                setExerciseList(rawData)
+                // console.log(exerciseList)
               })
               }}
             placeholder="운동 부위 선택"
@@ -75,7 +90,7 @@ export default function RoutineInput({countNum, routineInfo}) {
           <SelectList 
             data={exerciseList}
             save="key"
-            setSelected={(value) => setExerciseId(value)}
+            setSelected={(value) => {setExerciseId(value), console.log(exerciseId)}}
             placeholder="운동 종류 선택"
           />
           <TextInput

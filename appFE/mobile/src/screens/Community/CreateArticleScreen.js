@@ -15,7 +15,7 @@ export default function CreateArticleScreen({ navigation }) {
   const [isValid, setIsValid] = useState(false)
   const [userId, setUserId] = useState('')
   const [routineData, setRoutineData] = useState([])
-  const [selected, setSelected] = useState(0)   // selected : 선택된 routineId가 저장됨
+  const [selectedroutine, setSelectedRoutine] = useState(0)   // selected : 선택된 routineId가 저장됨
   const [share, setShare] = useState(true)
 
   function onPost() {
@@ -33,7 +33,7 @@ export default function CreateArticleScreen({ navigation }) {
         "groupId": 0,
         "modifiedTime": "",
         "registeredTime":"",
-        "routineId": selected,
+        "routineId": selectedroutine,
         "sharePost": true,
         "title": title,
         "user_id": `${userId}`
@@ -106,7 +106,7 @@ export default function CreateArticleScreen({ navigation }) {
           data={routineData}
           save="key"
           placeholder='루틴을 선택하세요!'
-          setSelected={(key) => {setSelected(Number(key)), console.log('selected :',selected)}}
+          setSelected={(key) => {setSelectedRoutine(Number(key)), console.log('selected :',selected)}}
           onSelect={() => alert(selected)}
           />
       </View>}
@@ -121,6 +121,13 @@ export default function CreateArticleScreen({ navigation }) {
           setShare(!share)
         }}
       />
+      <Button
+        mode="contained"
+        onPress={() => { 
+          onPost,
+          navigation.navigate('ArticleListScreen')
+        }}
+      > 게시글 등록 </Button>
     </View>
   )
 }
@@ -168,33 +175,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-
-// 비운의 Modal
-// const [visible, setVisible] = useState(false)
-// const showModal = () => setVisible(true)
-// const hideModal = () => setVisible(false)
-// const containerStyle = {backgroundColor: 'white', padding: 20}
-{/* <Modal 
-visible={visible} 
-onDismiss={hideModal} 
-contentContainerStyle={containerStyle}
-style={{backgroundColor: "black"}}
->
-<Text>선택할 나의 운동 루틴 리스트 보여주기</Text>
-<View style={styles.modalView}>
-<FlatList 
-data={myRoutine}
-    renderItem={({item}) => (
-      <RoutineListItem 
-      routineId={item.routineId}
-      name={item.name}
-      />
-      )}
-      >
-  </FlatList>
-  </View>
-</Modal>
-<Button style={{marginTop: 30}} onPress={() => { showModal, getRoutineList }}>
-  Show
-</Button> */}

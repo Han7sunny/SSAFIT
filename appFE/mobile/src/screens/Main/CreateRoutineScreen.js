@@ -20,11 +20,11 @@ export default function CreateRoutineScreen({ navigation }) {
       // console.log(UserInfo)
       setAccessToken(UserInfo.token)
       setUserId(UserInfo.id)
-      // console.log('[루틴생성] 토큰 :' , accessToken)
     })
   }, [])
 // axios 요청 보낼 함수
 function onPost() {
+  console.log('루틴 생성 전 확인 = ',exerciseList)
   axios({
     method: 'post',
     url: 'http://70.12.246.116:8080/routine/generate-routine',
@@ -33,9 +33,9 @@ function onPost() {
       "X-AUTH-TOKEN":`${accessToken}`
     },
     data: {
-      "routineName": `${routineName}`,
-      "userId": userId,
       "exerciseList": exerciseList,
+      "routineName": routineName,
+      "userId": userId,
       "routineId": 0
     }
   })
@@ -80,8 +80,8 @@ function onPost() {
       <TextInput
         label="루틴 이름을 설정하세요!"
         value={routineName}
-        onChangeText={(text) => {
-          setRoutineName(text)
+        onChangeText={(value) => {
+          setRoutineName(value)
         }}
         // onEndEditing={() => {console.log('routineName 외않되 : ',routineName)}}
       />

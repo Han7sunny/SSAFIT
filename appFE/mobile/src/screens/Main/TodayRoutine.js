@@ -7,36 +7,34 @@ import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const today = new Date()
-export default function TodayRoutine() {
-  const [todayRoutine, setTodayRoutine] = useState([])
-  const [userId, setUserId] = useState('')
-  const [accessToken, setAccessToken] = useState('')
+export default function TodayRoutine(props) {
+  // const [todayRoutine, setTodayRoutine] = useState([])
+  // const [userId, setUserId] = useState('')
+  // const [accessToken, setAccessToken] = useState('')
   const navigation = useNavigation()
-  useEffect(() => {
-    AsyncStorage.getItem('username', (err,result) => {
-      const UserInfo = JSON.parse(result)
-      console.log('토큰',UserInfo.token)
-      setUserId(UserInfo.id)
-      setAccessToken(UserInfo.token)
-    })
-    axios({
-      method: 'get',
-      url: `http://70.12.246.116:8080/record/get-schedule/${userId}`,
-      headers: {
-        "authorization": `Bearer ${accessToken}`,
-        "X-AUTH-TOKEN":`${accessToken}`
-      }
-    })
-    .then((res) => {
-      console.log(res.data)
-      setTodayRoutine(res.data)
-    })
-    .catch((err) => {
-      console.log('today routine screen',err)
-    })
-  },[])
-
-
+  // useEffect(() => {
+  //   AsyncStorage.getItem('username', (err,result) => {
+  //     const UserInfo = JSON.parse(result)
+  //     console.log('today routine 토큰',UserInfo.token)
+  //     setUserId(UserInfo.id)
+  //     setAccessToken(UserInfo.token)
+  //   })
+  //   axios({
+  //     method: 'get',
+  //     url: `http://70.12.246.116:8080/record/get-schedule/${userId}?year=2023&month=2&day=8`,
+  //     headers: {
+  //       "authorization": `Bearer ${accessToken}`,
+  //       "X-AUTH-TOKEN":`${accessToken}`
+  //     }
+  //   })
+  //   .then((res) => {
+  //     console.log(res.data)
+  //     setTodayRoutine(res.data)
+  //   })
+  //   .catch((err) => {
+  //     console.log('today routine screen',err)
+  //   })
+  // },[])
   return(
     <View 
       style={styles.container}
@@ -53,8 +51,8 @@ export default function TodayRoutine() {
 
       {/* <Text style={styles.exercise}> {todayRoutine.routineName} </Text> */}
       <RoutineListItem 
-        routineId={todayRoutine.exerciseId}
-        name={todayRoutine.routineName}
+        routineId={props.exerciseId}
+        name={props.routineName}
       />
       {/* <View>
         <View>

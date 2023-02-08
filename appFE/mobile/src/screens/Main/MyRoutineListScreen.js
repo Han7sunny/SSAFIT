@@ -15,9 +15,11 @@ export default function MyRoutineListScreen({ navigation }) {
     AsyncStorage.getItem('username', (err, result) => {
       // const UserInfo = result
       const UserInfo = JSON.parse(result)       // JSON.parse를 꼭 해줘야 한다!
-      setUserId(UserInfo.id)
       setAccessToken(UserInfo.token)
+      setUserId(UserInfo.id)
+      console.log('더 빨리 나와야 되는댕...',UserInfo.token)
     })
+    console.log('my routine list screen : ', accessToken)
     axios({
       method: 'get',
       url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`,

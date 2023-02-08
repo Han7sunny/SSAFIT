@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { TouchableOpacity, StyleSheet, View } from "react-native";
+import { TouchableOpacity, StyleSheet, View, Alert } from "react-native";
 import { Text } from "react-native-paper";
 import Button from '../../components/Button'
 import TextInput from '../../components/TextInput'
@@ -14,7 +14,7 @@ export default function LoginScreen({ navigation }) {
   const onLoginPressed = () => {
     axios({
       method: 'post',
-      url: `http://70.12.246.102:8080/user/login`,
+      url: `http://70.12.246.116:8080/user/login`,
       data: {
         "id": id.value,
         "password": password.value,
@@ -29,18 +29,24 @@ export default function LoginScreen({ navigation }) {
         const userId = response.data.id
         AsyncStorage.setItem("username", JSON.stringify({"username": username,"id": userId, "token": token}), () =>{
           console.log('AsyncStorage에 유저 정보 저장 완료')
-          alert(response.data.msg)
+          Alert.alert(
+            'OPPS',response.data.msg, [
+              {text: '확인', onPress:() => navigation.reset({
+                index: 0,
+                routes: [{ name: 'HomeScreen'}]
+              })}
+            ])
         })
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'HomeScreen'}],
+        // })
       } else {
-        alert(response.data.msg)
+        Alert.alert(response.data.msg)
       }
     })
     .catch((err) => {
      console.log(err)
-    })
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'HomeScreen'}],
     })
   }
 

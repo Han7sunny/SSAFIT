@@ -27,7 +27,6 @@ import {
   MyRoutineListScreen,
   RoutineDetailScreen,
   MyGroup,
-  RoutineReservationScreen,
 } from './src/screens/Main';
 
 import {
@@ -61,7 +60,10 @@ import {
   NoticeDetailScreen,
 } from './src/screens/Notice';
 
-import {MyRecordScreen} from './src/screens/Record';
+import {
+  MyRecordScreen,
+  RoutineReservationScreen,
+} from './src/screens/Record';
 
 import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
@@ -183,7 +185,27 @@ const CommunityStackNavigator = () => {
 
 const MainSideNavigator = () => {
   return (
-    <MainSide.Navigator initialRouteName="HomeScreen">
+    <MainSide.Navigator initialRouteName="LoginScreen">
+       <MainSide.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="MyGroupListScreen"
+        component={MyGroupListScreen}
+        options={{headerShown: false}}
+      />
       <MainSide.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -202,6 +224,11 @@ const MainSideNavigator = () => {
       <MainSide.Screen
         name="RoutineDetailScreen"
         component={RoutineDetailScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="RoutineReservationScreen"
+        component={RoutineReservationScreen}
         options={{headerShown: false}}
       />
       <MainSide.Screen name="MyGroup" component={MyGroup} />

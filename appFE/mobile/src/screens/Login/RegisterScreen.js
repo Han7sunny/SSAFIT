@@ -4,7 +4,7 @@ import { Text, Button as Btn } from 'react-native-paper'
 import Button from '../../components/Button'
 import TextInput from '../../components/TextInput'
 import { theme } from '../../components/theme'
-import { emailValidator, nameValidator, passwordValidator, checkPasswordValidator } from "../../components/AuthValidator";
+// import { emailValidator, nameValidator, passwordValidator, checkPasswordValidator } from "../../components/AuthValidator";
 import axios from "axios";
 
 export default function RegisterScreen({ navigation }) {
@@ -16,16 +16,16 @@ export default function RegisterScreen({ navigation }) {
   const [checkPassword, setCheckPassword] = useState('')
 
   const onSubmit = () => {
-    const emailError = emailValidator(email.value)
-    const passwordError = passwordValidator(password.value)
-    const checkPasswordError = checkPasswordValidator(password.value, checkPassword.value)
-    if (emailError || passwordError || checkPasswordError) {
-      // setName({ ...name, error: nameError })
-      setEmail({ ...email, error: emailError })
-      setPassword({ ...password, error: passwordError })
-      setCheckPassword({ ...checkPassword, error: checkPasswordError })
-      return
-    }
+    // const emailError = emailValidator(email.value)
+    // const passwordError = passwordValidator(password.value)
+    // const checkPasswordError = checkPasswordValidator(password.value, checkPassword.value)
+    // if (emailError || passwordError || checkPasswordError) {
+    //   // setName({ ...name, error: nameError })
+    //   setEmail({ ...email, error: emailError })
+    //   setPassword({ ...password, error: passwordError })
+    //   setCheckPassword({ ...checkPassword, error: checkPasswordError })
+    //   return
+    // }
     axios({
       method: 'post',
       url: 'http://70.12.246.116:8080/user/join',

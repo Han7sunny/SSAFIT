@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-paper'
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
-import MyRoutineListScreen from './MyRoutineListScreen'
+import RoutineListItem from '../../components/RoutineItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '../../components/Button';
 import axios from 'axios';
@@ -13,9 +13,11 @@ export default function RoutineReservationScreen({ navigation }) {
   const [userId, setUserId] = useState('')
   const [accessToken, setAccessToken] = useState('')
   const [routineId, setRoutineId] = useState(0)
+  const [routineList, setRoutineList] = useState([])
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
+  const [loadRoutines, setLoadRoutines] = useState(false)
   // const [selectedDay, setSelectedDay] = useState('')
   const [isDateSelected, setIsDateSelected] = useState(false)
   // const currentDay = date.getDate()
@@ -27,9 +29,9 @@ export default function RoutineReservationScreen({ navigation }) {
       const UserInfo = JSON.parse(result)
       setUserId(UserInfo.id)
       setAccessToken(UserInfo.token)
-  })
+    })
   }, [])
-  const onPost = () => {
+  const onRegistration = () => {
     axios({
       method: 'post',
       url: `http://70.12.246.116:8080/record/record-registration`,
@@ -49,6 +51,24 @@ export default function RoutineReservationScreen({ navigation }) {
     })
     .catch((err) => {
       console.log(err)
+    })
+  }
+
+  const getMyRoutine = () => {
+    axios({
+      method: 'get',
+      url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`,
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
+    })
+    .then((res) => {
+      console.log(res.data)
+      setRoutineList(res.data)
+    })
+    .catch((err) => {
+      console.log('reservation / get my routine',err)
     })
   }
 
@@ -94,8 +114,27 @@ export default function RoutineReservationScreen({ navigation }) {
       {/* RoutineItem 뿌려주기 */}
       <Button
         mode="contained"
-        onPress={onPost}
-      >루틴 저장하기</Button>
+        onPress={() => {
+          setLoadRoutines(!loadRoutines),
+          getMyRoutine(),
+          console.log('예약하기 누름ㅇ리ㅓㄷ라ㅣㅇ러')
+        }}
+      >루틴 예약하기</Button>
+      {loadRoutines && <View>
+        <FlatList 
+          data={routineList}
+          renderItem={({item}) => {
+            <TouchableOpacity
+              onPress={() => setRoutineId(item.routineId)}
+            >
+              <RoutineListItem 
+                routineId={item.routineId}
+                name={item.name}
+              />
+            </TouchableOpacity>
+          }}
+        />
+      </View>}
     </View>}
     </View>
   )
