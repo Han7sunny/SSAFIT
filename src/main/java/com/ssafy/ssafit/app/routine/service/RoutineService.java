@@ -12,7 +12,7 @@ import java.util.List;
 public interface RoutineService {
     void generateRoutine(RoutineGenerateReqDto routineGenerateReqDto);
 
-    void deleteRoutine(String userId, Long routineId);
+    void deleteRoutine(Long routineId);
 
     void modifyRoutine(RoutineGenerateReqDto routineGenerateReqDto);
 

@@ -21,6 +21,8 @@ public class UserMyPageRespDto extends CommonResp {
 
     private List<Notification> notificationList;
 
+    private String myImage;
+
 
     @SuperBuilder
     @Getter

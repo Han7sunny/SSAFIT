@@ -7,11 +7,13 @@ import com.ssafy.ssafit.app.routine.dto.req.RoutineGenerateReqDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
+import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.ApiOperation;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class RoutineController {
 
     @PostMapping("/generate-routine")
     @ApiOperation(value = "루틴을 생성하는 기능",
-            notes = "운동 정보 배열, 루틴 이름, 유저의 아이디를 보내섯 루틴을 등록함 (루틴 아이디는 X)",
+            notes = "운동 정보 배열, 루틴 이름, 유저의 아이디를 보내서 루틴을 등록함 (루틴 아이디는 X)",
             response = CommonResp.class)
     public ResponseEntity<?> generateRoutine(@RequestBody RoutineGenerateReqDto routineGenerateReqDto) {
         try {
@@ -44,9 +46,9 @@ public class RoutineController {
     @ApiOperation(value = "특정 루틴을 내 루틴에서 제거하는 기능",
             notes = "루틴의 아이디와 내 아아디를 통해 해당 루틴을 내 루틴에서 제거",
             response = CommonResp.class)
-    public ResponseEntity<?> deleteRoutine(@RequestParam("userId") String userId, @RequestParam("routineId") Long routineId) {
+    public ResponseEntity<?> deleteRoutine(@RequestParam("routineId") Long routineId) {
         try {
-            routineService.deleteRoutine(userId, routineId);
+            routineService.deleteRoutine(routineId);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("삭제 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -80,13 +82,13 @@ public class RoutineController {
         }
     }
 
-    @GetMapping("/get-user-routine/{id}")
+    @GetMapping("/get-user-routine")
     @ApiOperation(value = "특정 유저의 루틴 정보를 가져오는 기능",
             notes = "유저의 아이디를 통해 해당 유저의 루틴 정보를 가져옴",
             response = List.class)
-    public ResponseEntity<?> getUserRoutine(@PathVariable("id") String userId) {
+    public ResponseEntity<?> getUserRoutine(@AuthenticationPrincipal CustomUserDetails user) {
         try {
-            List<RoutineInfoRespDto> routineInfoRespDtoList = routineService.getUserRoutine(userId);
+            List<RoutineInfoRespDto> routineInfoRespDtoList = routineService.getUserRoutine(user.getUser().getId());
             return new ResponseEntity<List<RoutineInfoRespDto>>(routineInfoRespDtoList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);

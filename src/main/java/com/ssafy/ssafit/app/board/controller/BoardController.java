@@ -188,12 +188,11 @@ public class BoardController {
     //    루틴 다운로드
     @GetMapping("/{boardId}/downloads")
     @ApiOperation(value = "운동 루틴 다운로드", notes = "게시글 ID에 첨부된 운동 루틴을 로그인 계정의 운동 루틴 목록에 추가한다.")
-    public ResponseEntity<BoardRespDto> downloadRoutine(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId, @AuthenticationPrincipal CustomUserDetails user){
+    public ResponseEntity<BoardRespDto> downloadRoutine(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId){
         logger.info("Called downloadRoutine. boardId: {}", boardId);
 
-        String userId = user.getUsername(); // 내 아이디
         BoardRespDto board = boardService.increaseDownload(boardId);
-        routineService.addUserRoutine(new RoutineAddReqDto(board.getRoutineId(), userId));
+        routineService.addUserRoutine(new RoutineAddReqDto(board.getRoutineId()));
 
         return new ResponseEntity<BoardRespDto>(board,HttpStatus.OK);
     }

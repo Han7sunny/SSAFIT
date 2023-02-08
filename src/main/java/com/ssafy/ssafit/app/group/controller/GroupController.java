@@ -144,7 +144,6 @@ public class GroupController {
 
         // 로그인 된 사용자 아이디, 즉 그룹 모집글 또는 그룹 생성을 한 작성자
         // 그룹 모집글 작성자 userId -> 바로 수락으로 변경
-
         groupMemberService.addGroupMember(GroupMemberReqDto.builder().groupId(registedGroup.getId()).userId(userId).acceptInvitation(true).build());
 
 //        그룹 요청 메시지 알람 보내기 (Firebase ? )

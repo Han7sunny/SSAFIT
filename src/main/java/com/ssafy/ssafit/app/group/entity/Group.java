@@ -2,6 +2,7 @@ package com.ssafy.ssafit.app.group.entity;
 
 import com.ssafy.ssafit.app.group.dto.req.GroupMemberReqDto;
 import com.ssafy.ssafit.app.group.dto.req.GroupReqDto;
+import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import lombok.*;
@@ -63,6 +64,9 @@ public class Group {
 
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     private List<GroupMember> groupMember;
+
+    @OneToMany(mappedBy = "group", cascade = {CascadeType.ALL})
+    private List<Notification> notification;
 
     public Group(GroupReqDto groupReqDto){
         this.groupName = groupReqDto.getGroupName();

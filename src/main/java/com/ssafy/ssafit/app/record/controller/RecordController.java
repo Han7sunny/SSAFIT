@@ -6,10 +6,12 @@ import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.service.RecordService;
+import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -33,27 +35,28 @@ public class RecordController {
                     "startMonth : 등록하고자 하는 날의 월\n" +
                     "startYear : 등록하고자 하는 날의 년\n",
             response = CommonResp.class)
-    public ResponseEntity<?> registerExercise(@RequestBody RecordRegisterReqDto recordRegisterReqDto) {
+    public ResponseEntity<?> registerExercise(@AuthenticationPrincipal CustomUserDetails user, @RequestBody RecordRegisterReqDto recordRegisterReqDto) {
         try {
+            System.out.println("뭐가 문제야");
+            RecordRegisterReqDto data = RecordRegisterReqDto.builder().routineId(recordRegisterReqDto.getRoutineId()).userId(user.getUser().getId()).build();
             LocalDate startDate = LocalDate.of(recordRegisterReqDto.getStartYear(), recordRegisterReqDto.getStartMonth(), recordRegisterReqDto.getStartDay());
-            recordService.registerExercise(recordRegisterReqDto, startDate);
+            recordService.registerExercise(data, startDate);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("추가 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/get-schedule/{id}")
+    @GetMapping("/get-schedule")
     @ApiOperation(value = "예약한 운동 루틴 정보", notes = "특정 날짜에 예약해놓은 운동 루틴 정보를 얻는다.\n" +
             "day : 조회하고 싶은 날의 일\n" +
             "month : 조회하고 싶은 날의 월\n" +
-            "year : 조회하고 싶은 날의 년\n" +
-            "id : 조회하고 싶은 유저의 아이디",
+            "year : 조회하고 싶은 날의 년\n",
             response = List.class)
-    public ResponseEntity<?> getSchedule(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
+    public ResponseEntity<?> getSchedule(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day) {
         try {
             LocalDate startDate = LocalDate.of(year, month, day);
-            List<RecordScheduleRespDto> recordScheduleRespDtoList = recordService.getSchedule(startDate, id);
+            List<RecordScheduleRespDto> recordScheduleRespDtoList = recordService.getSchedule(startDate, user.getUser().getId());
             return new ResponseEntity<List<RecordScheduleRespDto>>(recordScheduleRespDtoList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -87,18 +90,17 @@ public class RecordController {
         }
     }
 
-    @GetMapping("/get-exercise-record/{id}")
+    @GetMapping("/get-exercise-record")
     @ApiOperation(value = "특정 날짜의 운동 기록 가져오는 기능",
             notes = "원하는 날짜에 수행한 운동들의 정보를 가져온다." +
                     "day : 조회하고 싶은 날의 일\n" +
                     "month : 조회하고 싶은 날의 월\n" +
-                    "year : 조회하고 싶은 날의 년\n" +
-                    "id : 조회하고 싶은 유저의 아이디",
+                    "year : 조회하고 싶은 날의 년\n",
             response = CommonResp.class)
-    public ResponseEntity<?> getExerciseRecord(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @PathVariable String id) {
+    public ResponseEntity<?> getExerciseRecord(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @AuthenticationPrincipal CustomUserDetails user) {
         try {
             LocalDate time = LocalDate.of(year, month, day);
-            List<RecordExerciseRecordRespDto> exerciseRecordList = recordService.getExerciseRecord(time, id);
+            List<RecordExerciseRecordRespDto> exerciseRecordList = recordService.getExerciseRecord(time, user.getUser().getId());
             return new ResponseEntity<List<RecordExerciseRecordRespDto>>(exerciseRecordList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);

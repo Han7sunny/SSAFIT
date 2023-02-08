@@ -7,6 +7,7 @@ import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface UserService {
 
     User findId(String email);
 
-    void modifyFaceAuth(User user);
+    void modifyFaceAuth(MultipartFile image, String id) throws Exception;
 
     int idCheck(String id);
 
@@ -33,7 +34,7 @@ public interface UserService {
 
     void changePassword(Map<String, String> idPwd);
 
-    void userJoin(UserJoinReqDto userJoinReqDto);
+    void userJoin(UserJoinReqDto userJoinReqDto, MultipartFile file) throws Exception;
 
     String createCode(String email);
 
@@ -41,7 +42,7 @@ public interface UserService {
 
     void userDelete(String userId);
 
-    UserMyPageRespDto getMyPageInfo(String userId);
-    
+    UserMyPageRespDto getMyPageInfo(String userId) throws Exception;
+
     List<UserInfoResp> searchUsers(String name);
 }
