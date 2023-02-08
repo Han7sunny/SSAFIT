@@ -1,56 +1,45 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { ScrollView, Text, TouchableOpacity, FlatList, View, StyleSheet } from 'react-native'
 import Button from '../../components/Button'
 import ArticleItem from '../../components/ArticleItem'
-import RoutineListItem from '../../components/RoutineListItem'
+import RoutineListItem from '../../components/RoutineItem'
 import axios from 'axios'
+import { useSelector } from 'react-redux'
+import { ArticleDataAction } from '../../redux/actions/actionCreators'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-let articleData = [
-  {
-	  success : true,
-	  board_id : 1,
-	  user_id: "asdf1234",
-	  category_id : 2,
-	  title : "Test title",
-	  content : "Test content",
-	  registered_time : "23-02-02",
-	  modified_time : "23-02-02",
-	  share : true, // 게시글 공개/비공개 여부
-	  hits : 100,
-	  likes : 20,
-	  replyList : [
-      {
-        id: 1,
-        content: '1번 댓글'
-      },
-      {
-        id: 2,
-        content: '2번 댓글'
-      },
-      {
-        id: 3,
-        content: '3번 댓글'
-      }
-  ]
-}]
+// 함수형 컴포넌트 내에 setState 코드를 작성하면 무한 렌더링 현상이 발생 
 
 export default function CommunityScreen({ navigation }) {
-
-  // axios({
-  //   method: 'get',
-  //   url: '',
-  //   headers: {
-  //     authorization: `${123423647}`
-  //   }
-  // })
-  // .then(function (res) {
-  //   console.log(res.data)
-  //   articleData = res.data
-  // })
-  // .catch(function (err) {
-  //   console.log(err)
-  // })
-
+  const [data, setData] = useState([])
+  const [accessToken, setAccessToken] = useState('')
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      setAccessToken(UserInfo.token)
+    })
+    axios({
+      method: 'get',
+      url: 'http://70.12.246.116:8080/board/',
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
+    })
+    .then(function (res) {
+      // console.log(res.data)
+      const newData = res.data
+      setData(newData)
+      ArticleDataAction.getArticleData({
+        newData,
+      })
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
+  }, [])
+  // const articleData = state => state.articleData
+  
   return (
     <View>
       <Text> Welcome to Community </Text>
@@ -67,10 +56,10 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={articleData}
+            data={data.slice(0,4)}
             renderItem={({item}) => (
               <ArticleItem 
-                id={item.board_id}
+                id={item.boardId}
                 title={item.title}
               />
             )}
@@ -86,7 +75,7 @@ export default function CommunityScreen({ navigation }) {
         </TouchableOpacity>
         <View>
           <FlatList 
-            data={articleData}
+            data={data.slice(4,7)}
             renderItem={({item}) => (
             
             <RoutineListItem 

@@ -1,80 +1,60 @@
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
-import { ScrollView, Text, FlatList, View } from 'react-native'
+import { StyleSheet, Text, FlatList, View } from 'react-native'
 import ReplyItem from '../../components/ReplayItem'
 import CreateReply from '../../components/CreateReply'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-// let articleData = {
-// 	success : true,
-// 	board_id : 1,
-// 	user_id: "asdf1234",
-// 	category_id : 2,
-// 	title : "Test title",
-// 	content : "Test content - 아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기아무소리나 계속 하기",
-// 	registered_time : "23-02-02",
-// 	modified_time : "23-02-02",
-// 	share : true, // 게시글 공개/비공개 여부
-// 	hits : 100,
-// 	likes : 20,
-// 	replyList : [
-//     {
-//       id: 1,
-//       content: '1번 댓글'
-//     },
-//     {
-//       id: 2,
-//       content: '2번 댓글'
-//     },
-//     {
-//       id: 3,
-//       content: '3번 댓글'
-//     }
-//   ]
-// }
 export default function ArticleDetailScreen({ route }) {
   const [articleData, setArticleData] = useState([])
-  console.log('==== Now in [ArticleDetailScreen] : ', route.params.id)
-  useEffect(() => {
-    async function getData() {
-      axios({
-        method: 'get',
-        url: `http://70.12.246.102:8080/board/${route.params.id}`,
-        // headers: {
-        //   authorization: `${123423647}`
-        // }
-      })
-      .then((res) => {
-        console.log(res.data)
-        let newData = res.data
-        setArticleData(newData)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    }
-    getData()
-  })
+  const [replyData, setReplyData] = useState([])
+  const [accessToken, setAccessToken] = useState('')
+  const [boardId, setBoardId] = useState(0)
+  // console.log('==== Now in [ArticleDetailScreen] : ', route.params.id)
+  useEffect(()=> {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      setAccessToken(UserInfo.token)
+    })
+    axios({
+      method: 'get',
+      url: `http://70.12.246.116:8080/board/${route.params.id}`,
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
+    })
+    .then((res) => {
+      console.log(res.data)
+      setArticleData(res.data)
+      setReplyData(res.data.replyList)
+      setBoardId(res.data.boardId)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }, [])
 
   return (
     <View>
-      <View>
-        <Text>{articleData.title}</Text>
-        <Text>{articleData.registered_time}</Text>
-        <Text>{articleData.modified_time}</Text>
-        <Text>{articleData.hits}</Text>
-        <Text>{articleData.likes}</Text>
-        <Text>{articleData.content}</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>{articleData.title}</Text>
+        <Text> 등록 시간 : {articleData.registeredTime}</Text>
+        <Text> 수정 시간 : {articleData.modifiedTime}</Text>
+        <Text> 조회수 : {articleData.hits}</Text>
+        <Text> 좋아요 : {articleData.likes}</Text>
+        <Text> 내용 : {articleData.content}</Text>
       </View>
       <View>
         <CreateReply 
-          board_id={articleData.board_id}
+          boardId={boardId}
         />
       </View>
       <FlatList 
-        data={articleData.replyList}
+        data={replyData}
         renderItem={({item}) => (
           <ReplyItem
-            id={item.id}
+            id={item.board_id}
             content={item.content}
           />
         )}
@@ -82,3 +62,13 @@ export default function ArticleDetailScreen({ route }) {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignContent:"center",
+    textAlign: "center"
+  },
+  title: {
+    fontSize: 25
+  },
+})

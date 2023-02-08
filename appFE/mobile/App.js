@@ -27,6 +27,7 @@ import {
   MyRoutineListScreen,
   RoutineDetailScreen,
   MyGroup,
+  RoutineReservationScreen,
 } from './src/screens/Main';
 
 import {
@@ -42,6 +43,7 @@ import {
   ArticleDetailScreen,
   CreateArticleScreen,
   ArticleListScreen,
+  RoutineListScreen,
 } from './src/screens/Community';
 
 import {
@@ -59,7 +61,9 @@ import {
   NoticeDetailScreen,
 } from './src/screens/Notice';
 
-import RoutineItem from './src/components/RoutineListItem';
+import {MyRecordScreen} from './src/screens/Record';
+
+import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
 import {Text} from 'react-native-paper';
 
@@ -72,6 +76,110 @@ const MyPageSide = createDrawerNavigator();
 const LoginSide = createDrawerNavigator();
 
 const Notice = createNativeStackNavigator();
+const MainStackNavigator = () => {
+  return (
+    <MainStack.Navigator initialRouteName="LoginScreen">
+      <MainStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="CreateRoutineScreen"
+        component={CreateRoutineScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="MyRoutineListScreen"
+        component={MyRoutineListScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="RoutineDetailScreen"
+        component={RoutineDetailScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen
+        name="RoutineReservationScreen"
+        component={RoutineReservationScreen}
+        options={{headerShown: false}}
+      />
+      <MainStack.Screen name="MyGroup" component={MyGroup} />
+    </MainStack.Navigator>
+  );
+};
+const GroupStackNavigator = () => {
+  return (
+    <GroupStack.Navigator initialRouteName="GroupListScreen">
+      <GroupStack.Screen
+        name="GroupListScreen"
+        component={GroupListScreen}
+        options={{headerShown: false}}
+      />
+      <GroupStack.Screen
+        name="GroupListDetailScreen"
+        component={GroupListDetailScreen}
+        options={{headerShown: false}}
+      />
+      <GroupStack.Screen
+        name="MyGroupListScreen"
+        component={MyGroupListScreen}
+        options={{headerShown: false}}
+      />
+      <GroupStack.Screen
+        name="MyGroupDetail"
+        component={MyGroupDetail}
+        options={{headerShown: false}}
+      />
+      <GroupStack.Screen
+        name="CreateGroupScreen"
+        component={CreateGroupScreen}
+        options={{headerShown: false}}
+      />
+    </GroupStack.Navigator>
+  );
+};
+const CommunityStackNavigator = () => {
+  return (
+    <CommunityStack.Navigator initialRouteName="CommunityScreen">
+      <CommunityStack.Screen
+        name="CommunityScreen"
+        component={CommunityScreen}
+        options={{headerShown: false}}
+      />
+      <CommunityStack.Screen
+        name="ArticleDetailScreen"
+        component={ArticleDetailScreen}
+        options={{headerShown: false}}
+      />
+      <CommunityStack.Screen
+        name="CreateArticleScreen"
+        component={CreateArticleScreen}
+        options={{headerShown: false}}
+      />
+      <CommunityStack.Screen
+        name="ArticleListScreen"
+        component={ArticleListScreen}
+        options={{headerShown: false}}
+      />
+      <CommunityStack.Screen
+        name="RoutineListScreen"
+        component={RoutineListScreen}
+        options={{headerShown: false}}
+      />
+    </CommunityStack.Navigator>
+  );
+};
 
 const MainSideNavigator = () => {
   return (
