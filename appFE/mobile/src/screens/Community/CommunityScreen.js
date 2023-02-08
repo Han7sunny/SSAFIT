@@ -27,7 +27,7 @@ export default function CommunityScreen({ navigation }) {
       }
     })
     .then(function (res) {
-      // console.log(res.data)
+      console.log(res.data)
       const newData = res.data
       setData(newData)
       ArticleDataAction.getArticleData({
@@ -41,7 +41,7 @@ export default function CommunityScreen({ navigation }) {
   // const articleData = state => state.articleData
   
   return (
-    <View>
+    <ScrollView>
       <Text> Welcome to Community </Text>
       <Button
         onPress={() => navigation.navigate('CreateArticleScreen')}
@@ -77,16 +77,19 @@ export default function CommunityScreen({ navigation }) {
           <FlatList 
             data={data.slice(4,7)}
             renderItem={({item}) => (
-            
-            <RoutineListItem 
-              id={item.board_id}
-              title={item.title}
-            />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('RoutineDetailScreen', {routineId: item.routineId})}
+              >
+                <RoutineListItem 
+                  id={item.board_id}
+                  title={item.title}
+                />
+              </TouchableOpacity>
             )}
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 

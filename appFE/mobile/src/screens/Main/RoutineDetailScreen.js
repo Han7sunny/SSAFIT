@@ -9,8 +9,10 @@ import axios from 'axios'
 
 export default function RoutineDetailScreen({ route ,navigation }) {
   const [routineInfo, setRoutineInfo] = useState([])
+  const [routineName, setRoutineName] = useState('')
   const [accessToken, setAccessToken] = useState('')
   let { routineId } = route.params
+  console.log('루틴 아이디:', routineId)
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result)
@@ -18,14 +20,16 @@ export default function RoutineDetailScreen({ route ,navigation }) {
     })
     axios({
       method: 'get',
-      url: `http://70.12.246.102:8080/routine/get-exercise-info/${routineId}`,
+      url: `http://70.12.246.116:8080/routine/get-exercise-info/${routineId}`,
       headers: {
         "authorization": `Bearer ${accessToken}`,
         "X-AUTH-TOKEN":`${accessToken}`
       }
     }) 
     .then(function (response) {
-      setRoutineInfo(response.data)
+      console.log('routine detail : ', response.data)
+      setRoutineName(response.data.routineName)
+      setRoutineInfo(response.data.exerciseInfoList)
     }) 
     .catch(function (error) {
       console.log(error)
@@ -35,6 +39,7 @@ export default function RoutineDetailScreen({ route ,navigation }) {
   return (
     <View style={styles.container}> 
       <Text> Routine Detail Screen! </Text>
+      <Text style={styles.title}>{routineName}</Text>
       <FlatList
         data={routineInfo}
         renderItem={({item}) => (
@@ -62,5 +67,8 @@ export default function RoutineDetailScreen({ route ,navigation }) {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 2
+  },
+  title: {
+    fontSize: 30
   }
 })

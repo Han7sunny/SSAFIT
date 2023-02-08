@@ -9,8 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { useSelector } from 'react-redux'
 
 // const userData = useSelector(store=>store.userData)
+let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
 export default function CreateRoutineScreen({ navigation }) {
-  let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
   const [routineName, setRoutineName] = useState()
   const [accessToken, setAccessToken] = useState()
   const [userId, setUserId] = useState('')

@@ -5,8 +5,8 @@ import { IconButton } from 'react-native-paper'
 import axios from 'axios'
 
 export default function ArticleItem( props ) {
-  navigation = useNavigation()
-  console.log('댓글 : ',props.replyList)
+  const navigation = useNavigation()
+  console.log(props)
   const [isClickHeart, setIsClickHeart] = useState(false);
   const [heartCnt, setIsHeartCnt] = useState(0);
   const clickHeart = async() => {
@@ -32,7 +32,7 @@ export default function ArticleItem( props ) {
           style={styles.iconButton}
         />
         <Text> 좋아요 수 : {heartCnt}</Text>
-        <Text>댓글 개수 : {replyNum}</Text>
+        <Text>댓글 개수 : {props.replySize}</Text>
       </TouchableOpacity>
     </View>
   )

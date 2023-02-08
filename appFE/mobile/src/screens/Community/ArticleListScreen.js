@@ -43,6 +43,7 @@ export default function ArticleListScreen({ navigation }) {
             id={item.board_id}
             title={item.title}
             replyList={item.replyList}
+            replySize={item.replySize}
           />
         )}
       />

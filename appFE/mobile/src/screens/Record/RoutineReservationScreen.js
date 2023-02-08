@@ -55,9 +55,10 @@ export default function RoutineReservationScreen({ navigation }) {
   }
 
   const getMyRoutine = () => {
+    console.log('get my routine : ', accessToken)
     axios({
       method: 'get',
-      url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`,
+      url: `http://70.12.246.116:8080/routine/get-user-routine`,
       headers: {
         "authorization": `Bearer ${accessToken}`,
         "X-AUTH-TOKEN":`${accessToken}`
