@@ -109,3 +109,8 @@ const styles = StyleSheet.create({
     width: 5
   }
 })
+const styles = StyleSheet.create({
+  btn: {
+    width: 5
+  }
+})

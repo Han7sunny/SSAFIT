@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 // import Constants from 'expo-constants';
@@ -6,6 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const screenWidth = Dimensions.get("window").width;
+=======
+import * as React from 'react';
+import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+// import Constants from 'expo-constants';
+import {ProgressChart} from "react-native-chart-kit";
+const screenWidth = Dimensions.get("window").width;
+
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
 const chartConfig = {
   backgroundGradientFrom: "#cc14aa",
   backgroundGradientFromOpacity: 0,
@@ -25,6 +34,7 @@ const data = {
 };
 
 export default function App() {
+<<<<<<< HEAD
   const [recordData, setRecordData] = useState('')
   const [userId, setUserId] = useState('')
   const [accessToken, setAccessToken] = useState('')
@@ -53,6 +63,8 @@ export default function App() {
       console.log('record screen 실패 ',err)
     })
   }, [])
+=======
+>>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
   return (
     <View style={styles.container}>
       <Text style={styles.title}> OOO 님의 운동 기록 </Text>
