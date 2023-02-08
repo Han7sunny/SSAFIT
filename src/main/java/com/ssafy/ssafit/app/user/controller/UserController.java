@@ -15,14 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -72,27 +75,13 @@ public class UserController {
 
     @PutMapping("/modifyFaceAuth")
     @ApiOperation(value = "얼굴 인식 수정", notes = "새로운 사진을 추가하여 얼굴 인식을 위한 데이터를 생성한다", response = Boolean.class)
-    public ResponseEntity<Boolean> modifyFaceAuth(@RequestParam MultipartFile newPhoto) throws IOException {
-
-        // 현재 로그인된 사용자 정보
-        // 토큰 ?
-        // User user =
-
-        // photo
-        String photo = null;
-        if(newPhoto != null){
-            Base64.Encoder encoder = Base64.getEncoder();
-            byte[] photoEncode = encoder.encode(newPhoto.getBytes());
-            photo = new String(photoEncode, "UTF8");
+    public ResponseEntity<?> modifyFaceAuth(@RequestParam MultipartFile image, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+        try {
+            userService.modifyFaceAuth(image, user.getUser().getId());
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
-
-        // photo_encoding
-        // py
-
-//        userService.modifyFaceAuth(user);
-
-        // modify -> save();
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
     //    @Operation(value = "로그아웃", description = "회원 정보를 저장하고 있는 Token을 제거하고 결과를 반환한다.", tags = { "User" })
@@ -214,10 +203,14 @@ public class UserController {
 
     @PutMapping("/change-password")
     @ApiOperation(value = "비밀번호 변경 기능",
-            notes = "유저의 아이디와 바꿀 비밀번호 정보를 통해 비밀번호를 변경",
+            notes = "유저의 아이디와 바꿀 비밀번호 정보를 통해 비밀번호를 변경" +
+            "{ password : String } 형태의 데이터 필요",
             response = CommonResp.class)
-    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> idPwd) {
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal CustomUserDetails user, @RequestBody Map<String, String> password) {
         try {
+            Map<String, String> idPwd = new HashMap<>();
+            idPwd.put("id", user.getUser().getId());
+            idPwd.put("password", password.get("password"));
             userService.changePassword(idPwd);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("변경 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
@@ -226,14 +219,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/join")
+    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ApiOperation(value = "회원가입 기능",
             notes = "회원가입 기능",
             response = CommonResp.class)
-    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
+    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
 
         try {
-            userService.userJoin(userJoinReqDto);
+            userService.userJoin(userJoinReqDto, file);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -272,12 +265,13 @@ public class UserController {
 //            notes = "id값을 받아서 마이페이지에 띄울 정보를 반환합니다.",
 //            response = CommonResp.class)
 
-    @DeleteMapping("/user_delete/{id}")
+    @DeleteMapping("/user_delete")
     @ApiOperation(value = "회원 탈퇴 기능",
-            notes = "id값은 이메일을 보낼 때 반환받은 값, 코드는 메일에 입력된 값을 사용합니다.",
+            notes = "회원탈퇴입니다.",
             response = CommonResp.class)
-    private ResponseEntity<?> userDelete(@PathVariable("id") String userId) {
+    private ResponseEntity<?> userDelete(@AuthenticationPrincipal CustomUserDetails user) {
         try {
+            String userId = user.getUser().getId();
             userService.userDelete(userId);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("탈퇴 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
@@ -285,12 +279,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/get-mypage/{id}")
+    @GetMapping("/get-mypage")
     @ApiOperation(value = "마이페이지 기능",
             notes = "마이페이지에 보여줄 정보를 반환합니다.",
             response = CommonResp.class)
-    private ResponseEntity<?> getMyPageInfo(@PathVariable("id") String userId) {
+    private ResponseEntity<?> getMyPageInfo(@AuthenticationPrincipal CustomUserDetails user) {
         try {
+            String userId = user.getUser().getId();
             UserMyPageRespDto userMyPageRespDto = userService.getMyPageInfo(userId);
             return new ResponseEntity<UserMyPageRespDto>(userMyPageRespDto, HttpStatus.OK);
         } catch (Exception e) {

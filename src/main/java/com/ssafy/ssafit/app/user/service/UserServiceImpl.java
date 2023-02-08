@@ -1,15 +1,12 @@
 package com.ssafy.ssafit.app.user.service;
 
-import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.board.repository.BoardRepository;
 import com.ssafy.ssafit.app.config.JwtTokenProvider;
 import com.ssafy.ssafit.app.group.entity.GroupMember;
 import com.ssafy.ssafit.app.group.repository.GroupMemberRepository;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
-import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.repository.RecordRepository;
-import com.ssafy.ssafit.app.reply.entity.Reply;
 import com.ssafy.ssafit.app.reply.repository.ReplyRepository;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.dto.Role;
@@ -18,26 +15,25 @@ import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserInfoResp;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
+import com.ssafy.ssafit.util.FileMultipartFileConverter;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
-import com.ssafy.ssafit.app.user.dto.resp.LoginResponseDto;
 import com.ssafy.ssafit.app.user.dto.resp.UserMyPageRespDto;
 import com.ssafy.ssafit.app.user.entity.Authentication;
 import com.ssafy.ssafit.app.user.repository.AuthenticationRepository;
 import com.ssafy.ssafit.util.MailService;
 import com.ssafy.ssafit.util.RandomString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import com.ssafy.ssafit.util.Sha256;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -142,9 +138,19 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void modifyFaceAuth(User user) {
-        userRepository.save(user);
+    public void modifyFaceAuth(MultipartFile image, String id) throws Exception {
+        String path = uploadImage(image);
+        String encPath = path.replace("\\", "/");
+        String encValue = saveFaceEncoding(encPath);
+
+        User user = userRepository.findById(id).get();
+
+        File file = new File(user.getPhoto());
+        file.delete();
+
+        userRepository.updatePhotoAndPhotoEncoding(path, encValue, id);
     }
+
 
     @Override
     public int idCheck(String id) {
@@ -185,14 +191,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void userJoin(UserJoinReqDto userJoinReqDto) {
+    public void userJoin(UserJoinReqDto userJoinReqDto, MultipartFile file) throws Exception{
+        String path = uploadImage(file);
+        String encPath = path.replace("\\", "/");
+        String encValue = saveFaceEncoding(encPath);
+
         User user = User.builder()
                 .id(userJoinReqDto.getId())
                 .password(passwordEncoder.encode(userJoinReqDto.getPassword()))
                 .name(userJoinReqDto.getName())
                 .email(userJoinReqDto.getEmail())
-                .photo("12345")
-                .photoEncoding("12345")
+                .photo(path)
+                .photoEncoding(encValue)
                 .onOff(false)
                 .role(Role.USER).roles(Collections.singletonList("ROLE_USER")) // 회원가입하는 모든 회원 권한 : USER
                 .build();
@@ -230,7 +240,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserMyPageRespDto getMyPageInfo(String userId) {
+    public UserMyPageRespDto getMyPageInfo(String userId) throws Exception{
         List<GroupMember> groupMemberList = groupMemberRepository.findByUser_IdAndAcceptInvitation(userId, false);
 
         List<UserMyPageRespDto.GroupInvitation> groupInvitationList = new ArrayList<UserMyPageRespDto.GroupInvitation>();
@@ -272,10 +282,22 @@ public class UserServiceImpl implements UserService{
             }
         }
 
+        User user = userRepository.findById(userId).get();
+
+        MultipartFile image = FileMultipartFileConverter.FiletoMultipartFile(user.getPhoto());
+
+        String myImage = null;
+        if(image != null) {
+            Base64.Encoder encoder = Base64.getEncoder();
+            byte[] photoEncode = encoder.encode(image.getBytes());
+            myImage = new String(photoEncode, "UTF-8");
+        }
+
         UserMyPageRespDto userMyPageRespDto = UserMyPageRespDto.builder()
                 .success(true)
+                .myImage(myImage)
                 .msg("마이페이지 정보입니다.")
-                .name(userRepository.findById(userId).get().getName())
+                .name(user.getName())
                 .groupInvitationList(groupInvitationList)
                 .notificationList(notificationList).build();
 
@@ -295,5 +317,52 @@ public class UserServiceImpl implements UserService{
             userInfoList.add(UserInfoResp.builder().userId(user.getId()).userName(user.getName()).build());
         }
         return userInfoList;
+    }
+
+    public String uploadImage(MultipartFile file) throws Exception{
+        UUID uuid = UUID.randomUUID();
+        final String FOLDER_PATH = "C:\\SSAFY\\upload_files\\";
+
+        String filePath = FOLDER_PATH + uuid.toString() + "_" + file.getOriginalFilename();
+            // 파일 결로
+        file.transferTo(new File(filePath));
+
+        String enc_path = filePath.replace("\\", "/");
+        String enc_value = saveFaceEncoding(enc_path);
+
+        if (filePath != null) {
+                return filePath;
+        }
+
+        return null;
+    }
+
+    public String saveFaceEncoding(String path) {
+        String arg1 = "C:/SSAFY/faceEncoding.py";
+        ProcessBuilder builder = new ProcessBuilder("python", arg1, path);
+
+        try {
+            builder.redirectErrorStream(true);
+            Process process = builder.start();
+            int exitval = process.waitFor();
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
+
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            while((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            if(exitval != 0) {
+                System.out.println("비정상 종료");
+            }
+
+            return sb.toString();
+
+        } catch (Exception e) {
+            System.out.println("오류");
+            return "오류";
+        }
     }
 }

@@ -191,7 +191,7 @@ public class BoardController {
 
         String userId = "test123"; // 내 아이디
         // board에 포함된 routine_id 추출 ( 다운로드 )
-        routineService.addUserRoutine(new RoutineAddReqDto(routineId, userId));
+        routineService.addUserRoutine(new RoutineAddReqDto(routineId));
 
         // 해당 게시글의 downloads 증가
         boardService.increaseDownload(boardId);

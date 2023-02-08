@@ -12,6 +12,7 @@ import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
+import com.ssafy.ssafit.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,9 @@ public class RoutineServiceImpl implements RoutineService {
                 .name(routineGenerateReqDto.getRoutineName())
                 .build();
 
-        routine.getUser().add(userRepository.findById(routineGenerateReqDto.getUserId()).get());
+        System.out.println(SecurityUtil.getCurrentUserId().get().getUserId());
+
+        routine.getUser().add(userRepository.findById(SecurityUtil.getCurrentUserId().get().getUserId()).get());
         routineRepository.save(routine);
 
         int sz = routineGenerateReqDto.getExerciseList().size();
@@ -63,23 +66,23 @@ public class RoutineServiceImpl implements RoutineService {
     }
 
     @Override
-    public void deleteRoutine(String userId, Long routineId) {
+    public void deleteRoutine(Long routineId) {
         Routine routine = routineRepository.findById(routineId).get();
-        routine.getUser().remove(userRepository.findById(userId).get());
+        routine.getUser().remove(userRepository.findById(SecurityUtil.getCurrentUserId().get().getUserId()).get());
         routineRepository.save(routine);
     }
 
     @Override
     @Transactional
     public void modifyRoutine(RoutineGenerateReqDto routineGenerateReqDto) {
-        deleteRoutine(routineGenerateReqDto.getUserId(), routineGenerateReqDto.getRoutineId());
+        deleteRoutine(routineGenerateReqDto.getRoutineId());
         generateRoutine(routineGenerateReqDto);
     }
 
     @Override
     public boolean addUserRoutine(RoutineAddReqDto routineAddReqDto) {
         Routine routine = routineRepository.findById(routineAddReqDto.getRoutineId()).get();
-        User user = userRepository.findById(routineAddReqDto.getUserId()).get();
+        User user = userRepository.findById(SecurityUtil.getCurrentUserId().get().getUserId()).get();
         if(routine.getUser().contains(user))
             return false;
         else {

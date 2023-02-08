@@ -1,6 +1,7 @@
 package com.ssafy.ssafit.app.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.user.dto.Role;
 import lombok.*;
 
@@ -63,14 +64,22 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> record;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Notification> notification;
+
     @Builder
-    public User(String id, String name, String password, String email, String photo, String photo_encoding, boolean on_off) {
+    public User(String id, String name, String password, String email, String photo, String photoEncoding, boolean onOff, Role role, List<String> roles, long mileage, List<Record> record, List<Notification> notification) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
         this.photo = photo;
-        this.photoEncoding = photo_encoding;
-        this.onOff = on_off;
+        this.photoEncoding = photoEncoding;
+        this.onOff = onOff;
+        this.role = role;
+        this.roles = roles;
+        this.mileage = mileage;
+        this.record = record;
+        this.notification = notification;
     }
 }

@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RoutineAddReqDto {
     private Long routineId;
-    private String userId;
 }

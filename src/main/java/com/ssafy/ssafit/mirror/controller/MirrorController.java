@@ -5,6 +5,7 @@ import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.mirror.service.MirrorService;
 import io.swagger.annotations.ApiOperation;
@@ -122,4 +123,19 @@ public class MirrorController {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/get-face-encoding-list")
+    @ApiOperation(value = "face-encoding 리스트 획득",
+            notes = "모든 유저의 face-encoding 정보를 얻어옵니다.",
+            response = List.class)
+
+    public ResponseEntity<?> getFaceEncodingList() {
+        try {
+            List<MirrorFaceEncodingRespDto> mirrorFaceEncodingRespDtoList = mirrorService.getFaceEncodingList();
+            return new ResponseEntity<List<MirrorFaceEncodingRespDto>>(mirrorFaceEncodingRespDtoList, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

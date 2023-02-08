@@ -3,6 +3,10 @@ package com.ssafy.ssafit.mirror.service;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
+import com.ssafy.ssafit.app.group.entity.Group;
+import com.ssafy.ssafit.app.group.entity.GroupMember;
+import com.ssafy.ssafit.app.group.repository.GroupMemberRepository;
+import com.ssafy.ssafit.app.group.repository.GroupRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.entity.Record;
@@ -16,6 +20,7 @@ import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,12 +45,16 @@ public class MirrorServiceImpl implements MirrorService{
 
     RecordService recordService;
     private final ExerciseTypeRepository exerciseTypeRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
     public MirrorServiceImpl(RecordRepository recordRepository, RecordDetailRepository recordDetailRepository, RoutineRepository routineRepository,
                              UserRepository userRepository,
                              ExerciseRepository exerciseRepository, RecordService recordService,
-                             ExerciseTypeRepository exerciseTypeRepository) {
+                             ExerciseTypeRepository exerciseTypeRepository,
+                             GroupMemberRepository groupMemberRepository,
+                             GroupRepository groupRepository) {
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
@@ -53,6 +62,8 @@ public class MirrorServiceImpl implements MirrorService{
         this.exerciseRepository = exerciseRepository;
         this.recordService = recordService;;
         this.exerciseTypeRepository = exerciseTypeRepository;
+        this.groupMemberRepository = groupMemberRepository;
+        this.groupRepository = groupRepository;
     }
 
     @Override
@@ -110,19 +121,19 @@ public class MirrorServiceImpl implements MirrorService{
     }
 
     @Override
+    @Transactional
     public void endExercise(LocalDateTime endTime, MirrorUpdateRecordReqDto mirrorUpdateRecordReqDto) {
         Record record = recordRepository.findById(mirrorUpdateRecordReqDto.getRecordId()).get();
 
         List<RecordDetail> recordDetailList = record.getRecordDetails();
 
-        double achievementRate = 0.0;
+        long allCount = 0;
+        long allCountRez = 0;
         for (RecordDetail recordDetail : recordDetailList) {
-            long count = recordDetail.getCount();
-            long countRez = recordDetail.getCountRez();
-
-            achievementRate += (double)count / countRez;
+            allCount += recordDetail.getCount();
+            allCountRez += recordDetail.getCountRez();
         }
-        achievementRate /= recordDetailList.size();
+        double achievementRate = (double) allCount / allCountRez;
 
         record = Record.builder()
                 .id(record.getId())
@@ -134,9 +145,25 @@ public class MirrorServiceImpl implements MirrorService{
                 .startTime(record.getStartTime())
                 .achievementRate(achievementRate)
                 .startDate(record.getStartDate())
+                .group(record.getGroup())
                 .build();
 
         recordRepository.save(record);
+
+        if(record.getGroup() != null) {
+            User user = userRepository.findById(mirrorUpdateRecordReqDto.getUserId()).get();
+            Group group = record.getGroup();
+
+            GroupMember groupMember = groupMemberRepository.findByUserAndGroup(user, group);
+
+            double oldAchievementRate = groupMember.getAchievementRate();
+            double newAchievementRate = (groupMember.getAchievementRate() * group.getPeriod() + achievementRate) / group.getPeriod();
+            groupMemberRepository.updateGroupMemberAchievementRate(newAchievementRate, mirrorUpdateRecordReqDto.getUserId(), group.getId());
+
+            double groupAchievementRate = (group.getAchievementRate() * group.getCurrentMember() - oldAchievementRate + newAchievementRate) / group.getCurrentMember();
+            groupRepository.updateGroupAchievementRate(groupAchievementRate, group.getId());
+
+        }
 
         userRepository.updateMileage(record.getUser().getId(), record.getUser().getMileage(), mirrorUpdateRecordReqDto.getMileage());
 
@@ -165,6 +192,23 @@ public class MirrorServiceImpl implements MirrorService{
     @Override
     public RecordInfoRespDto getRecord(Long id) {
         return recordService.getRecord(id);
+    }
+
+    @Override
+    public List<MirrorFaceEncodingRespDto> getFaceEncodingList() {
+        List<User> userList = userRepository.findAll();
+        List<MirrorFaceEncodingRespDto> mirrorFaceEncodingRespDtoList = new ArrayList<>();
+
+        for(User user : userList) {
+            MirrorFaceEncodingRespDto mirrorFaceEncodingRespDto = MirrorFaceEncodingRespDto.builder()
+                    .userId(user.getId())
+                    .userName(user.getName())
+                    .faceEncode(user.getPhotoEncoding())
+                    .build();
+
+            mirrorFaceEncodingRespDtoList.add(mirrorFaceEncodingRespDto);
+        }
+        return mirrorFaceEncodingRespDtoList;
     }
 
     private MirrorRoutineRespDto generateRoutineRespDto(Long recordId, Routine routine) {

@@ -2,6 +2,7 @@ package com.ssafy.ssafit.app.record.entity;
 
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.group.entity.Group;
+import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.user.entity.User;
 import lombok.AccessLevel;
@@ -58,17 +59,23 @@ public class Record {
     @OneToMany(mappedBy = "record", cascade = {CascadeType.ALL})
     private List<RecordDetail> recordDetails;
 
+    @OneToMany(mappedBy = "record", cascade = {CascadeType.ALL})
+    private List<Notification> notification;
+
     @Builder
-    public Record(Long id, String photo, User user, Double achievementRate, Long mileage, Long experiencePoint, LocalDateTime startTime, LocalDateTime endTime, Routine routine, LocalDate startDate) {
+    public Record(Long id, String photo, User user, Double achievementRate, Group group, Long mileage, Long experiencePoint, LocalDateTime startTime, LocalDateTime endTime, Routine routine, LocalDate startDate, List<RecordDetail> recordDetails, List<Notification> notification) {
         this.id = id;
         this.photo = photo;
         this.user = user;
         this.achievementRate = achievementRate;
+        this.group = group;
         this.mileage = mileage;
         this.experiencePoint = experiencePoint;
         this.startTime = startTime;
         this.endTime = endTime;
         this.routine = routine;
         this.startDate = startDate;
+        this.recordDetails = recordDetails;
+        this.notification = notification;
     }
 }
