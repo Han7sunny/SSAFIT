@@ -162,13 +162,13 @@ export default function CreateGroupScreen({navigation}) {
     );
   };
 
-  const getMember = () => {
-    console.log(1);
-    if (findUser.length === 1) {
+  const getMember = text => {
+    console.log(text);
+    if (text.length === 1) {
       const getData = async () => {
         const data = (
           await axios.get(
-            `http://70.12.246.102:8080/group/search?name=${findUser}`,
+            `http://70.12.246.102:8080/group/search?name=${text}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -467,8 +467,7 @@ export default function CreateGroupScreen({navigation}) {
           selectText="Pick Items"
           searchInputPlaceholderText="Search Items..."
           onChangeInput={text => {
-            setFindUser(text);
-            console.log(findUser);
+            getMember(text);
           }}
           altFontFamily="ProximaNova-Light"
           tagRemoveIconColor="#CCC"
