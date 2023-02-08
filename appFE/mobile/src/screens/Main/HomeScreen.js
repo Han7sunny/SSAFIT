@@ -1,9 +1,7 @@
 import React from "react";
-<<<<<<< HEAD
+
 import { View, StyleSheet, ScrollView } from 'react-native'
-=======
-import { View, StyleSheet } from 'react-native'
->>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
+
 import { Text } from 'react-native-paper'
 import Button from '../../components/Button'
 import TodayRoutine from "./TodayRoutine";
@@ -12,11 +10,7 @@ import MyGroup from "./MyGroup";
 
 export default function HomeScreen({ navigation }) {
   return (
-<<<<<<< HEAD
     <ScrollView>
-=======
-    <View>
->>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
       <Text style={styles.text}> 운동 시작한지 N일 </Text>
       <RecordScreen />
       <TodayRoutine />
@@ -39,11 +33,9 @@ export default function HomeScreen({ navigation }) {
       >
         나의 그룹
       </Button>
-<<<<<<< HEAD
     </ScrollView>
-=======
-    </View>
->>>>>>> 16d5a01b1e0962cd01e85f851c39959e735c0b65
+
+
   )
 }
 

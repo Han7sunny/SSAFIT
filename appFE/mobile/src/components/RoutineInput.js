@@ -127,13 +127,3 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
 })
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    justifyContent: 'center',
-    borderWidth: 2,
-    marginVertical: 30,
-    borderRadius: 5,
-    marginBottom: 2
-  },
-})
