@@ -77,7 +77,7 @@ public class NoticeController {
     }
 
     @DeleteMapping("/{boardId}")
-    @ApiOperation(value = "게시글 삭제", notes = "입력한 게시글 ID에 해당하는 공지사항을 삭제한다.공지사항에 대해 작성된 모든 댓글도 함께 삭제된다.")
+    @ApiOperation(value = "공지사항 삭제", notes = "입력한 게시글 ID에 해당하는 공지사항을 삭제한다.공지사항에 대해 작성된 모든 댓글도 함께 삭제된다.")
     public ResponseEntity<Boolean> deleteNotice(@PathVariable("boardId") @ApiParam(value = "게시판 ID", required = true) long boardId) throws Exception {
         LOGGER.info("Called deleteNotice. boardId: {}", boardId);
         noticeService.delete(boardId);

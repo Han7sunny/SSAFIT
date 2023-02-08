@@ -12,5 +12,7 @@ public interface GroupRepository extends JpaRepository<Group,Long> {
     List<Group> findByEndDate(LocalDate now);
     List<Group> findAllByEndRecruitDateGreaterThanEqual(LocalDate now);
 
+    List<Group> findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate now1, LocalDate now2);
+
     List<Group> findAllByStartDate(LocalDate start_date);
 }

@@ -70,11 +70,10 @@ public class GroupController {
     public ResponseEntity<List<GroupRespDto>> getMyGroupList(@AuthenticationPrincipal CustomUserDetails user){
         LOGGER.info("[Enter] getMyGroupList");
 
-//        List<GroupRespDto> myGroupList = groupService.getMyGroupList(user.getUsername());
-        List<GroupRespDto> myGroupList = new ArrayList<>();
+        List<GroupRespDto> myGroupList = groupService.getMyGroupList(user.getUsername());
         HttpStatus status = HttpStatus.NO_CONTENT;
-//        if(!myGroupList.isEmpty())
-//            status = HttpStatus.OK;
+        if(!myGroupList.isEmpty())
+            status = HttpStatus.OK;
         return new ResponseEntity<List<GroupRespDto>>(myGroupList, status);
     }
 

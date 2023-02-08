@@ -45,8 +45,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/join", "/user/login", "/swagger-ui/**","/swagger-ui.html").permitAll() // 가입 및 로그인 주소는 허용 ,"/sign-api/exception"
 //                .antMatchers("/**").permitAll() // 가입 및 로그인 주소는 허용 ,"/sign-api/exception"
 //                .antMatchers(HttpMethod.GET, "/product/**").permitAll() // product로 시작하는 Get 요청은 허용
-                .antMatchers("/notice/regist").hasRole("ADMIN")
+
+//  hasAnyRole()하면 안됨;
+                .antMatchers(HttpMethod.GET,"/notice/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/notice/*/regist").permitAll()//.hasRole("USER")
+                .antMatchers(HttpMethod.PUT,"/notice/*/*").permitAll()//.hasRole("USER")
+                .antMatchers(HttpMethod.DELETE,"/notice/*/*").permitAll()//.hasRole("USER")
+                .antMatchers("/notice/**").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.PUT,"/notice/*").hasRole("ADMIN")
+
                 .antMatchers("/**").permitAll()
 //                .antMatchers("**exception**").permitAll()
 

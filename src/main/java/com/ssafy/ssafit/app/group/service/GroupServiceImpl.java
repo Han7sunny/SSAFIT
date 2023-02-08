@@ -390,6 +390,24 @@ public class GroupServiceImpl implements GroupService{
         return groupRecruitList;
     }
 
+    @Override
+    public List<GroupRespDto> getMyGroupList(String userId) {
+
+        List<GroupRespDto> myGroupList = new ArrayList<>();
+
+        List<Group> groupList = groupRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate.now(), LocalDate.now());
+        if(groupList.isEmpty())
+            return myGroupList;
+
+        for (Group group : groupList) {
+            if(groupMemberRepository.findByGroupIdAndUserId(group.getId(), userId) != null) { // 있으면
+                myGroupList.add(new GroupRespDto(group));
+            }
+        }
+
+        return myGroupList;
+    }
+
     @Scheduled(cron = "10 0 0 1/1 * ?", zone = "Asia/Seoul")
     public void findStartGroup() {
         List<Group> groupList = groupRepository.findByStartDate(LocalDate.now(ZoneId.of("Asia/Seoul")));

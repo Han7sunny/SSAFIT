@@ -91,14 +91,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-        // LOGGER.info("[Test] init join data ");
-        // User joinUser = User.builder()
-        //         .id("test1").password(passwordEncoder.encode("test1pw")).email("test@test")
-        //         .on_off(false).photo("photo").photo_encoding("photo_encoding")
-        //         .name("testName").role(Role.USER).roles(Collections.singletonList("ROLE_USER"))
-        //         .build();
-        // userRepository.save(joinUser); // join
-
         LOGGER.info("[Login] findById");
 
         Optional<User> findUser = userRepository.findById(loginRequestDto.getId());
@@ -115,15 +107,11 @@ public class UserServiceImpl implements UserService{
             return LoginResponseDto.builder().success(false).msg("비밀번호가 틀렸습니다.").build();
         }
 
-        // 2023-02-07 10:54 변경
         return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getId()), user.getRoles()))
                 .role(user.getRole().toString())
                 .success(true).msg("로그인이 성공적으로 완료되었습니다.")
                 .build();
 
-//        return LoginResponseDto.builder().id(user.getId()).name(user.getName()).token(jwtTokenProvider.createToken(String.valueOf(user.getName()), user.getRoles()))
-//                .success(true).msg("로그인이 성공적으로 완료되었습니다.")
-//                .build();
     }
 
     @Override
@@ -195,6 +183,7 @@ public class UserServiceImpl implements UserService{
                 .photo("12345")
                 .photoEncoding("12345")
                 .onOff(false)
+//                .role(Role.ADMIN).roles(Collections.singletonList("ROLE_ADMIN")) // 회원가입하는 모든 회원 권한 : USER
                 .role(Role.USER).roles(Collections.singletonList("ROLE_USER")) // 회원가입하는 모든 회원 권한 : USER
                 .build();
 
