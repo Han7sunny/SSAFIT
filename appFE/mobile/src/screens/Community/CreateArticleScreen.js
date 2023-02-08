@@ -16,23 +16,26 @@ export default function CreateArticleScreen({ navigation }) {
   const [isValid, setIsValid] = useState(false)
   const [userId, setUserId] = useState('')
   const [routineData, setRoutineData] = useState([])
-  const [selected, setSelected] = useState('')   // selected : 선택된 routineId가 저장됨
+  const [selected, setSelected] = useState(0)   // selected : 선택된 routineId가 저장됨
   const [share, setShare] = useState(true)
 
   function onPost() {
     axios({
       method: 'post',
-      url: 'http://70.12.246.116:8080/board/regist',
+      url: 'http://70.12.246.102:8080/board/regist',
       headers: {
-        authorization: `${accessToken}`
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
       },
       data: {
         "board_id": 0,
         "category_id": categoryId,
         "content": content,
-        "modified_time": "",
-        "registered_time":"",
-        "share": true,
+        "groupId": 0,
+        "modifiedTime": "",
+        "registeredTime":"",
+        "routineId": selected,
+        "sharePost": true,
         "title": title,
         "user_id": `${userId}`
       }
@@ -81,7 +84,7 @@ export default function CreateArticleScreen({ navigation }) {
       })
   }, [])
   const category = [
-    {key: 1, value:"질문"}, 
+    {key: 2, value:"질문"}, 
     {key: 3, value:"루틴 공유"}
   ]
   return (
@@ -91,8 +94,9 @@ export default function CreateArticleScreen({ navigation }) {
         data={category}
         save="key"
         placeholder='글 타입 선택'
-        setSelected={(key) => {
-          onChangeCategory(key)
+        setSelected={(value) => {
+          setCategoryId(value),
+          console.log('?????',categoryId)
           }}
       />
       <TextInput

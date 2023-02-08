@@ -27,27 +27,32 @@ const data = {
 export default function App() {
   const [recordData, setRecordData] = useState('')
   const [userId, setUserId] = useState('')
+  const [accessToken, setAccessToken] = useState('')
 
   useEffect(() => {
     //  사용자 정보 가져오기
     AsyncStorage.getItem('username', (err, result) =>{
       const UserInfo = result
       setUserId(UserInfo.id)
+      setAccessToken(UserInfo.token)
     })
-
     // axios 요청 보내기
     axios({
       method: 'get',
-      url: `http://70.12.246.102:8080/record/get-exercise-record/${userId}`
+      url: `http://70.12.246.116:8080/record/get-exercise-record/${userId}?year=2023&month=2&day=8r`,
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
     })
     .then((res) => {
-      console.log(res.data)
-      // setRecordData(res.data)
+      console.log('운동기록 : ', res.data)
+      setRecordData(res.data)
     })
     .catch((err) =>{
-      console.log(err)
+      console.log('record screen 실패 ',err)
     })
-  })
+  }, [])
   return (
     <View style={styles.container}>
       <Text style={styles.title}> OOO 님의 운동 기록 </Text>

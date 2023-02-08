@@ -14,13 +14,14 @@ export default function LoginScreen({ navigation }) {
   const onLoginPressed = () => {
     axios({
       method: 'post',
-      url: `http://70.12.246.116:8080/user/login`,
+      url: `http://70.12.246.102:8080/user/login`,
       data: {
         "id": id.value,
         "password": password.value,
       }
     })
     .then((response) => {
+      console.log(response.data)
       if (response.data.success === true) {
         // response.data.token 저장
         const username = response.data.name
@@ -41,45 +42,7 @@ export default function LoginScreen({ navigation }) {
       index: 0,
       routes: [{ name: 'HomeScreen'}],
     })
-    }
-      
-  // const onLoginPressed = useCallback(async () => {
-  //   // const emailError = emailValidator(email.value)
-  //   const passwordError = passwordValidator(password.value)
-  //   if (passwordError) {
-  //     // setEmail({ ...email, error: emailError })
-  //     setPassword({ ...password, error: passwordError })
-  //     return
-  //   }
-  //   await axios.post(
-  //     `https://70.12.246.116:8080/user/login`,
-  //     // `https://70.12.246.102:8080/user/login`,
-  //     {
-  //       "id": id.value,
-  //       "password": password.value
-  //     })
-  //     .then((response) => {
-  //       console.log(response.data.msg)
-  //       console.log(response.data)
-  //       if (response.data.success === true) {
-  //         // response.data.token 저장
-  //         const username = response.data.name
-  //         const token = response.data.token
-  //         AsyncStorage.setItem("username", JSON.stringify({"username": username, "token": token}), () =>{
-  //           console.log('저장 완료')
-  //         })
-  //       } else {
-  //         alert(response.data.msg)
-  //       }
-  //     })
-  //     .catch((err) => {
-  //      console.log(err)
-  //     })
-  //     navigation.reset({
-  //       index: 0,
-  //       routes: [{ name: 'HomeScreen' }]
-  //     })
-  // }, [id, password])
+  }
 
   return (
     <View>
@@ -115,7 +78,7 @@ export default function LoginScreen({ navigation }) {
 
       <View style={styles.row}>
         <Text> 계정이 없으신가요? </Text>
-        <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
+        <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
             <Text style={styles.link}> Sign Up </Text>
         </TouchableOpacity>
       </View>

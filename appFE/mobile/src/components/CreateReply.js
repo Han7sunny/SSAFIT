@@ -10,21 +10,25 @@ export default function CreateReply(props) {
   const [reply, setReply] = useState('')
   const [userId, setUserId] = useState('')
   const [accessToken, setAccessToken] = useState('')
-  
-  AsyncStorage.getItem('username', (err,result) => {
-    const UserInfo = JSON.parse(result)
-    setUserId(UserInfo.id)
-    setAccessToken(UserInfo.token)
-  })
-  const postReply = () => {
+  // console.log('게시글 번호:', props)
+  useEffect(() => {
+
+    AsyncStorage.getItem('username', (err,result) => {
+      const UserInfo = JSON.parse(result)
+      setUserId(UserInfo.id)
+      setAccessToken(UserInfo.token)
+    })
+  }, [])
+  const onPost = () => {
     axios({
       method: 'post',
-      url: `http://70.12.246.102:8080/board/${props.board_id}/regist`,
+      url: `http://70.12.246.116:8080/board/${props.boardId}/regist`,
       headers: {
-        authorization: `${accessToken}`
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
       },
       data: {
-        "board_id": props.board_id,
+        "board_id": props.boardId,
         "content": reply,
         "registered_time": "",
         "reply_id": 0,
@@ -38,16 +42,16 @@ export default function CreateReply(props) {
       console.log('댓글 post 실패 :',err)
     })
   }
-
   return (
     <View style={styles.container}>
       <Text> 댓글 입력 컴포넌트</Text>
       <TextInput 
         label="댓글을 입력하세요"
-        onChangeText={(text) => {setReply(text), console.log(reply)}}
+        value={reply}
+        onChangeText={(value) => setReply(value)}
       />
       <Button
-        onPress={() => postReply()}
+        onPress={() => onPost()}
       >
         댓글 작성하기
       </Button>

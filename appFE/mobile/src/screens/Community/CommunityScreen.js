@@ -6,15 +6,25 @@ import RoutineListItem from '../../components/RoutineItem'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { ArticleDataAction } from '../../redux/actions/actionCreators'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // 함수형 컴포넌트 내에 setState 코드를 작성하면 무한 렌더링 현상이 발생 
 
 export default function CommunityScreen({ navigation }) {
   const [data, setData] = useState([])
+  const [accessToken, setAccessToken] = useState('')
   useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      setAccessToken(UserInfo.token)
+    })
     axios({
       method: 'get',
       url: 'http://70.12.246.116:8080/board/',
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
     })
     .then(function (res) {
       // console.log(res.data)

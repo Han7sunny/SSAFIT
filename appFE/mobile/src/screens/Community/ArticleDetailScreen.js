@@ -3,19 +3,32 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, FlatList, View } from 'react-native'
 import ReplyItem from '../../components/ReplayItem'
 import CreateReply from '../../components/CreateReply'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function ArticleDetailScreen({ route }) {
   const [articleData, setArticleData] = useState([])
   const [replyData, setReplyData] = useState([])
+  const [accessToken, setAccessToken] = useState('')
+  const [boardId, setBoardId] = useState(0)
   // console.log('==== Now in [ArticleDetailScreen] : ', route.params.id)
   useEffect(()=> {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result)
+      setAccessToken(UserInfo.token)
+    })
     axios({
       method: 'get',
       url: `http://70.12.246.116:8080/board/${route.params.id}`,
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
     })
     .then((res) => {
+      console.log(res.data)
       setArticleData(res.data)
       setReplyData(res.data.replyList)
+      setBoardId(res.data.boardId)
     })
     .catch((err) => {
       console.log(err)
@@ -34,7 +47,7 @@ export default function ArticleDetailScreen({ route }) {
       </View>
       <View>
         <CreateReply 
-          board_id={articleData.board_id}
+          boardId={boardId}
         />
       </View>
       <FlatList 

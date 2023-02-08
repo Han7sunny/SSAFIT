@@ -10,16 +10,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function MyRoutineListScreen({ navigation }) {
   const [routineData, setRoutineData] = useState([])
   const [userId, setUserId] = useState('')
+  const [accessToken, setAccessToken] = useState('')
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
       // const UserInfo = result
       const UserInfo = JSON.parse(result)       // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id)
+      setAccessToken(UserInfo.token)
     })
     axios({
       method: 'get',
       url: `http://70.12.246.116:8080/routine/get-user-routine/${userId}`,
-    
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
     })
     .then(function (res) {
       console.log('[나의 루틴 리스트] :',res.data)
@@ -28,7 +33,7 @@ export default function MyRoutineListScreen({ navigation }) {
       // console.log('데이터를 받아왔다~ : ', routineData)
     })
     .catch(function (err) {
-      console.log("나의 루틴 가져오기 실패",err)
+      console.log("My routine list screen",err)
     })
   }, [])
 

@@ -1,36 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import axios from 'axios'
 import RoutineListItem from '../../components/RoutineItem'
 import Button from '../../components/Button'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-let todayRoutine = {
-    exerciseId: 1,
-    routineName: '칼로리를 불태우는 궁극의 전신 운동',
-    exerciseTypeName: '전신',
-    exerciseSet: '3',
-  }
-
-// 오늘의 운동 루틴 가져올 함수 -> component Mount 되자마자 바로 불러오기
-// function getTodayRoutine() {
-//   return (
-//     axios({
-//       method: 'get',
-//       url: '',
-//       headers: ``
-//     })
-//     .then(function (response) {
-//       const todayRoutine = response.data
-//     })
-//     .catch(function (error) {
-//       console.log(error)
-//     })
-//   )
-// }
-
+const today = new Date()
 export default function TodayRoutine() {
+  const [todayRoutine, setTodayRoutine] = useState([])
+  const [userId, setUserId] = useState('')
+  const [accessToken, setAccessToken] = useState('')
   const navigation = useNavigation()
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err,result) => {
+      const UserInfo = JSON.parse(result)
+      console.log('토큰',UserInfo.token)
+      setUserId(UserInfo.id)
+      setAccessToken(UserInfo.token)
+    })
+    axios({
+      method: 'get',
+      url: `http://70.12.246.116:8080/record/get-schedule/${userId}`,
+      headers: {
+        "authorization": `Bearer ${accessToken}`,
+        "X-AUTH-TOKEN":`${accessToken}`
+      }
+    })
+    .then((res) => {
+      console.log(res.data)
+      setTodayRoutine(res.data)
+    })
+    .catch((err) => {
+      console.log('today routine screen',err)
+    })
+  },[])
+
   return(
     <View 
       style={styles.container}

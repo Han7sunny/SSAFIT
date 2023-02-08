@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, Button as Btn } from 'react-native-paper'
 import Button from '../../components/Button'
@@ -50,44 +50,6 @@ export default function RegisterScreen({ navigation }) {
       routes: [{ name: 'LoginScreen'}],
     })
   }
-  // const onSubmit = useCallback(
-  //   async (e) => {
-  //     const nameError = nameValidator(name.value)
-  //     const emailError = emailValidator(email.value)
-  //     const passwordError = passwordValidator(password.value)
-  //     const checkPasswordError = checkPasswordValidator(password.value, checkPassword.value)
-  //     if (nameError || emailError || passwordError || checkPasswordError) {
-  //       setName({ ...name, error: nameError })
-  //       setEmail({ ...email, error: emailError })
-  //       setPassword({ ...password, error: passwordError })
-  //       setCheckPassword({ ...checkPassword, error: checkPasswordError })
-  //       return
-  //     }
-  //     e.preventDefault()
-  //     try {
-  //       await axios
-  //         .post(`http://70.12.246.116:8080/user/join`, {
-  //           "name": name.value,
-  //           "id": id.value,
-  //           "password": password.value,
-  //           "email": email.value,
-  //         })
-  //         .then((res) => {
-  //           console.log('response:', res)
-  //           if (res.success === true) {
-  //             navigation.push('HomeScreen')
-  //           }
-  //         })
-  //     } catch (err) {
-  //       console.error(err)
-  //     }
-  //     // navigation.reset({
-  //     //   index: 0,
-  //     //   routes: [{ name: 'Dashboard'}],
-  //     // })
-  //   },
-  //   [id, email, name, password]
-  // )
   return (
     <View>
       <TextInput 

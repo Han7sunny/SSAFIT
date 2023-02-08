@@ -11,8 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // const userData = useSelector(store=>store.userData)
 export default function CreateRoutineScreen({ navigation }) {
   let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
-  const [routineName, setRoutineName] = useState('')
-  const [accessToken, setAccessToken] = useState('')
+  const [routineName, setRoutineName] = useState()
+  const [accessToken, setAccessToken] = useState()
   const [userId, setUserId] = useState('')
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
@@ -20,7 +20,7 @@ export default function CreateRoutineScreen({ navigation }) {
       // console.log(UserInfo)
       setAccessToken(UserInfo.token)
       setUserId(UserInfo.id)
-      console.log('[루틴생성] 토큰 :' , accessToken)
+      // console.log('[루틴생성] 토큰 :' , accessToken)
     })
   }, [])
 // axios 요청 보낼 함수
@@ -29,8 +29,8 @@ function onPost() {
     method: 'post',
     url: 'http://70.12.246.116:8080/routine/generate-routine',
     headers: {
-      authorization: `${accessToken}`
-      // react native - jwt 라이브러리
+      "authorization": `Bearer ${accessToken}`,
+      "X-AUTH-TOKEN":`${accessToken}`
     },
     data: {
       "routineName": `${routineName}`,
@@ -41,12 +41,12 @@ function onPost() {
   })
   .then(function (response) {
     console.log(response.data)
-    // console.log('==== 데이터 POST 성공 ======')
+    console.log('==== 루틴 생성 성공 ======')
     // console.log('routineName :', routineName)
     // console.log('exerciseList :', exerciseList)
   })
   .catch(function (error) {
-    // console.log('==== 데이터 POST 실패 ======')
+    console.log('==== 루틴 생성 실패 ======')
     // console.log('routineName :', routineName)
     // console.log('exerciseList :', exerciseList)
     console.log(error)
@@ -79,7 +79,7 @@ function onPost() {
       <Text> Create New Routine! </Text>
       <TextInput
         label="루틴 이름을 설정하세요!"
-        value={routineName.value}
+        value={routineName}
         onChangeText={(text) => {
           setRoutineName(text)
         }}
