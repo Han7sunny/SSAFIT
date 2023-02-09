@@ -62,7 +62,7 @@ export default function CommunityScreen({ navigation }) {
                 id={item.boardId}
                 title={item.title}
               />
-            )}
+              )}
           />
         </View>
       </View>
@@ -78,7 +78,7 @@ export default function CommunityScreen({ navigation }) {
             data={data.slice(4,7)}
             renderItem={({item}) => (
               <TouchableOpacity
-                onPress={() => navigation.navigate('RoutineDetailScreen', {routineId: item.routineId})}
+                onPress={() => navigation.navigate('RoutineArticleDetailScreen', {boardId: item.boardId, routineId: item.routineId})}
               >
                 
                 <RoutineListItem 

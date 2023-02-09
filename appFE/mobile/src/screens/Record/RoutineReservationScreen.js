@@ -14,12 +14,13 @@ export default function RoutineReservationScreen({ navigation }) {
   const [accessToken, setAccessToken] = useState('')
   const [routineId, setRoutineId] = useState(0)
   const [routineList, setRoutineList] = useState([])
-  const [markedDates, setMarkedDates] = useState([])
+  const [stringDate, setStringDate] = useState([])
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedMonth, setSelectedMonth] = useState('')
   const [selectedYear, setSelectedYear] = useState('')
   const [getRoutines, setGetRoutines] = useState(false)
   const [isDateSelected, setIsDateSelected] = useState(false)
+  const [acc, setAcc] = useState({})
 
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
@@ -46,7 +47,6 @@ export default function RoutineReservationScreen({ navigation }) {
     })
     .then((res) => {
       console.log(res.data)
-      setMarkedDates()
     })
     .catch((err) => {
       console.log(err)
@@ -96,17 +96,36 @@ export default function RoutineReservationScreen({ navigation }) {
     })
   }
 
+  const markedDates = (stringDate) => {
+    // const formattedDate = format(new Date(current.date), 'yyyy-MM-dd')
+    let arr = []
+    arr[stringDate] = {marked: true}
+    console.log('acc : ', arr)
+    setAcc(arr)
+  }
+
+  const markedSelectedDate = {
+    ...markedSelectedDate,
+    [stringDate]: {
+      selected: true,
+      marked: markedDates[stringDate]?.marked
+    }
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text>루틴 예약하기!</Text>
       <Calendar style={styles.calendar}
         // initialDate={today}
+        markedDates={markedSelectedDate}
         onDayPress={day => {
           console.log('selected day', day);
           setIsDateSelected(true)
           setSelectedDay(day.day)
           setSelectedMonth(day.month)
           setSelectedYear(day.year)
+          setStringDate(day.stringDate)
+          markedDates(day.stringDate)
           onChangeDay()
         }}
         firstDay={1}

@@ -43,6 +43,7 @@ import {
   CreateArticleScreen,
   ArticleListScreen,
   RoutineListScreen,
+  RoutineArticleDetailScreen,
 } from './src/screens/Community';
 
 import {
@@ -179,6 +180,11 @@ const CommunityStackNavigator = () => {
         component={RoutineListScreen}
         options={{headerShown: false}}
       />
+      <CommunityStack.Screen
+        name="RoutineArticleDetailScreen"
+        component={RoutineArticleDetailScreen}
+        options={{headerShown: false}}
+      />
     </CommunityStack.Navigator>
   );
 };
@@ -288,6 +294,11 @@ const CommunitySideNavigator = () => {
       <CommunitySide.Screen
         name="ArticleListScreen"
         component={ArticleListScreen}
+        options={{headerShown: false}}
+      />
+      <CommunitySide.Screen
+        name="RoutineArticleDetailScreen"
+        component={RoutineArticleDetailScreen}
         options={{headerShown: false}}
       />
       <CommunitySide.Screen name="ArticleItem" component={ArticleItem} />
