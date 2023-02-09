@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/routine")
+@RequestMapping("/api/routine")
 public class RoutineController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RoutineController.class);

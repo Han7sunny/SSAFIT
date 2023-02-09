@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import net.coobird.thumbnailator.Thumbnails;
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/api/board")
 @Api("Board Controller API v1")
 public class BoardController {
 

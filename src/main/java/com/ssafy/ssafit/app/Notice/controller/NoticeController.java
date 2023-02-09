@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/notice")
+@RequestMapping("/api/notice")
 @Api("Notice Controller API v1")
 public class NoticeController {
     private final Logger LOGGER = LoggerFactory.getLogger(NoticeController.class);

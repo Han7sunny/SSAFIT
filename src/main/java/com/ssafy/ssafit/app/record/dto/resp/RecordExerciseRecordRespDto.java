@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RecordExerciseRecordRespDto {
 
+    private double totalAchievementRate;
     private Long routineId;
 
     private String routineName;

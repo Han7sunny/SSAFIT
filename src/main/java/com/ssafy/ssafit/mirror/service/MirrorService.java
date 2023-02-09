@@ -1,5 +1,7 @@
 package com.ssafy.ssafit.mirror.service;
 
+import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
+import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
@@ -13,6 +15,10 @@ import java.util.List;
 
 @Service
 public interface MirrorService {
+    List<ExerciseTypeRespDto> getExerciseType(String area);
+
+    ExerciseTypeAreaRespDto getExerciseTypeArea();
+
     void startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto);
 
     Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);

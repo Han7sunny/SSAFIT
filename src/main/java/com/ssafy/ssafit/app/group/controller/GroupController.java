@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/group")
+@RequestMapping("/api/group")
 @Api("Group Controller API v1")
 // 그룹 생성 및 그룹 모집글 관련
 public class GroupController {

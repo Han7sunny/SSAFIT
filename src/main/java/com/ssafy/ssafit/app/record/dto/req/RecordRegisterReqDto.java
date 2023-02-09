@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @ToString
 @Builder
 public class RecordRegisterReqDto {

@@ -1,8 +1,11 @@
 package com.ssafy.ssafit.mirror.service;
 
+import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
+import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
+import com.ssafy.ssafit.app.exercise.service.ExerciseService;
 import com.ssafy.ssafit.app.group.entity.Group;
 import com.ssafy.ssafit.app.group.entity.GroupMember;
 import com.ssafy.ssafit.app.group.repository.GroupMemberRepository;
@@ -23,6 +26,7 @@ import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -37,6 +41,7 @@ import java.util.Optional;
 @Service
 public class MirrorServiceImpl implements MirrorService{
 
+    private final ExerciseService exerciseService;
     RecordRepository recordRepository;
     RecordDetailRepository recordDetailRepository;
     RoutineRepository routineRepository;
@@ -54,7 +59,7 @@ public class MirrorServiceImpl implements MirrorService{
                              ExerciseRepository exerciseRepository, RecordService recordService,
                              ExerciseTypeRepository exerciseTypeRepository,
                              GroupMemberRepository groupMemberRepository,
-                             GroupRepository groupRepository) {
+                             GroupRepository groupRepository, ExerciseService exerciseService) {
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
@@ -64,6 +69,26 @@ public class MirrorServiceImpl implements MirrorService{
         this.exerciseTypeRepository = exerciseTypeRepository;
         this.groupMemberRepository = groupMemberRepository;
         this.groupRepository = groupRepository;
+        this.exerciseService = exerciseService;
+    }
+
+    @Override
+    public List<ExerciseTypeRespDto> getExerciseType(String area) {
+        return exerciseService.getExerciseType(area);
+    }
+
+    @Override
+    public ExerciseTypeAreaRespDto getExerciseTypeArea() {
+        List<String> exerciseTypeAreaList = exerciseTypeRepository.getExerciseTypeArea();
+
+        List<String> tmpList = new ArrayList<>();
+        for (String s: exerciseTypeAreaList) {
+            tmpList.add(s);
+        }
+
+        return ExerciseTypeAreaRespDto.builder()
+                .exerciseAreaList(tmpList)
+                .build();
     }
 
     @Override

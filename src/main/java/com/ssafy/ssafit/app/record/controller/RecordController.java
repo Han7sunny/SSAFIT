@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/record")
+@RequestMapping("/api/record")
 public class RecordController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(RecordController.class);
@@ -44,7 +44,6 @@ public class RecordController {
     public ResponseEntity<?> registerExercise(@AuthenticationPrincipal CustomUserDetails user, @RequestBody RecordRegisterReqDto recordRegisterReqDto) {
         LOGGER.info("[Enter] registerExcercise");
         try {
-            System.out.println("뭐가 문제야");
             RecordRegisterReqDto data = RecordRegisterReqDto.builder().routineId(recordRegisterReqDto.getRoutineId()).userId(user.getUser().getId()).build();
             LocalDate startDate = LocalDate.of(recordRegisterReqDto.getStartYear(), recordRegisterReqDto.getStartMonth(), recordRegisterReqDto.getStartDay());
             recordService.registerExercise(data, startDate);

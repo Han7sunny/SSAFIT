@@ -141,6 +141,9 @@ public class RecordServiceImpl implements RecordService{
 
         List<RecordExerciseRecordRespDto> exerciseRecordList = new ArrayList<RecordExerciseRecordRespDto>();
 
+        Long countAll = 0L;
+        Long countRezAll = 0L;
+
         for(Record record : recordList) {
             List<RecordExerciseRecordRespDto.ExerciseDetail> tmpList = new ArrayList<RecordExerciseRecordRespDto.ExerciseDetail>();
 
@@ -150,12 +153,15 @@ public class RecordServiceImpl implements RecordService{
                 String exerciseName = recordDetail.getExerciseType().getExerciseTypeName();
                 Long countRez = recordDetail.getCountRez();
                 tmpList.add(new RecordExerciseRecordRespDto.ExerciseDetail(exerciseName, recordDetail.getCount(), countRez));
+                countAll += recordDetail.getCount();
+                countRezAll += countRez;
             }
 
             exerciseRecordList.add(RecordExerciseRecordRespDto.builder()
                             .routineId(record.getRoutine().getRoutineId())
                             .routineName(record.getRoutine().getName())
                             .achievementRate(record.getAchievementRate())
+                            .totalAchievementRate(countAll / countRezAll)
                             .exerciseDetailList(tmpList)
                             .build());
         }

@@ -36,7 +36,8 @@ public class SwaggerConfiguration {
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.ssafy.ssafit"))
-                .paths(PathSelectors.any())
+//                .paths(PathSelectors.any())
+                .paths(PathSelectors.ant("/api/**"))
                 .build();
     }
 
