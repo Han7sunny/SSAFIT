@@ -26,11 +26,11 @@ export default function RoutineListItem(props) {
   }
   return (
     <View style={styles.container}> 
-      <IconButton
+      {/* <IconButton
         // mode="contained"
-        icon="plus"
+        icon="plus-circle-outline"
         onPress={addTodayRoutine}
-      />
+      /> */}
         <Text>{props.routineId}</Text>
         <Text style={styles.routineName}>{props.name}</Text>
     </View>

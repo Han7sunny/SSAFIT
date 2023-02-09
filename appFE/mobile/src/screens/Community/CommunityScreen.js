@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ScrollView, Text, TouchableOpacity, FlatList, View, StyleSheet } from 'react-native'
 import Button from '../../components/Button'
 import ArticleItem from '../../components/ArticleItem'
-import RoutineListItem from '../../components/RoutineItem'
+import RoutineListItem from '../../components/RoutineListItem'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { ArticleDataAction } from '../../redux/actions/actionCreators'
@@ -80,10 +80,14 @@ export default function CommunityScreen({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate('RoutineDetailScreen', {routineId: item.routineId})}
               >
+                
                 <RoutineListItem 
-                  id={item.board_id}
-                  title={item.title}
+                  routineId={item.routineId}
+                  name={item.title}
                 />
+                <Text>조회수 : {item.hits}</Text>
+                <Text>공유수 : {item.downloads}</Text>
+                <Text>좋아요 : {item.likes}</Text>
               </TouchableOpacity>
             )}
           />

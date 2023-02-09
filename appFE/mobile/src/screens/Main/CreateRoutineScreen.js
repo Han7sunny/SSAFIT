@@ -25,6 +25,7 @@ export default function CreateRoutineScreen({ navigation }) {
 // axios 요청 보낼 함수
 function onPost() {
   console.log('루틴 생성 전 확인 = ',exerciseList)
+  console.log(accessToken)
   axios({
     method: 'post',
     url: 'http://70.12.246.116:8080/routine/generate-routine',
