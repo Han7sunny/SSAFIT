@@ -1,21 +1,21 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Modal, IconButton, Text} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function GroupSearchScreen({navigation, item}) {
+  console.log(navigation, item);
   const [isClickHeart, setIsClickHeart] = useState(item.clickLikes);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [heartCnt, setIsHeartCnt] = useState(item.likes);
   const [accessToken, setAccessToken] = useState('');
-  const showModal = () => setIsOpenModal(true);
-  const hideModal = () => setIsOpenModal(false);
+  const [state, setState] = useState(false);
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
     });
+    console.log(isClickHeart, heartCnt, accessToken, state);
   }, []);
   const clickHeart = async () => {
     const result = (
@@ -31,13 +31,17 @@ export default function GroupSearchScreen({navigation, item}) {
     ).data;
     setIsClickHeart(result);
     setIsHeartCnt(heartCnt + (result ? 1 : -1));
+    if (result) setState(!state);
   };
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate('GroupListDetailScreen', {id: item.groupId})
-      }>
+      onPress={() => {
+        navigation.navigate('GroupListDetailScreen', {
+          id: item.groupId,
+          state: state,
+        });
+      }}>
       <View
         style={[
           styles.container,
@@ -50,11 +54,11 @@ export default function GroupSearchScreen({navigation, item}) {
             alignContent: 'space-around',
           },
         ]}>
-        <View style={{flex: 3}}>
+        <View style={{flex: 5}}>
           <Text style={styles.box}>{item.title}</Text>
           <Text style={styles.box}>{item.content}</Text>
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <IconButton
                 icon={isClickHeart ? 'heart' : 'heart-outline'}
                 iconColor={isClickHeart ? 'red' : 'black'}
@@ -62,18 +66,16 @@ export default function GroupSearchScreen({navigation, item}) {
                 onPress={clickHeart}
                 style={styles.iconButton}
               />
-              <Text>{heartCnt}</Text>
+              <Text variant="titleLarge">{heartCnt}</Text>
             </View>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <IconButton
                 icon="message-reply-text-outline"
                 size={40}
                 style={styles.iconButton}
               />
-              <Text>
-                {item.groupRecruitReplyList
-                  ? item.groupRecruitReplyList.length
-                  : 0}
+              <Text variant="titleLarge">
+                {item.replySize ? item.replySize : 0}
               </Text>
             </View>
           </View>
@@ -83,9 +85,6 @@ export default function GroupSearchScreen({navigation, item}) {
           {item.currentMember}/{item.maximumMember} 명
         </Text>
       </View>
-      <Modal visible={isOpenModal} onDismiss={hideModal}>
-        <Text>Example Modal. Click outside this area to dismiss.</Text>
-      </Modal>
     </TouchableOpacity>
   );
 }

@@ -3,53 +3,31 @@ import React, {useEffect, useState} from 'react';
 import {View, Image, FlatList, StyleSheet} from 'react-native';
 import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
 import MemberScreen from './MemberScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MyGroupSimple({navigation, route}) {
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
-
   const id = route.params.id;
-  const [item, setItem] =
-    // useState({
-    //   "achievement_rate": 0,
-    //   "current_member": 0,
-    //   "end_date": "string",
-    //   "goal": 0,
-    //   "groupId": 0,
-    //   "groupMemberList": [
-    //     {
-    //       "acceptInvitation": true,
-    //       "achievementRate": 0,
-    //       "groupId": 0,
-    //       "groupMemberId": 0,
-    //       "on_off": true,
-    //       "userId": "string",
-    //       "userName": "string"
-    //     }
-    //   ],
-    //   "maximum_member": 0,
-    //   "msg": "string",
-    //   "name": "string",
-    //   "penalty": "string",
-    //   "period": 0,
-    //   "routineList": [
-    //     {
-    //       "name": "string",
-    //       "routineId": 0
-    //     }
-    //   ],
-    //   "start_date": "string",
-    //   "success": true
-    // })
-    useState({});
+
+  const [userId, setUserId] = useState('');
+  const [role, setRole] = useState('USER1');
+  const [accessToken, setAccessToken] = useState('');
+  const [item, setItem] = useState({});
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setRole(UserInfo.role);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
   useEffect(() => {
     console.log(id);
     const getData = async () => {
       const data = (
         await axios.get(`http://70.12.246.116:8080/group/` + Number(id), {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'X-AUTH-TOKEN': `${token}`,
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
           },
         })
       ).data;

@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function GroupDetailScreen({route}) {
   const id = route.params.id;
-  const my = {memberid: 'lhj', isMember: false, userId: 'test123'};
   const [heartCnt, setIsHeartCnt] = useState(0);
   const [isClickHeart, setIsClickHeart] = useState(0);
   const [text, setText] = useState('');
@@ -15,7 +14,6 @@ export default function GroupDetailScreen({route}) {
 
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
-  // useState({"achievementRate": 0, "boardId": 0, "categoryId": 0, "clickLikes": false, "content": "내용 바꿈ㅋㅋ", "currentMember": 2, "downloads": 0, "endDate": "2023-03-07", "endRecruitDate": null, "fileList": null, "goal": 89.24, "groupId": 1, "groupMemberList": [{"acceptInvitation": false, "achievementRate": 0, "groupId": 1, "groupMemberId": 2, "on_off": false, "userId": "test123", "userName": "test123"}], "groupName": "공주들", "groupRecruitReplyList": [{"board_id": 1, "content": "저를 받아주십시오.", "includedGroup": false, "msg": null, "registered_time": "2023-02-06T00:55:18.777+00:00", "reply_id": 1, "success": true, "userName": "test456", "user_id": "test456"}], "hits": 10, "likes": 0, "maximumMember": 5, "modifiedTime": "2023-02-06T11:21:30.166614", "msg": null, "penalty": "대가리 박박 밀기", "period": 5, "registeredTime": "2023-02-06T09:38:04.421357", "replyList": null, "replySize": 1, "routineId": 0, "routineList": [{"name": "루틴 1 _ test22", "routineId": 3}], "sharePost": true, "startDate": "2023-03-03", "startRecruitDate": null, "success": true, "title": "제목도 바꿔부러", "userId": "test1xoa", "userName": null});
   const [Reply, setReply] = useState([]);
   const [changeReply, setChangeReply] = useState(false);
   useEffect(() => {
@@ -24,25 +22,26 @@ export default function GroupDetailScreen({route}) {
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
-  });
-  useEffect(() => {
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        })
-      ).data;
-      // console.log(data);
-      setItem(data);
-      setReply(data.groupRecruitReplyList);
-      setIsHeartCnt(data.likes);
-      setIsClickHeart(data.clickLikes);
-    };
     getData();
+  }, []);
+  const getData = async () => {
+    const data = (
+      await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    // console.log(data);
+    setItem(data);
+    setReply(data.groupRecruitReplyList);
+    setIsHeartCnt(data.likes);
+    setIsClickHeart(data.clickLikes);
     setChangeReply(false);
+  };
+  useEffect(() => {
+    getData();
   }, [id, changeReply]);
   const clickHeart = async () => {
     const data = await axios.get(
@@ -50,7 +49,6 @@ export default function GroupDetailScreen({route}) {
     ).data;
     setIsClickHeart(data);
     setIsHeartCnt(heartCnt + (data ? 1 : -1));
-    console.log(data);
   };
   const deleteRecruit = async () => {
     const result = (
@@ -62,13 +60,15 @@ export default function GroupDetailScreen({route}) {
       })
     ).data;
     if (result) navigation.navigate('MainMyPageScreen');
-    console.log(result);
   };
-
+  const deleteReply = isDelete => {
+    console.log(isDelete);
+    if (isDelete) setChangeReply(true);
+  };
   const addReply = async () => {
     // console.log(text)
     if (text.length === 0) return;
-    console.log(text);
+    // console.log(text);
     const uploadReply = await axios.post(
       `http://70.12.246.116:8080/group/recruit/${id}/regist`,
       {
@@ -76,7 +76,7 @@ export default function GroupDetailScreen({route}) {
         content: text,
         registered_time: '2023-02-07T02:01:16.776Z',
         reply_id: Number(0),
-        user_id: my.userId,
+        user_id: userId,
       },
       {
         headers: {
@@ -85,11 +85,11 @@ export default function GroupDetailScreen({route}) {
         },
       },
     );
-    console.log(uploadReply);
+    // console.log(uploadReply);
     setChangeReply(true);
     setText('');
   };
-
+  console.log('hi: ', heartCnt, isClickHeart, text, item, Reply);
   return (
     <View>
       <View
@@ -130,7 +130,7 @@ export default function GroupDetailScreen({route}) {
           {item.currentMember}/{item.maximumMember} 명
         </Text>
         <Text style={{marginBottom: 20}}>{item.content}</Text>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <IconButton
             icon={isClickHeart ? 'heart' : 'heart-outline'}
             iconColor={isClickHeart ? 'red' : 'black'}
@@ -141,7 +141,7 @@ export default function GroupDetailScreen({route}) {
           <Text>{heartCnt}</Text>
         </View>
       </View>
-      <View style={{flexDirection: 'row', alignContent: 'center'}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image source={require('./comment.png')} />
         <Text>{Reply ? Reply.length : 0}</Text>
       </View>
@@ -152,20 +152,18 @@ export default function GroupDetailScreen({route}) {
         renderItem={({item}) => (
           // console.log(item);
           <View>
-            <ReplyScreen reply={item} groupId={id} />
+            <ReplyScreen reply={item} groupId={id} send={deleteReply} />
           </View>
         )}
         keyExtractor={item => item.reply_id.toString()}
         style={{height: 115, padding: 0}}
       />
-      <View>
-        <TextInput
-          label="댓글을 입력하세요"
-          value={text}
-          onChangeText={text => setText(text)}
-        />
-        <Button onPress={addReply}>댓글 작성하기</Button>
-      </View>
+      <TextInput
+        label="댓글을 입력하세요"
+        value={text}
+        onChangeText={text => setText(text)}
+        right={<TextInput.Icon icon="import" onPress={addReply} />}
+      />
     </View>
   );
 }

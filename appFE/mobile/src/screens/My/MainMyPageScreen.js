@@ -1,10 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, FlatList, StyleSheet, Pressable} from 'react-native';
 import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MainMyPageScreen({navigation}) {
   const my = {id: 1, name: '이학준', state: 'admi'};
   const [photo, setPhoto] = useState(undefined);
+
+  const [role, setRole] = useState('');
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+      setRole(UserInfo.role);
+    });
+    getData();
+  }, []);
   const groups = [
     {id: 0, name: '유현준'},
     {id: 1, name: '송경삼'},
@@ -20,6 +34,19 @@ export default function MainMyPageScreen({navigation}) {
     {id: 2, title: '세번째 공지사항'},
     {id: 3, title: '네번째 공지사항'},
   ];
+
+  const getData = async () => {
+    const data = (
+      await axios.get('http://70.12.246.116:8080//user/get-mypage', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    // setNotices(data);
+    // setFiltering(data);
+  };
   return (
     <View>
       <View style={{alignSelf: 'center', alignItems: 'center'}}>
@@ -52,13 +79,13 @@ export default function MainMyPageScreen({navigation}) {
             margin: 0,
           }}>
           <Text style={{fontSize: 25, fontWeight: 'bold', margin: 0}}>
-            {my.state === 'admin' ? '관리자' : my.name + ' 님'}
+            {userId === 'ADMIN' ? '관리자' : userId + ' 님'}
           </Text>
           <IconButton
             icon="cog"
             iconColor={MD3Colors.error50}
             size={20}
-            onPress={() => console.log('Pressed')}
+            onPress={() => navigation.navigate('ResetPasswordScreen')}
           />
         </View>
       </View>

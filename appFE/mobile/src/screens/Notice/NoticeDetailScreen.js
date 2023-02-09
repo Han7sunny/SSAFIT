@@ -21,20 +21,20 @@ export default function NoticeDetailScreen({navigation, route}) {
       setAccessToken(UserInfo.token);
     });
   }, []);
-  useEffect(() => {
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/notice/${id}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        })
-      ).data;
-      setNotices(data);
-    };
-    getData();
+  const getData = async () => {
+    const data = (
+      await axios.get(`http://70.12.246.116:8080/notice/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setNotices(data);
     setChangeReply(false);
+  };
+  useEffect(() => {
+    getData();
   }, [id, changeReply]);
   const deleteReply = isDelete => {
     console.log(isDelete);
@@ -131,14 +131,12 @@ export default function NoticeDetailScreen({navigation, route}) {
           keyExtractor={item => item.reply_id}
         />
       </View>
-      <View>
-        <TextInput
-          label="댓글을 입력하세요"
-          value={text}
-          onChangeText={text => setText(text)}
-          right={<TextInput.Icon icon="import" onPress={addReply} />}
-        />
-      </View>
+      <TextInput
+        label="댓글을 입력하세요"
+        value={text}
+        onChangeText={text => setText(text)}
+        right={<TextInput.Icon icon="import" onPress={addReply} />}
+      />
     </View>
   );
 }

@@ -109,20 +109,7 @@ export default function CreateGroupScreen({navigation}) {
       navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen');
   };
 
-  const [Lists, setLists] = useState([
-    // {userId: 'david1235', userName: '아뇽'},
-    // {userId: 'dkdlel', userName: 'notfound'},
-    // {userId: 'dkdlel1', userName: 'username1'},
-    // {userId: 'gkfrpdjqtk', userName: 'slrspdla'},
-    // {userId: 'test123', userName: 'test123'},
-    // {userId: 'test1xoa', userName: '서니'},
-    // {userId: 'test22', userName: '투투'},
-    // {userId: 'test456', userName: 'test456'},
-    // {userId: 'testlogin', userName: '로그인테스트용'},
-    // {userId: 'testLoginTest', userName: 'testName'},
-    // {userId: 'xoa1235', userName: '서니사라ㅇ'},
-  ]);
-  //useState([]);
+  const [Lists, setLists] = useState([]);
   const [selecUsers, setSelectUsers] = useState([]);
   const [findUser, setFindUser] = useState('');
   onSelectedUsersChange = selecUsers => {
@@ -179,16 +166,14 @@ export default function CreateGroupScreen({navigation}) {
         <Text
           variant="headlineLarge"
           style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
-          {' '}
-          그룹 생성{' '}
+          {' 그룹 생성 '}
         </Text>
       )}
       {isEnabled && (
         <Text
           variant="headlineLarge"
           style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
-          {' '}
-          그룹 게시글 작성{' '}
+          {' 그룹 게시글 작성 '}
         </Text>
       )}
       <View
