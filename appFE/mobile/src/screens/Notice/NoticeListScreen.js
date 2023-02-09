@@ -1,71 +1,184 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {View, FlatList, Pressable, StyleSheet} from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import {Button, Text, RadioButton, TextInput} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function NoticeListScreen({navigation}) {
-  const my = {id: 1, name: '이학준', state: 'admin'};
+export default function NoticeListScreen({navigation, route}) {
   const [accessToken, setAccessToken] = useState('');
   const [role, setRole] = useState('');
-  const [Notices, setNotices] = useState([
-    // {boardId: 0, title: '첫번째 공지사항'},
-    // {boardId: 1, title: '두번째 공지사항'},
-    // {boardId: 2, title: '세번째 공지사항'},
-    // {boardId: 3, title: '네번째 공지사항'},
-  ]);
-  //   useState([]);
+  const [findWord, setFindWord] = useState('');
+  const [checked, setChecked] = useState('title');
+  const [Notices, setNotices] = useState([]);
+  const [Filtering, setFiltering] = useState([]);
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setRole(UserInfo.role);
       setAccessToken(UserInfo.token);
     });
-    const getData = async () => {
-      const data = (
-        await axios.get('http://70.12.246.116:8080/notice', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        })
-      ).data;
-      setNotices(data);
-      console.log(data);
-    };
-    getData();
+    // getData();
   }, []);
+  useEffect(() => {
+    getData();
+  }, [route.params]);
+  const getData = async () => {
+    const data = (
+      await axios.get('http://70.12.246.116:8080/notice/', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setNotices(data);
+    setFiltering(data);
+  };
+  const filter = () => {
+    setFiltering(
+      Notices.filter(
+        item =>
+          (checked === 'title' && item.title.includes(findWord)) ||
+          (checked === 'id' && item.id.includes(findWord)) ||
+          (checked === 'two' &&
+            (item.title.includes(findWord) || item.id.includes(findWord))),
+      ),
+    );
+  };
   return (
     <View>
-      {role !== 'USER' && (
-        <Button
-          mode="contained"
-          onPress={() => {
-            navigation.navigate('AddNoticeScreen');
+      <TextInput
+        onChangeText={value => setFindWord(value)}
+        onSubmitEditing={filter}
+        placeholder="검색어를 입력하세요"
+        right={<TextInput.Icon icon="magnify" onPress={filter} />}
+      />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-evenly',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <RadioButton
+            value="title"
+            status={checked === 'title' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('title')}
+          />
+          <Text>제목</Text>
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <RadioButton
+            value="id"
+            status={checked === 'id' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('id')}
+          />
+          <Text>작성자</Text>
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <RadioButton
+            value="two"
+            status={checked === 'two' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('two')}
+          />
+          <Text>제목+작성자</Text>
+        </View>
+      </View>
+
+      <View style={styles.listTitle}>
+        <Text
+          variant="titleLarge"
+          style={{
+            fontWeight: 'bold',
+            flex: 2.5,
+            textAlign: 'center',
+            fontSize: 25,
           }}>
-          작성
-        </Button>
-      )}
+          제목
+        </Text>
+        <Text
+          variant="titleLarge"
+          style={{
+            fontWeight: 'bold',
+            flex: 1,
+            textAlign: 'center',
+            fontSize: 25,
+          }}>
+          작성자
+        </Text>
+        <Text
+          variant="titleLarge"
+          style={{
+            fontWeight: 'bold',
+            flex: 1,
+            textAlign: 'center',
+            fontSize: 25,
+          }}>
+          날짜
+        </Text>
+      </View>
       <FlatList
-        data={Notices}
+        data={Filtering}
+        style={{height: 520, padding: 10}}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({item}) => (
           <Pressable
+            style={{flexDirection: 'row', height: 30, alignItems: 'center'}}
             onPress={() =>
-              navigation.navigate('NoticeDetailScreen', {id: item.boardId})
+              navigation.navigate('NoticeDetailScreen', {
+                id: item.boardId,
+              })
             }>
-            <Text>[공지]{item.title}</Text>
+            <Text style={{flex: 2.5, fontSize: 20}}>[공지]{item.title}</Text>
+            <Text style={{flex: 1, textAlign: 'center', fontSize: 17}}>
+              {item.userName}
+            </Text>
+            <Text style={{flex: 1, textAlign: 'center', fontSize: 17}}>
+              {item.registeredTime.substring(0, 10)}
+            </Text>
           </Pressable>
         )}
         keyExtractor={item => item.boardId.toString()}
       />
+      {role === 'ADMIN' && (
+        <Button
+          mode="contained"
+          buttonColor="black"
+          style={styles.button}
+          labelStyle={styles.label}
+          onPress={() => {
+            navigation.navigate('AddNoticeScreen', {data: false});
+          }}>
+          작성
+        </Button>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   separator: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#aaa',
     height: 1,
+  },
+  listTitle: {
+    height: 50,
+    flexDirection: 'row',
+    borderTopWidth: 3,
+    marginTop: 10,
+    borderBottomWidth: 1,
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  button: {
+    width: 350,
+    height: 50,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  label: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 17,
   },
 });

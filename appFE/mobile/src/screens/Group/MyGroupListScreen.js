@@ -5,7 +5,7 @@ import {Button, Text} from 'react-native-paper';
 import MyGroupSimple from './MyGroupSimple';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MyGroupListScreen({navigation}) {
+export default function MyGroupListScreen({navigation, route}) {
   const [Lists, setLists] = useState([]);
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -15,20 +15,22 @@ export default function MyGroupListScreen({navigation}) {
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/group/myGroupList`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        })
-      ).data;
-      setLists(data);
-      console.log(data);
-    };
-    getData();
   }, []);
+  useEffect(() => {
+    getData();
+  }, [route.params]);
+  const getData = async () => {
+    const data = (
+      await axios.get(`http://70.12.246.116:8080/group/myGroupList`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setLists(data);
+    console.log(data);
+  };
 
   return (
     <View>

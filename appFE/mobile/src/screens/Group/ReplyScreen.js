@@ -40,6 +40,22 @@ export default function ReplyScreen({groupId, reply}) {
     console.log('click');
   };
 
+  const deleteReply = async replyId => {
+    const result = (
+      await axios.delete(
+        `http://70.12.246.116:8080/group/recruit/${id}/${replyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        },
+      )
+    ).data;
+    console.log(result);
+    setChangeReply(true);
+  };
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -55,6 +71,7 @@ export default function ReplyScreen({groupId, reply}) {
       <Text style={[styles.routineName, {marginLeft: 20}]}>
         {reply.content}
       </Text>
+      <Button onPress={() => deleteReply(item.reply_id)}>댓글 삭제하기</Button>
       {/* <IconButton
         icon={isClickHeart ? 'heart' : 'heart-outline'}
         iconColor={isClickHeart ? 'red' : 'black'}

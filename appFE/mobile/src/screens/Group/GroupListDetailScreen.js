@@ -17,12 +17,15 @@ export default function GroupDetailScreen({route}) {
   const [accessToken, setAccessToken] = useState('');
   // useState({"achievementRate": 0, "boardId": 0, "categoryId": 0, "clickLikes": false, "content": "내용 바꿈ㅋㅋ", "currentMember": 2, "downloads": 0, "endDate": "2023-03-07", "endRecruitDate": null, "fileList": null, "goal": 89.24, "groupId": 1, "groupMemberList": [{"acceptInvitation": false, "achievementRate": 0, "groupId": 1, "groupMemberId": 2, "on_off": false, "userId": "test123", "userName": "test123"}], "groupName": "공주들", "groupRecruitReplyList": [{"board_id": 1, "content": "저를 받아주십시오.", "includedGroup": false, "msg": null, "registered_time": "2023-02-06T00:55:18.777+00:00", "reply_id": 1, "success": true, "userName": "test456", "user_id": "test456"}], "hits": 10, "likes": 0, "maximumMember": 5, "modifiedTime": "2023-02-06T11:21:30.166614", "msg": null, "penalty": "대가리 박박 밀기", "period": 5, "registeredTime": "2023-02-06T09:38:04.421357", "replyList": null, "replySize": 1, "routineId": 0, "routineList": [{"name": "루틴 1 _ test22", "routineId": 3}], "sharePost": true, "startDate": "2023-03-03", "startRecruitDate": null, "success": true, "title": "제목도 바꿔부러", "userId": "test1xoa", "userName": null});
   const [Reply, setReply] = useState([]);
+  const [changeReply, setChangeReply] = useState(false);
   useEffect(() => {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
+  });
+  useEffect(() => {
     const getData = async () => {
       const data = (
         await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`, {
@@ -39,7 +42,8 @@ export default function GroupDetailScreen({route}) {
       setIsClickHeart(data.clickLikes);
     };
     getData();
-  }, [id]);
+    setChangeReply(false);
+  }, [id, changeReply]);
   const clickHeart = async () => {
     const data = await axios.get(
       `http://70.12.246.116:8080/group/recruit/${id}/likes`,
@@ -81,25 +85,9 @@ export default function GroupDetailScreen({route}) {
         },
       },
     );
-    // setReply(Reply.push({memberid: my.memberid, commentText: text, isMember: my.isMember}));
     console.log(uploadReply);
-    // setReply((await axios.get('http://70.12.246.116:8080/group/recruit/'+id)).data.groupRecruitReplyList);
+    setChangeReply(true);
     setText('');
-  };
-
-  const deleteReply = async replyId => {
-    const result = (
-      await axios.delete(
-        `http://70.12.246.116:8080/group/recruit/${id}/${replyId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        },
-      )
-    ).data;
-    console.log(result);
   };
 
   return (
@@ -165,9 +153,6 @@ export default function GroupDetailScreen({route}) {
           // console.log(item);
           <View>
             <ReplyScreen reply={item} groupId={id} />
-            <Button onPress={() => deleteReply(item.reply_id)}>
-              댓글 삭제하기
-            </Button>
           </View>
         )}
         keyExtractor={item => item.reply_id.toString()}
@@ -176,6 +161,7 @@ export default function GroupDetailScreen({route}) {
       <View>
         <TextInput
           label="댓글을 입력하세요"
+          value={text}
           onChangeText={text => setText(text)}
         />
         <Button onPress={addReply}>댓글 작성하기</Button>
