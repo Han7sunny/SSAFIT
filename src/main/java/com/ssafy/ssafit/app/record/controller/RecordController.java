@@ -6,8 +6,11 @@ import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.service.RecordService;
+import com.ssafy.ssafit.app.user.controller.UserController;
 import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/record")
 public class RecordController {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(RecordController.class);
+
     RecordService recordService;
 
     @Autowired
@@ -36,6 +42,7 @@ public class RecordController {
                     "startYear : 등록하고자 하는 날의 년\n",
             response = CommonResp.class)
     public ResponseEntity<?> registerExercise(@AuthenticationPrincipal CustomUserDetails user, @RequestBody RecordRegisterReqDto recordRegisterReqDto) {
+        LOGGER.info("[Enter] registerExcercise");
         try {
             System.out.println("뭐가 문제야");
             RecordRegisterReqDto data = RecordRegisterReqDto.builder().routineId(recordRegisterReqDto.getRoutineId()).userId(user.getUser().getId()).build();
@@ -54,6 +61,7 @@ public class RecordController {
             "year : 조회하고 싶은 날의 년\n",
             response = List.class)
     public ResponseEntity<?> getSchedule(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day) {
+        LOGGER.info("[Enter] getSchedule");
         try {
             LocalDate startDate = LocalDate.of(year, month, day);
             List<RecordScheduleRespDto> recordScheduleRespDtoList = recordService.getSchedule(startDate, user.getUser().getId());
@@ -68,6 +76,7 @@ public class RecordController {
             "id : 조회하고 싶은 record의 아이디",
             response = RecordInfoRespDto.class)
     public ResponseEntity<?> getRecord(@PathVariable Long id) {
+        LOGGER.info("[Enter] getRecord");
         try {
             RecordInfoRespDto recordInfoRespDto = recordService.getRecord(id);
             return new ResponseEntity<RecordInfoRespDto>(recordInfoRespDto, HttpStatus.OK);
@@ -82,6 +91,7 @@ public class RecordController {
             "recordId : 제거하고 싶은 record의 아이디",
             response = CommonResp.class)
     public ResponseEntity<?> removeSchedule(@RequestParam Long recordId) {
+        LOGGER.info("[Enter] removeSchedule");
         try {
             recordService.removeSchedule(recordId);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("삭제 성공").build(), HttpStatus.OK);
@@ -96,8 +106,9 @@ public class RecordController {
                     "day : 조회하고 싶은 날의 일\n" +
                     "month : 조회하고 싶은 날의 월\n" +
                     "year : 조회하고 싶은 날의 년\n",
-            response = CommonResp.class)
+            response = List.class)
     public ResponseEntity<?> getExerciseRecord(@RequestParam("year") int year, @RequestParam("month") int month, @RequestParam("day") int day, @AuthenticationPrincipal CustomUserDetails user) {
+        LOGGER.info("[Enter] getExerciseRecord");
         try {
             LocalDate time = LocalDate.of(year, month, day);
             List<RecordExerciseRecordRespDto> exerciseRecordList = recordService.getExerciseRecord(time, user.getUser().getId());

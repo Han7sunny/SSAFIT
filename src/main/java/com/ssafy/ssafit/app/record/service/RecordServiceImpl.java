@@ -72,7 +72,7 @@ public class RecordServiceImpl implements RecordService{
                 .achievementRate(0.0)
                 .build();
 
-        if(recordRegisterReqDto.getGroupId() != 0)
+        if(recordRegisterReqDto.getGroupId() != null)
             record.setGroup(groupRepository.findById(recordRegisterReqDto.getGroupId()).get());
 
         recordRepository.save(record);

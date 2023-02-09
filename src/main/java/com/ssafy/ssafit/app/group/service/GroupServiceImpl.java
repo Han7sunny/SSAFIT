@@ -33,6 +33,7 @@ import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
+import com.ssafy.ssafit.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,8 +309,8 @@ public class GroupServiceImpl implements GroupService{
             return GroupRecruitRespDto.builder().success(false).msg("해당 게시글을 찾을 수 없습니다.").build();
         }
 
+        String userId = SecurityUtil.getCurrentUserId().get().getUserId();
         Group group = getGroup.get();
-
         Board board = boardRepository.findByGroupId(groupId);
         board.setHits(board.getHits() + 1);
         boardRepository.save(board);
@@ -325,6 +326,16 @@ public class GroupServiceImpl implements GroupService{
         groupRecruitRespDto.setSharePost(board.isSharePost());
         groupRecruitRespDto.setHits(board.getHits());
         groupRecruitRespDto.setLikes(board.getLikes());
+
+        Likes getLikes = likesRepository.findByUserIdAndBoardId(userId, board.getId());
+        if(getLikes == null) {
+            // 좋아요 안 누른 상태
+            groupRecruitRespDto.setClickLikes(false);
+        }else{
+            // 좋아요 이미 누른 상태
+            groupRecruitRespDto.setClickLikes(true);
+        }
+
         // 그룹 운동 루틴 목록
         // 만약에 1만 들어있으면?
         List<String> routineIdList = Arrays.asList(group.getGroupRoutine().split(","));
@@ -369,6 +380,7 @@ public class GroupServiceImpl implements GroupService{
 
     @Override
     public List<GroupRecruitRespDto> getGroupRecruitList() {
+        String userId = SecurityUtil.getCurrentUserId().get().getUserId();
         List<Group> getGroupRecruitList =  groupRepository.findAllByEndRecruitDateGreaterThanEqual(LocalDate.now());
 
         //empty
@@ -389,6 +401,16 @@ public class GroupServiceImpl implements GroupService{
                 groupRecruitResp.setLikes(board.getLikes());
                 groupRecruitResp.setReplySize(replyRepository.countByBoard_Id(board.getId()));
                 groupRecruitList.add(groupRecruitResp);
+
+                Likes getLikes = likesRepository.findByUserIdAndBoardId(userId, board.getId());
+                if(getLikes == null) {
+                    // 좋아요 안 누른 상태
+                    groupRecruitResp.setClickLikes(false);
+                }else{
+                    // 좋아요 이미 누른 상태
+                    groupRecruitResp.setClickLikes(true);
+                }
+
             }
         }
         return groupRecruitList;

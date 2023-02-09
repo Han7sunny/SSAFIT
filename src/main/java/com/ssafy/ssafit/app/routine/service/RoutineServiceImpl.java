@@ -4,6 +4,7 @@ import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
+import com.ssafy.ssafit.app.group.controller.GroupController;
 import com.ssafy.ssafit.app.routine.dto.req.RoutineAddReqDto;
 import com.ssafy.ssafit.app.routine.dto.req.RoutineGenerateReqDto;
 import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
@@ -13,6 +14,8 @@ import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.util.SecurityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -129,6 +132,7 @@ public class RoutineServiceImpl implements RoutineService {
 
         return  routineExerciseRespDto;
     }
+    private final Logger LOGGER = LoggerFactory.getLogger(RoutineServiceImpl.class);
 
     @Override
     public List<RoutineInfoRespDto> getUserRoutine(String userId) {
@@ -136,6 +140,7 @@ public class RoutineServiceImpl implements RoutineService {
         List<RoutineInfoRespDto> routineInfoRespDtoList = new ArrayList<RoutineInfoRespDto>();
 
         for(Long tmp : routineList) {
+            LOGGER.info("routineId {}", tmp);
             Routine routine = routineRepository.findById(tmp).get();
 
             routineInfoRespDtoList.add(RoutineInfoRespDto.builder()

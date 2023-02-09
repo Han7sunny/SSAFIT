@@ -121,7 +121,7 @@ public class NoticeServiceImpl implements NoticeService{
 
         getNotice.setTitle(notice.getTitle());
         getNotice.setContent(notice.getContent());
-        getNotice.setRegisteredTime(notice.getRegisteredTime());
+//        getNotice.setRegisteredTime(notice.getRegisteredTime());
         getNotice.setModifiedTime(LocalDateTime.now());
         getNotice.setSharePost(notice.isSharePost());
 

@@ -37,10 +37,12 @@ public class User {
     @Column(length = 40, nullable = false)
     private String email;
 
-    @Column(length = 100, nullable = false, columnDefinition = "MEDIUMTEXT")
+//    @Column(length = 100, nullable = false, columnDefinition = "MEDIUMTEXT")
+    @Column(length = 100, nullable = true, columnDefinition = "MEDIUMTEXT")
     private String photo;
 
-    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
+//    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = true)
     private String photoEncoding;
 
     @Column(nullable = false)

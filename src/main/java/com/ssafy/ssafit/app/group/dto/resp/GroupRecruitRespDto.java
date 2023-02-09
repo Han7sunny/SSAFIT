@@ -48,6 +48,8 @@ public class GroupRecruitRespDto extends BoardRespDto {
 
     private int currentMember;
 
+    private boolean isLiked;
+
     private List<GroupMemberRespDto> groupMemberList; // accept_invitation true일 경우만 .. ?
 
     private List<RoutineInfoRespDto> routineList;

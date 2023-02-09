@@ -66,6 +66,7 @@ public class UserController {
     @PostMapping("/findId")
     @ApiOperation(value = "아이디 찾기", notes = "입력한 회원 이메일에 해당하는 아이디를 반환한다.", response = String.class)
     public ResponseEntity<String> findId(@PathVariable("email") String email){
+        LOGGER.info("[Enter] findId email : {} ", email);
         User user = userService.findId(email);
         HttpStatus status = HttpStatus.NO_CONTENT;
         if(user != null)
@@ -76,6 +77,7 @@ public class UserController {
     @PutMapping("/modifyFaceAuth")
     @ApiOperation(value = "얼굴 인식 수정", notes = "새로운 사진을 추가하여 얼굴 인식을 위한 데이터를 생성한다", response = Boolean.class)
     public ResponseEntity<?> modifyFaceAuth(@RequestParam MultipartFile image, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+        LOGGER.info("[Enter] modifyFaceAuth ");
         try {
             userService.modifyFaceAuth(image, user.getUser().getId());
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
@@ -96,6 +98,7 @@ public class UserController {
     @ApiOperation(value = "로그아웃", notes = "회원 정보를 저장하고 있는 Token을 제거하고 결과를 반환한다.", response = Boolean.class)
     public ResponseEntity<Boolean> logout(@PathVariable("userId") String userId) throws Exception {
 //        userService.deleteRefreshToken(userId);
+        LOGGER.info("[Enter] logout id : {} ", userId);
         return new ResponseEntity<Boolean>(true, HttpStatus.ACCEPTED);
     }
 
@@ -139,6 +142,7 @@ public class UserController {
             "아이디 조건 : 첫문자는 영문자로 시작, 영문자와 숫자, _ 로만 이루어져있는 6~16자리 아이디",
             response = CommonResp.class)
     public ResponseEntity<?> idCheck(@RequestParam String id) {
+        LOGGER.info("[Enter] idCheck id : {} ", id);
         try {
             int res = userService.idCheck(id);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(res)).build(), HttpStatus.OK);
@@ -152,6 +156,7 @@ public class UserController {
             notes = "중복되는 닉네임이 있을 경우 true, 없을 경우 false 반환",
             response = CommonResp.class)
     public ResponseEntity<?> nameCheck(@RequestParam String name) {
+        LOGGER.info("[Enter] nameCheck name : {} ", name);
         try {
             boolean existence = userService.nameCheck(name);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(existence)).build(), HttpStatus.OK);
@@ -165,6 +170,7 @@ public class UserController {
             notes = "중복되는 이메일이 있을 경우 true, 없을 경우 false 반환",
             response = CommonResp.class)
     public ResponseEntity<?> emailCheck(@RequestParam String email) {
+        LOGGER.info("[Enter] emailCheck email : {} ", email);
         try {
             boolean existence = userService.emailCheck(email);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(existence)).build(), HttpStatus.OK);
@@ -179,6 +185,7 @@ public class UserController {
             "비밀번호 조건 : 영문자, 숫자, 특수기호가 최소한 하나씩 들어간 8 ~ 16자리 비밀번호",
             response = CommonResp.class)
     public ResponseEntity<?> passwordCheck(@RequestParam String password) {
+        LOGGER.info("[Enter] passwordCheck password : {} ", password);
         try {
             boolean validation = userService.passwordCheck(password);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(validation)).build(), HttpStatus.OK);
@@ -193,6 +200,7 @@ public class UserController {
                     "있을 경우 true 반환, 없을 경우 false 반환",
             response = CommonResp.class)
     public ResponseEntity<?> findPassword(@RequestParam String id, @RequestParam String email) {
+        LOGGER.info("[Enter] findPassword id : {} email : {} ", id, email);
         try {
             boolean check = userService.findPassword(id, email);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
@@ -207,6 +215,7 @@ public class UserController {
             "{ password : String } 형태의 데이터 필요",
             response = CommonResp.class)
     public ResponseEntity<?> changePassword(@AuthenticationPrincipal CustomUserDetails user, @RequestBody Map<String, String> password) {
+        LOGGER.info("[Enter] changePassword");
         try {
             Map<String, String> idPwd = new HashMap<>();
             idPwd.put("id", user.getUser().getId());
@@ -219,12 +228,17 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/join")
     @ApiOperation(value = "회원가입 기능",
             notes = "회원가입 기능",
             response = CommonResp.class)
-    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
+    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
+//    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
 
+        LOGGER.info("[Enter] userJoin");
+
+        MultipartFile file = null;
         try {
             userService.userJoin(userJoinReqDto, file);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
@@ -238,6 +252,7 @@ public class UserController {
             notes = "입력받은 이메일로 인증코드를 보냅니다. 반환받은 id값은 입력받은 인증코드를 확인할 때 사용합니다.",
             response = CommonResp.class)
     private ResponseEntity<?> createCode(@RequestParam("email") String email) {
+        LOGGER.info("[Enter] createCode");
         try {
             String id = userService.createCode(email);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(id).build(), HttpStatus.OK);
@@ -252,6 +267,7 @@ public class UserController {
             notes = "id값은 이메일을 보낼 때 반환받은 값, 코드는 메일에 입력된 값을 사용합니다.",
             response = CommonResp.class)
     private ResponseEntity<?> checkCode(@RequestParam("code") String code,@RequestParam("id") String id) {
+        LOGGER.info("[Enter] checkCode");
         try {
             boolean check = userService.checkCode(code, id);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
@@ -270,6 +286,7 @@ public class UserController {
             notes = "회원탈퇴입니다.",
             response = CommonResp.class)
     private ResponseEntity<?> userDelete(@AuthenticationPrincipal CustomUserDetails user) {
+        LOGGER.info("[Enter] userDelete");
         try {
             String userId = user.getUser().getId();
             userService.userDelete(userId);

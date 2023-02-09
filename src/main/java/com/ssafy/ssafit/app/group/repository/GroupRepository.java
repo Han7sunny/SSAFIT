@@ -23,6 +23,6 @@ public interface GroupRepository extends JpaRepository<Group,Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update group g set g.achievement_rate = :achievementRate where g.group_id = :groupId", nativeQuery = true)
+    @Query(value = "update `group` g set g.achievement_rate = :achievementRate where g.group_id = :groupId", nativeQuery = true)
     void updateGroupAchievementRate(@Param("achievementRate") double groupAchievementRate, @Param("groupId") long id);
 }
