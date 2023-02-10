@@ -34,4 +34,6 @@ public interface MirrorService {
     RecordInfoRespDto getRecord(Long id);
 
     List<MirrorFaceEncodingRespDto> getFaceEncodingList();
+
+    String mirrorLogin(String id);
 }

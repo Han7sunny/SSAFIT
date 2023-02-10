@@ -1,5 +1,6 @@
 package com.ssafy.ssafit.mirror.service;
 
+import com.ssafy.ssafit.app.config.JwtTokenProvider;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
@@ -42,6 +43,7 @@ import java.util.Optional;
 public class MirrorServiceImpl implements MirrorService{
 
     private final ExerciseService exerciseService;
+    private final JwtTokenProvider jwtTokenProvider;
     RecordRepository recordRepository;
     RecordDetailRepository recordDetailRepository;
     RoutineRepository routineRepository;
@@ -59,7 +61,7 @@ public class MirrorServiceImpl implements MirrorService{
                              ExerciseRepository exerciseRepository, RecordService recordService,
                              ExerciseTypeRepository exerciseTypeRepository,
                              GroupMemberRepository groupMemberRepository,
-                             GroupRepository groupRepository, ExerciseService exerciseService) {
+                             GroupRepository groupRepository, ExerciseService exerciseService, JwtTokenProvider jwtTokenProvider) {
         this.recordRepository = recordRepository;
         this.recordDetailRepository = recordDetailRepository;
         this.routineRepository = routineRepository;
@@ -70,6 +72,7 @@ public class MirrorServiceImpl implements MirrorService{
         this.groupMemberRepository = groupMemberRepository;
         this.groupRepository = groupRepository;
         this.exerciseService = exerciseService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -225,15 +228,22 @@ public class MirrorServiceImpl implements MirrorService{
         List<MirrorFaceEncodingRespDto> mirrorFaceEncodingRespDtoList = new ArrayList<>();
 
         for(User user : userList) {
-            MirrorFaceEncodingRespDto mirrorFaceEncodingRespDto = MirrorFaceEncodingRespDto.builder()
-                    .userId(user.getId())
-                    .userName(user.getName())
-                    .faceEncode(user.getPhotoEncoding())
-                    .build();
-
-            mirrorFaceEncodingRespDtoList.add(mirrorFaceEncodingRespDto);
+            if(user.getPhotoEncoding() != null) {
+                MirrorFaceEncodingRespDto mirrorFaceEncodingRespDto = MirrorFaceEncodingRespDto.builder()
+                        .userId(user.getId())
+                        .userName(user.getName())
+                        .faceEncode(user.getPhotoEncoding())
+                        .build();
+                mirrorFaceEncodingRespDtoList.add(mirrorFaceEncodingRespDto);
+            }
         }
         return mirrorFaceEncodingRespDtoList;
+    }
+
+    @Override
+    public String mirrorLogin(String id) {
+        User user = userRepository.findById(id).get();
+        return jwtTokenProvider.createToken(user.getId(), user.getRoles());
     }
 
     private MirrorRoutineRespDto generateRoutineRespDto(Long recordId, Routine routine) {

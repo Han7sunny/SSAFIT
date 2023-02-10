@@ -51,7 +51,7 @@ public class NoticeServiceImpl implements NoticeService{
 
         List<NoticeRespDto> noticeList = new ArrayList<>();
 
-        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(NOTICE);
+        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrueOrderByRegisteredTimeDesc(NOTICE);
         for (Board board : boardList) {
             NoticeRespDto notice = new NoticeRespDto(board);
             notice.setReplySize(replyRepository.countByBoard_Id(board.getId()));

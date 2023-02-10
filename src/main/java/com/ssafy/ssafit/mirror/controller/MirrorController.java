@@ -59,6 +59,19 @@ public class MirrorController {
         }
     }
 
+    @GetMapping("/mirror-login/{id}")
+    @ApiOperation(value = "운동 부위 종류 가져오기",
+            notes = "미러용 로그인 기능",
+            response = List.class)
+    public ResponseEntity<?> mirrorLogin(@PathVariable String id) {
+        try {
+            String token = mirrorService.mirrorLogin(id);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(token).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("/get-schedule")
     @ApiOperation(value = "오늘 예약한 운동 루틴 목록 가져오기",
             notes = "유저가 오늘 하기로 예약한 운동 루틴들을 가져온다.",

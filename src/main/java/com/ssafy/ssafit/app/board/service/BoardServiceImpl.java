@@ -161,7 +161,7 @@ public class BoardServiceImpl implements BoardService{
 
         List<BoardRespDto> QAList = new ArrayList<>();
 
-        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(QA);
+        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrueOrderByRegisteredTimeDesc(QA);
         for (Board board : boardList) {
             BoardRespDto boardRespDto = new BoardRespDto(board);
             boardRespDto.setReplySize(replyRepository.countByBoard_Id(board.getId()));
@@ -176,7 +176,7 @@ public class BoardServiceImpl implements BoardService{
 
         List<BoardRespDto> shareRoutineList = new ArrayList<>();
 
-        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrue(SHARE_ROUTINE);
+        List<Board> boardList = boardRepository.findByCategoryIdAndSharePostTrueOrderByRegisteredTimeDesc(SHARE_ROUTINE);
         for (Board board : boardList) {
             BoardRespDto boardRespDto = new BoardRespDto(board);
             boardRespDto.setReplySize(replyRepository.countByBoard_Id(board.getId()));
