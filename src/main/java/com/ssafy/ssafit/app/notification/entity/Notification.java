@@ -27,7 +27,7 @@ public class Notification {
 
     private String message;
 
-    private int notification_type; // 0은 그룹 시작, 종료 알림 & 1은 댓글 작성 알림 & 2는 운동 안했을 경우 알림
+    private int notification_type; // 0은 그룹 시작, 종료 알림 & ( 1은 커뮤니티 댓글 작성 알림 &  2는 그룹 댓글 작성 알림 & 3은 공지글 댓글 작성 알림) & 4는 운동 안했을 경우 알림
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")

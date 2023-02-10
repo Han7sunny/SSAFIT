@@ -9,6 +9,7 @@ import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.mirror.service.MirrorService;
 import io.swagger.annotations.ApiOperation;
@@ -181,6 +182,19 @@ public class MirrorController {
             return new ResponseEntity<List<MirrorFaceEncodingRespDto>>(mirrorFaceEncodingRespDtoList, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-mypage")
+    @ApiOperation(value = "미러용 마이페이지",
+            notes = "마이페이지에 보여줄 정보를 띄웁니다.",
+            response = List.class)
+    public ResponseEntity<?> getMyPageInfo(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            MirrorMyPageRespDto mirrorMyPageRespDto = mirrorService.getMyPageInfo(user.getUser().getId());
+            return new ResponseEntity<MirrorMyPageRespDto>(mirrorMyPageRespDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
         }
     }
 

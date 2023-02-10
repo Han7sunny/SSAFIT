@@ -7,6 +7,7 @@ import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import org.springframework.stereotype.Service;
 
@@ -36,4 +37,6 @@ public interface MirrorService {
     List<MirrorFaceEncodingRespDto> getFaceEncodingList();
 
     String mirrorLogin(String id);
+
+    MirrorMyPageRespDto getMyPageInfo(String id) throws Exception;
 }

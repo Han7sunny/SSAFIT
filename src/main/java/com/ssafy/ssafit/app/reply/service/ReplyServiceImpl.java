@@ -2,6 +2,7 @@ package com.ssafy.ssafit.app.reply.service;
 
 import com.ssafy.ssafit.app.board.entity.Board;
 import com.ssafy.ssafit.app.board.repository.BoardRepository;
+import com.ssafy.ssafit.app.group.repository.GroupRepository;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
 import com.ssafy.ssafit.app.group.entity.Group;
@@ -39,17 +40,20 @@ public class ReplyServiceImpl implements ReplyService{
     private final RoutineRepository routineRepository;
 
     private GroupMemberRepository groupMemberRepository;
+    private final GroupRepository groupRepository;
 
     @Autowired
     public ReplyServiceImpl(UserRepository userRepository, BoardRepository boardRepository, ReplyRepository replyRepository,
                             NotificationRepository notificationRepository,
-                            RoutineRepository routineRepository, GroupMemberRepository groupMemberRepository) {
+                            RoutineRepository routineRepository, GroupMemberRepository groupMemberRepository,
+                            GroupRepository groupRepository) {
         this.notificationRepository = notificationRepository;
         this.routineRepository = routineRepository;
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
         this.replyRepository = replyRepository;
         this.groupMemberRepository = groupMemberRepository;
+        this.groupRepository = groupRepository;
     }
 
     // 작성글에 해당하는 댓글들 조회 .. 그룹 모집글일떄랑 다른때랑 나눠서?
@@ -78,11 +82,33 @@ public class ReplyServiceImpl implements ReplyService{
         Reply registReply = Reply.builder().user(user).board(board).content(reply.getContent()).registeredTime(LocalDateTime.now()).build();
         replyRepository.save(registReply);
 
+        Long categoryId = board.getCategory().getId();
+
+        Group group = null;
+        String message = null;
+        int notificationType;
+
+        if(categoryId == 1) {
+            message = "(공지글) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
+            notificationType = 3;
+        } else if(categoryId == 2) {
+            message = "(질문글) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
+            notificationType = 1;
+        } else if(categoryId == 3) {
+            message = "(루틴 공유) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
+            notificationType = 1;
+        } else {
+            message = "(그룹 모집) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
+            group = board.getGroup();
+            notificationType = 2;
+        }
+
         Notification notification = Notification.builder()
                 .board(board)
+                .group(group)
                 .user(board.getUser())
-                .message(board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.")
-                .notification_type(1)
+                .message(message)
+                .notification_type(notificationType)
                 .build();
 
         notificationRepository.save(notification);

@@ -19,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
+
 public class GroupRecruitRespDto extends BoardRespDto {
 
     private long groupId;

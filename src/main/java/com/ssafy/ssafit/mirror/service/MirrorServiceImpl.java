@@ -4,6 +4,7 @@ import com.ssafy.ssafit.app.config.JwtTokenProvider;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
+import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.exercise.service.ExerciseService;
@@ -25,19 +26,22 @@ import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
+import com.ssafy.ssafit.util.FileMultipartFileConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.DateFormatter;
 import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 public class MirrorServiceImpl implements MirrorService{
@@ -244,6 +248,73 @@ public class MirrorServiceImpl implements MirrorService{
     public String mirrorLogin(String id) {
         User user = userRepository.findById(id).get();
         return jwtTokenProvider.createToken(user.getId(), user.getRoles());
+    }
+
+    @Override
+    public MirrorMyPageRespDto getMyPageInfo(String id) throws Exception {
+        User user = userRepository.findById(id).get();
+
+        MultipartFile image = FileMultipartFileConverter.FiletoMultipartFile(user.getPhoto());
+
+        String myImage = null;
+        if(image != null) {
+            Base64.Encoder encoder = Base64.getEncoder();
+            byte[] photoEncode = encoder.encode(image.getBytes());
+            myImage = new String(photoEncode, "UTF-8");
+        }
+
+        Long mileage = user.getMileage();
+
+        List<String> dateList = recordRepository.findRecordDate(id);
+
+        int idx = 0;
+        int sz = dateList.size();
+
+
+        for (LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul")); idx < sz ; today = today.minusDays(1), idx++) {
+            if(today.compareTo(LocalDate.parse(dateList.get(idx), DateTimeFormatter.ISO_DATE)) != 0)
+                break;
+        }
+
+        System.out.println("여기까지");
+        
+        List<Record> recordList = recordRepository.findByUserAndEndTimeIsNotNull(user);
+
+        Map<Long, Long> exerciseMap = new HashMap<>();
+
+        for (Record rec : recordList) {
+            List<RecordDetail> recordDetailList = rec.getRecordDetails();
+
+            for(RecordDetail recd : recordDetailList) {
+                if(recd.getCount() == 0) continue;
+
+                ExerciseType exerciseType = recd.getExerciseType();
+                if(exerciseMap.containsKey(exerciseType.getExerciseTypeId())) {
+                    exerciseMap.replace(exerciseType.getExerciseTypeId(), recd.getCount() + exerciseMap.get(exerciseType.getExerciseTypeId()));
+                } else {
+                    exerciseMap.put(exerciseType.getExerciseTypeId(), recd.getCount());
+                }
+            }
+        }
+
+        List<MirrorMyPageRespDto.ExerciseInfo> list = new ArrayList<>();
+        for (Long key : exerciseMap.keySet()) {
+           MirrorMyPageRespDto.ExerciseInfo tmp = MirrorMyPageRespDto.ExerciseInfo.builder()
+                                                                                    .exerciseTypeId(key)
+                                                                                    .exerciseTypeName(exerciseTypeRepository.findById(key).get().getExerciseTypeName())
+                                                                                    .exerciseTypeCount(exerciseMap.get(key))
+                                                                                    .build();
+           list.add(tmp);
+        }
+
+        MirrorMyPageRespDto mirrorMyPageRespDto = MirrorMyPageRespDto.builder()
+                .photo(myImage)
+                .mileage(mileage)
+                .continuousExercisePeriod(idx)
+                .exerciseInfoList(list)
+                .build();
+
+        return mirrorMyPageRespDto;
     }
 
     private MirrorRoutineRespDto generateRoutineRespDto(Long recordId, Routine routine) {
