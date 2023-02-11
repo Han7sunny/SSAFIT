@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Alert} from 'react-native';
 import {Text, Button, TextInput} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,7 +13,12 @@ export default function ReplyScreen({reply, send}) {
   const [isChange, setIsChange] = useState(
     role === 'ADMIN' || userId === reply.user_id,
   );
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
@@ -29,7 +34,7 @@ export default function ReplyScreen({reply, send}) {
   const deleteReply = async () => {
     const result = (
       await axios.delete(
-        `http://70.12.246.116:8080/notice/${reply.board_id}/${reply.reply_id}`,
+        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -38,13 +43,23 @@ export default function ReplyScreen({reply, send}) {
         },
       )
     ).data;
-    if (result) send(true);
+    if (result)
+      Alert.alert(
+        `댓글 삭제 성공`,
+        `${reply.user_id}님의 댓글을 삭제하셨습니다.`,
+        [
+          {
+            text: '확인',
+            onPress: () => send(true),
+          },
+        ],
+      );
   };
 
   const changeReply = async () => {
     const result = (
       await axios.put(
-        `http://70.12.246.116:8080/notice/${reply.board_id}/${reply.reply_id}`,
+        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
         {
           board_id: Number(reply.board_id),
           content: text,
@@ -101,7 +116,22 @@ export default function ReplyScreen({reply, send}) {
             mode="text"
             style={styles.button}
             labelStyle={styles.label}
-            onPress={deleteReply}>
+            onPress={() =>
+              Alert.alert(
+                `${reply.user_id}님의댓글을 삭제하시겠습니까?`,
+                `내용\n${text}`,
+                [
+                  {
+                    text: '아니요',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '네',
+                    onPress: () => deleteReply(),
+                  },
+                ],
+              )
+            }>
             삭제
           </Button>
         </View>

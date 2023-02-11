@@ -14,41 +14,62 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import MultiSelect from 'react-native-multiple-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CreateGroupScreen({navigation}) {
+export default function CreateGroupScreen({navigation, route}) {
+  const data = route.params.data;
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectDate, setselectDate] = useState('');
+  const [checked, setChecked] = useState('id');
+
+  const [Data, setData] = useState(
+    data === false
+      ? {
+          title: '',
+          name: '',
+          member: [],
+          maxMemberNum: 0,
+          startDate: '',
+          endDate: '',
+          startRecruitDate: '',
+          endRecruitDate: '',
+          goal: '',
+          penalty: '',
+          content: '',
+        }
+      : {
+          title: data.title,
+          name: data.groupName,
+          member: data.groupMemberId,
+          maxMemberNum: data.maximum_member,
+          startDate: data.start_date,
+          endDate: data.end_date,
+          startRecruitDate: data.startRecruitDate,
+          endRecruitDate: data.endRecruitDate,
+          goal: data.goal,
+          penalty: data.penalty,
+          content: data.content,
+        },
+  );
+
+  const showDatePicker = date => {
+    setDatePickerVisibility(true);
+    setselectDate(date);
+  };
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); //
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
   }, []);
-  const my = {memberid: 'lhj', isMember: false, userId: {userId}};
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [selectDate, setselectDate] = useState('');
-  const [checked, setChecked] = React.useState('id');
-
-  const [Data, setData] = useState({
-    title: '',
-    name: '',
-    member: [],
-    maxMemberNum: 0,
-    startDate: '',
-    endDate: '',
-    startRecruitDate: '',
-    endRecruitDate: '',
-    goal: '',
-    penalty: '',
-    content: '',
-  });
-
-  const showDatePicker = date => {
-    setDatePickerVisibility(true);
-    setselectDate(date);
-  };
 
   const hideDatePicker = () => setDatePickerVisibility(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -77,7 +98,7 @@ export default function CreateGroupScreen({navigation}) {
   const createGroup = async () => {
     setData(pre => Object.assign({}, pre, {title: ''}));
     const result = await axios.post(
-      `http://70.12.246.116:8080/group/regist`,
+      `http://${ip}/group/regist`,
       {
         categoryId: Number(0),
         content: Data.content,
@@ -95,7 +116,7 @@ export default function CreateGroupScreen({navigation}) {
         startDate: Data.startDate,
         startRecruitDate: Data.startRecruitDate,
         title: Data.title,
-        userId: my.userId,
+        userId: userId,
       },
       {
         headers: {
@@ -111,53 +132,35 @@ export default function CreateGroupScreen({navigation}) {
 
   const [Lists, setLists] = useState([]);
   const [selecUsers, setSelectUsers] = useState([]);
-  const [findUser, setFindUser] = useState('');
   onSelectedUsersChange = selecUsers => {
     setSelectUsers(selecUsers);
   };
 
-  const showModal = async () => {
-    // const data = (await axios.get(`http://70.12.246.116:8080/group/search?name=${findUser}`)).data;
-    // setLists(data);
-    // console.log(data);
-    // console.log(Lists);
-    setIsOpenModal(true);
-  };
-  const hideModal = () => {
-    setData(pre => Object.assign({}, pre, {member: selecUsers}));
-    setIsOpenModal(false);
-  };
-  // onSelectionsChange = (selectLists) => {
-  //   setSelectLists(selectLists)
-  //   // setData(pre => Object.assign({}, pre, {member: value}))
-  //   console.log(selectLists)
-  // }
-  // onDeletionsChange = (value) => {
-  //   const filter = selectLists.filter(e => e.value !== value)
-  //   setSelectLists(filter)
-  //   console.log(filter)
-  // }
+  // const [isOpenModal, setIsOpenModal] = useState(false);
+  // const [findUser, setFindUser] = useState('');
+  // const showModal = async () => {
+  //   setIsOpenModal(true);
+  // };
+  // const hideModal = () => {
+  //   setData(pre => Object.assign({}, pre, {member: selecUsers}));
+  //   setIsOpenModal(false);
+  // };
 
   const getMember = text => {
-    if (text.length === 1) {
-      console.log(text);
-      const getData = async () => {
-        const data = (
-          await axios.get(
-            `http://70.12.246.116:8080/group/search?name=${text}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'X-AUTH-TOKEN': `${accessToken}`,
-              },
-            },
-          )
-        ).data;
-        setLists(data);
-        console.log(data);
-      };
-      getData();
-    }
+    if (text.length !== 1) return;
+    const getData = async () => {
+      const data = (
+        await axios.get(`http://${ip}/group/search?name=${text}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        })
+      ).data;
+      setLists(data);
+      console.log(data);
+    };
+    getData();
   };
 
   return (
@@ -223,23 +226,48 @@ export default function CreateGroupScreen({navigation}) {
           <View>
             <Text>그룹원</Text>
             <View>
-              <IconButton icon={'plus-circle-outline'} onPress={showModal} />
+              {/* <IconButton icon={'plus-circle-outline'} onPress={showModal} /> */}
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', margin: 10}}>
+                  <RadioButton
+                    value="ID"
+                    status={checked === 'id' ? 'checked' : 'unchecked'}
+                    onPress={() => setChecked('id')}
+                  />
+                  <Text>ID</Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <RadioButton
+                    value="NAME"
+                    status={checked === 'name' ? 'checked' : 'unchecked'}
+                    onPress={() => setChecked('name')}
+                  />
+                  <Text>NAME</Text>
+                </View>
+              </View>
+              <MultiSelect
+                // hideTags
+                items={Lists ? Lists : [{userId: '1', userName: '1'}]}
+                displayKey={checked === 'id' ? 'userId' : 'userName'}
+                uniqueKey="userId"
+                onSelectedItemsChange={onSelectedUsersChange}
+                selectedItems={selecUsers}
+                selectText="Pick Users"
+                searchInputPlaceholderText="Search Users..."
+                onChangeInput={text => getMember(text)}
+                altFontFamily="ProximaNova-Light"
+                tagRemoveIconColor="#999"
+                tagBorderColor="#999"
+                tagTextColor="#000"
+                selectedItemTextColor="#999"
+                selectedItemIconColor="#999"
+                itemTextColor="#000"
+                searchInputStyle={{color: '#999'}}
+                submitButtonColor="#bbb"
+                submitButtonText="Submit"
+                fixedHeight={true}
+              />
             </View>
-            {/* <TextInput
-              value={Data.member}
-              mode="outlined"
-              returnKeyType="next"
-              onChangeText={value => setFindUser(value)}
-              right={
-                <TextInput.Icon
-                  icon="plus-circle-outline"
-                  onPress={showModal}
-                />
-              }
-              onSubmitEditing={() => {
-                console.log(findUser);
-              }}
-            /> */}
           </View>
           {isEnabled && (
             <View>
@@ -409,7 +437,7 @@ export default function CreateGroupScreen({navigation}) {
         style={styles.button}
         labelStyle={styles.label}
         onPress={createGroup}>
-        등록
+        {data === false ? '등록' : '수정'}
       </Button>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -417,7 +445,7 @@ export default function CreateGroupScreen({navigation}) {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-      <Modal
+      {/* <Modal
         presentationStyle={'FullScreen'}
         visible={isOpenModal}
         onDismiss={hideModal}
@@ -462,7 +490,7 @@ export default function CreateGroupScreen({navigation}) {
           submitButtonText="Submit"
           fixedHeight={true}
         />
-      </Modal>
+      </Modal> */}
     </SafeAreaView>
   );
 }

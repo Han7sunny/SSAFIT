@@ -12,7 +12,12 @@ export default function MyGroupSimple({navigation, route}) {
   const [role, setRole] = useState('USER1');
   const [accessToken, setAccessToken] = useState('');
   const [item, setItem] = useState({});
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id);
@@ -22,30 +27,31 @@ export default function MyGroupSimple({navigation, route}) {
   }, []);
   useEffect(() => {
     console.log(id);
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/group/` + Number(id), {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        })
-      ).data;
-      setItem(data);
-      console.log(data);
-    };
     getData();
   }, [id]);
+  const getData = async () => {
+    if (ip === '') return;
+    const data = (
+      await axios.get(`http://${ip}/group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setItem(data);
+    console.log(data);
+  };
   const deleteGroup = async () => {
     const result = (
-      await axios.delete(`http://70.12.246.116:8080/group/${id}`, {
+      await axios.delete(`http://${ip}/group/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'X-AUTH-TOKEN': `${token}`,
         },
       })
     ).data;
-    if (result) navigation.navigate('MainMyPageScreen');
+    if (result) navigation.navigate('MainMyPageScreen', {state: true});
   };
   return (
     <View>

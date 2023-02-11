@@ -12,16 +12,27 @@ export default function TodayRoutine() {
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const navigation = useNavigation();
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
       console.log('토큰', UserInfo.token);
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
-    axios({
+  }, []);
+  useEffect(() => {
+    getData();
+  }, [accessToken]);
+  const getData = async () => {
+    if (accessToken === '') return;
+    await axios({
       method: 'get',
-      url: `http://70.12.246.116:8080/record/get-schedule/${userId}`,
+      url: `http://${ip}/record/get-schedule/${userId}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -34,7 +45,7 @@ export default function TodayRoutine() {
       .catch(err => {
         console.log('today routine screen', err);
       });
-  }, []);
+  };
 
   return (
     <View

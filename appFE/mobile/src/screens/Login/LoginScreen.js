@@ -10,11 +10,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function LoginScreen({navigation}) {
   const [id, setId] = useState({value: '', error: ''});
   const [password, setPassword] = useState({value: '', error: ''});
+  const [ip, setIP] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+  }, []);
 
   const onLoginPressed = () => {
+    console.log(id, password);
     axios({
       method: 'post',
-      url: `http://70.12.246.116:8080/user/login`,
+      url: `http://${ip}/user/login`,
       data: {
         id: id.value,
         password: password.value,
@@ -24,6 +32,7 @@ export default function LoginScreen({navigation}) {
         console.log(response.data);
         if (response.data.success === true) {
           // response.data.token 저장
+          // console.warn(success);
           const username = response.data.name;
           const token = response.data.token;
           const userId = response.data.id;
@@ -35,23 +44,25 @@ export default function LoginScreen({navigation}) {
               id: userId,
               token: token,
               role: role,
+              imageUri: 'undefined',
             }),
             () => {
               console.log('AsyncStorage에 유저 정보 저장 완료');
               alert(response.data.msg);
             },
           );
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'HomeScreen'}],
+          });
         } else {
           alert(response.data.msg);
         }
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
+        console.warn(err);
       });
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'HomeScreen'}],
-    });
   };
 
   return (

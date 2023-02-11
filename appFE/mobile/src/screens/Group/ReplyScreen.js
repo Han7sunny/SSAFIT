@@ -4,17 +4,22 @@ import {View, StyleSheet, Image} from 'react-native';
 import {Button, TextInput, IconButton, Text, Avatar} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ReplyScreen({groupId, reply, send}) {
+export default function ReplyScreen({groupId, reply, leader, send}) {
   const [userId, setUserId] = useState('');
-  const [isMember, setIsMembe] = useState(reply.includedGroup);
+  const [isMember, SetIsMember] = useState(reply.includedGroup); // 0: 비회원, 1: 회원, 2: 대기중
   const [role, setRole] = useState('user');
   const [accessToken, setAccessToken] = useState('');
   const [text, setText] = useState(reply.content);
   const [isClick, setIsCkick] = useState(false);
   const [isChange, setIsChange] = useState(
-    role === 'ADMIN' || userId === reply.user_id,
+    role === 'ADMIN' || userId === reply.user_id || userId === leader,
   );
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
@@ -28,35 +33,33 @@ export default function ReplyScreen({groupId, reply, send}) {
     setIsCkick(true);
   };
   const changeMember = async () => {
-    const result = await axios.post(
-      `http://70.12.246.116:8080/group/recruit/${groupId}/${reply.user_id}/` +
-        (isMember ? 'delete' : 'add'),
-      {
-        acceptInvitation: isMember ? false : true,
-        groupId: groupId,
-        userId: reply.user_id,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'X-AUTH-TOKEN': `${accessToken}`,
+    const result = (
+      await axios.post(
+        `http://${ip}/group/recruit/${groupId}/${reply.user_id}/` +
+          (isMember ? 'delete' : 'add'),
+        {
+          acceptInvitation: isMember ? false : true,
+          groupId: groupId,
+          userId: reply.user_id,
         },
-      },
-    );
-    if (!result) {
-      console.log('error');
-      return;
-    }
-    if (isMember) setIsMembe(false);
-    else setIsMembe(true);
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        },
+      )
+    ).data;
+    console.log(result);
 
-    console.log('click');
+    if (isMember === 0 && result) SetIsMember(1);
+    else if (isMember === 1 && !result) SetIsMember(0);
   };
 
-  const deleteReply = async replyId => {
+  const deleteReply = async () => {
     const result = (
       await axios.delete(
-        `http://70.12.246.116:8080/group/recruit/${groupId}/${reply.user_id}`,
+        `http://${ip}/group/recruit/${groupId}/${reply.reply_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -71,7 +74,7 @@ export default function ReplyScreen({groupId, reply, send}) {
   const changeReply = async () => {
     const result = (
       await axios.put(
-        `http://70.12.246.116:8080/notice/${reply.board_id}/${reply.reply_id}`,
+        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
         {
           board_id: Number(reply.board_id),
           content: text,
@@ -103,12 +106,20 @@ export default function ReplyScreen({groupId, reply, send}) {
           }}>
           <Avatar.Icon icon="account" size={30} />
           <Text variant="titleLarge">{reply.userName}</Text>
-          <IconButton
-            icon={isMember ? 'alpha-x-circle-outline' : 'plus-circle-outline'}
-            size={30}
-            onPress={changeMember}
-            style={{margin: 0}}
-          />
+          {userId !== leader && (
+            <IconButton
+              icon={
+                isMember === 0
+                  ? 'plus-circle-outline'
+                  : isMember === 1
+                  ? 'alpha-x-circle-outline'
+                  : 'minus-circle-outline'
+              }
+              size={30}
+              onPress={changeMember}
+              style={{margin: 0}}
+            />
+          )}
         </View>
         {!isClick && (
           <Text style={[styles.routineName, {marginLeft: 20}]}>{text}</Text>
@@ -140,22 +151,6 @@ export default function ReplyScreen({groupId, reply, send}) {
         </View>
       )}
     </View>
-    // <View style={styles.container}>
-    //   <View style={{flexDirection: 'row', alignItems: 'center'}}>
-    //     <Image source={require('./icon.png')} />
-    //     <Text>{reply.userName}</Text>
-    //     <IconButton
-    //       icon={isMember ? 'alpha-x-circle-outline' : 'plus-circle-outline'}
-    //       size={30}
-    //       onPress={changeMember}
-    //       style={styles.iconButton}
-    //     />
-    //   </View>
-    //   <Text style={[styles.routineName, {marginLeft: 20}]}>
-    //     {reply.content}
-    //   </Text>
-    //   <Button onPress={() => deleteReply(item.reply_id)}>댓글 삭제하기</Button>
-    // </View>
   );
 }
 

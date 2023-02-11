@@ -1,44 +1,48 @@
+import React, {useState, useEffect} from 'react';
+import {Text, IconButton} from 'react-native-paper';
+import {View, StyleSheet, FlatList} from 'react-native';
+import Button from '../../components/Button';
+import RoutineDetail from '../../components/RoutineDetail';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-import React, { useState, useEffect } from 'react'
-import { Text, IconButton } from 'react-native-paper'
-import { View, StyleSheet, FlatList } from 'react-native'
-import Button from '../../components/Button'
-import RoutineDetail from '../../components/RoutineDetail'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
-
-export default function RoutineDetailScreen({ route ,navigation }) {
-  const [routineInfo, setRoutineInfo] = useState([])
-  const [accessToken, setAccessToken] = useState('')
-  let { routineId } = route.params
+export default function RoutineDetailScreen({route, navigation}) {
+  const [routineInfo, setRoutineInfo] = useState([]);
+  const [accessToken, setAccessToken] = useState('');
+  let {routineId} = route.params;
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
-      const UserInfo = JSON.parse(result)
-      setAccessToken(UserInfo.token)
-    })
+      const UserInfo = JSON.parse(result);
+      setAccessToken(UserInfo.token);
+    });
     axios({
       method: 'get',
-      url: `http://70.12.246.102:8080/routine/get-exercise-info/${routineId}`,
+      url: `http://${ip}/routine/get-exercise-info/${routineId}`,
       headers: {
-        "authorization": `Bearer ${accessToken}`,
-        "X-AUTH-TOKEN":`${accessToken}`
-      }
-    }) 
-    .then(function (response) {
-      setRoutineInfo(response.data)
-    }) 
-    .catch(function (error) {
-      console.log(error)
+        authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      },
     })
-  }, [])
+      .then(function (response) {
+        setRoutineInfo(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <Text> Routine Detail Screen! </Text>
       <FlatList
         data={routineInfo}
         renderItem={({item}) => (
-          <RoutineDetail 
+          <RoutineDetail
             exerciseTypeName={item.exerciseTypeName}
             exerciseArea={item.exerciseArea}
             exerciseSet={item.exerciseSet}
@@ -49,18 +53,20 @@ export default function RoutineDetailScreen({ route ,navigation }) {
           />
         )}
       />
-        {/* <Text>{routineId}</Text> */}
-        {/* <Text>{routineTitle}</Text> */}
+      {/* <Text>{routineId}</Text> */}
+      {/* <Text>{routineTitle}</Text> */}
       <Button
-        onPress={() => navigation.navigate('CreateRoutineScreen', {routineInfo: routineInfo})}
-      >수정하기</Button>
-
+        onPress={() =>
+          navigation.navigate('CreateRoutineScreen', {routineInfo: routineInfo})
+        }>
+        수정하기
+      </Button>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 2
-  }
-})
+    borderWidth: 2,
+  },
+});

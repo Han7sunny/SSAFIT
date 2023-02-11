@@ -11,20 +11,25 @@ export default function NoticeListScreen({navigation, route}) {
   const [checked, setChecked] = useState('title');
   const [Notices, setNotices] = useState([]);
   const [Filtering, setFiltering] = useState([]);
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setRole(UserInfo.role);
       setAccessToken(UserInfo.token);
     });
-    // getData();
   }, []);
   useEffect(() => {
     getData();
-  }, [route.params]);
+  }, [accessToken, route.params]);
   const getData = async () => {
+    if (accessToken === '') return;
     const data = (
-      await axios.get('http://70.12.246.116:8080/notice/', {
+      await axios.get(`http://${ip}/notice/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -35,6 +40,7 @@ export default function NoticeListScreen({navigation, route}) {
     setFiltering(data);
   };
   const filter = () => {
+    // console.log(item);
     setFiltering(
       Notices.filter(
         item =>

@@ -12,21 +12,42 @@ import {
 } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import GroupListSimpleScreen from './GroupListSimpleScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function GroupListScreen({navigation}) {
+  const [ip, setIP] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [SelectFilter, setSelectFilter] = useState([]);
   const [Lists, setLists] = useState([]);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectText, setSelectText] = useState('');
+
+  const [FilteredLists, setFilteredLists] = useState([]);
   const [Filters, setFilters] = useState({
     startDate: '',
     endDate: '',
     minMemberNum: '',
     maxMemberNum: '',
-    minPenalty: '',
-    maxPenalty: '',
+    minGoal: '',
+    maxGoal: '',
   });
+
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+  }, []);
+  useEffect(() => {
+    getData();
+  }, [ip]);
+  const getData = async () => {
+    if (ip === '') return;
+    const data = (await axios.get(`http://${ip}/group/recruit`)).data;
+    setLists(data);
+    setFilteredLists(data);
+    console.log(data);
+  };
+
   const showDatePicker = date => {
     setDatePickerVisibility(true);
     setSelectText(date);
@@ -48,26 +69,40 @@ export default function GroupListScreen({navigation}) {
     hideDatePicker();
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      const data = (await axios.get('http://70.12.246.116:8080/group/recruit'))
-        .data;
-      setLists(data);
-      console.log(data);
-    };
-    getData();
-  }, []);
-
   const showModal = () => setIsOpenModal(true);
   const hideModal = () => setIsOpenModal(false);
-  onSelectionsChange = SelectFilter => {
-    setSelectFilter(SelectFilter);
-    // console.log(SelectFilter);
-  };
-  onDeletionsChange = value => {
-    const filter = SelectFilter.filter(e => e !== value);
-    setSelectFilter(filter);
-    // console.log(filter);
+  // onSelectionsChange = SelectFilter => {
+  //   setSelectFilter(SelectFilter);
+  //   // console.log(SelectFilter);
+  // };
+  // onDeletionsChange = value => {
+  //   const filter = SelectFilter.filter(e => e !== value);
+  //   setSelectFilter(filter);
+  //   // console.log(filter);
+  // };
+
+  const filter = () => {
+    // console.log(item);
+    console.log(Filters);
+    setFilteredLists(
+      Lists.filter(
+        item =>
+          (Filters.startDate === ''
+            ? 1
+            : new Date(Filters.startDate) <= new Date(item.startDate)) &&
+          (Filters.endDate === ''
+            ? 1
+            : new Date(Filters.endDate) >= new Date(item.endDate)) &&
+          (Filters.minMemberNum === ''
+            ? 1
+            : Filters.minMemberNum <= item.maximumMember) &&
+          (Filters.maxMemberNum === ''
+            ? 1
+            : Filters.maxMemberNum >= item.maximumMember) &&
+          (Filters.minGoal === '' ? 1 : Filters.minGoal <= item.goal) &&
+          (Filters.maxGoal === '' ? 1 : Filters.maxGoal <= item.goal),
+      ),
+    );
   };
 
   return (
@@ -88,7 +123,9 @@ export default function GroupListScreen({navigation}) {
             icon="plus-circle-outline"
             iconColor="black"
             size={50}
-            onPress={() => navigation.navigate('CreateGroupScreen')}
+            onPress={() =>
+              navigation.navigate('CreateGroupScreen', {data: false})
+            }
             style={styles.iconButton}
           />
           <IconButton
@@ -108,22 +145,27 @@ export default function GroupListScreen({navigation}) {
           backgroundColor: 'red',
           padding: 0,
         }}>
-        {SelectFilter.map((item, idx) => (
-          <Button
-            mode="contained"
-            style={[
-              styles.button,
-              {width: Math.max((item.length + 1) * 29, 100)},
-            ]}
-            labelStyle={styles.label}
-            onPress={() => onDeletionsChange(item)}>
-            {item} X
-          </Button>
-        ))}
+        {Object.keys(Filters).forEach(key => {
+          if (Filters[key] === '') return;
+          console.log(key);
+        })}
+        {/* {Filters.map((item, idx) =>
+          console.log(item),
+          // <Button
+          //   mode="contained"
+          //   style={[
+          //     styles.button,
+          //     {width: Math.max((item.length + 1) * 29, 100)},
+          //   ]}
+          //   labelStyle={styles.label}
+          //   onPress={() => onDeletionsChange(item)}>
+          //   {item} X
+          // </Button>
+        )} */}
       </View>
       <View style={{minHeight: 550, maxHeight: 550}}>
         <FlatList
-          data={Lists}
+          data={FilteredLists}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <GroupListSimpleScreen item={item} navigation={navigation} />
@@ -148,7 +190,7 @@ export default function GroupListScreen({navigation}) {
                 style={{width: 150}}
                 value={Filters.minMemberNum}
                 onChangeText={value => {
-                  if (value.match(/^\d+$/) === null) {
+                  if (value.length > 0 && value.match(/^\d+$/) === null) {
                     Alert.alert('입력오류', `숫자형식만 입력해주세요`);
                     setFilters(pre =>
                       Object.assign({}, pre, {minMemberNum: ''}),
@@ -167,7 +209,7 @@ export default function GroupListScreen({navigation}) {
                 style={{width: 150}}
                 value={Filters.maxMemberNum}
                 onChangeText={value => {
-                  if (value.match(/^\d+$/) === null) {
+                  if (value.length > 0 && value.match(/^\d+$/) === null) {
                     Alert.alert('입력오류', `숫자형식만 입력해주세요`);
                     setFilters(pre =>
                       Object.assign({}, pre, {maxMemberNum: ''}),
@@ -194,7 +236,10 @@ export default function GroupListScreen({navigation}) {
                 }
                 onSubmitEditing={() => {
                   // console.log(Filters.startDate);
-                  if (Filters.startDate.match(/\d{4}-\d{2}-\d{2}/) === null) {
+                  if (
+                    Filters.startDate.length > 0 &&
+                    Filters.startDate.match(/\d{4}-\d{2}-\d{2}/) === null
+                  ) {
                     setFilters(pre => Object.assign({}, pre, {startDate: ''}));
                     Alert.alert(
                       '입력오류',
@@ -231,8 +276,10 @@ export default function GroupListScreen({navigation}) {
                   setFilters(pre => Object.assign({}, pre, {endDate: value}))
                 }
                 onSubmitEditing={() => {
-                  // console.log(Filters.startDate);
-                  if (Filters.startDate.match(/\d{4}-\d{2}-\d{2}/) === null) {
+                  if (
+                    Filters.endDate.length > 0 &&
+                    Filters.endDate.match(/\d{4}-\d{2}-\d{2}/) === null
+                  ) {
                     setFilters(pre => Object.assign({}, pre, {endDate: ''}));
                     Alert.alert(
                       '입력오류',
@@ -261,29 +308,30 @@ export default function GroupListScreen({navigation}) {
             </View>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{flex: 1}}>패널티</Text>
+            <Text style={{flex: 1}}>목표치</Text>
             <View style={{flexDirection: 'row', alignItems: 'center', flex: 5}}>
               <TextInput
                 mode="outlined"
                 label="low"
                 placeholder="low"
                 style={{width: 150}}
-                value={Filters.minPenalty}
+                value={Filters.minGoal}
                 onChangeText={value => {
-                  if (value.match(/^\d+$/) === null) {
+                  if (value.length > 0 && value.match(/^\d+$/) === null) {
                     Alert.alert('입력오류', `숫자형식만 입력해주세요`);
-                    setFilters(pre => Object.assign({}, pre, {minPenalty: ''}));
+                    setFilters(pre => Object.assign({}, pre, {minGoal: ''}));
                   } else {
                     console.log(value);
-                    if (0 <= Number(value) && Number(value) <= 100)
+                    if (
+                      value.length === 0 ||
+                      (0 <= Number(value) && Number(value) <= 100)
+                    )
                       setFilters(pre =>
-                        Object.assign({}, pre, {minPenalty: value}),
+                        Object.assign({}, pre, {minGoal: value}),
                       );
                     else {
                       Alert.alert('입력오류', `0~100사이만 입력해주세요`);
-                      setFilters(pre =>
-                        Object.assign({}, pre, {minPenalty: ''}),
-                      );
+                      setFilters(pre => Object.assign({}, pre, {minGoal: ''}));
                     }
                   }
                 }}
@@ -294,22 +342,23 @@ export default function GroupListScreen({navigation}) {
                 label="high"
                 placeholder="high"
                 style={{width: 150}}
-                value={Filters.maxPenalty}
+                value={Filters.maxGoal}
                 onChangeText={value => {
-                  if (value.match(/^\d+$/) === null) {
+                  if (value.length > 0 && value.match(/^\d+$/) === null) {
                     Alert.alert('입력오류', `숫자형식만 입력해주세요`);
-                    setFilters(pre => Object.assign({}, pre, {maxPenalty: ''}));
+                    setFilters(pre => Object.assign({}, pre, {maxGoal: ''}));
                   } else {
                     console.log(value);
-                    if (0 <= Number(value) && Number(value) <= 100)
+                    if (
+                      value.length === 0 ||
+                      (0 <= Number(value) && Number(value) <= 100)
+                    )
                       setFilters(pre =>
-                        Object.assign({}, pre, {maxPenalty: value}),
+                        Object.assign({}, pre, {maxGoal: value}),
                       );
                     else {
                       Alert.alert('입력오류', `0~100사이만 입력해주세요`);
-                      setFilters(pre =>
-                        Object.assign({}, pre, {maxPenalty: ''}),
-                      );
+                      setFilters(pre => Object.assign({}, pre, {maxGoal: ''}));
                     }
                   }
                 }}
@@ -323,6 +372,7 @@ export default function GroupListScreen({navigation}) {
             labelStyle={styles.label}
             onPress={() => {
               // setFilters(Filters);
+              filter();
               setIsOpenModal(false);
             }}>
             적용

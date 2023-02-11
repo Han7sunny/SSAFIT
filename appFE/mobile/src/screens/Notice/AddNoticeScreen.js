@@ -15,7 +15,12 @@ export default function AddNoticeScreen({navigation, route}) {
   const [accessToken, setAccessToken] = useState('');
   const file = useRef();
   const content = useRef();
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
@@ -23,7 +28,7 @@ export default function AddNoticeScreen({navigation, route}) {
   }, []);
   const addNotice = async () => {
     const result = await axios.post(
-      `http://70.12.246.116:8080/notice/regist`,
+      `http://${ip}/notice/regist`,
       {
         categoryId: Number(1),
         content: Content,
@@ -42,7 +47,7 @@ export default function AddNoticeScreen({navigation, route}) {
 
   const changeNotice = async () => {
     const result = await axios.put(
-      `http://70.12.246.116:8080/notice/${data.boardId}`,
+      `http://${ip}/notice/${data.boardId}`,
       {
         boardId: data.boardId,
         categoryId: data.categoryId,

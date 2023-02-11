@@ -1,39 +1,44 @@
-import axios from 'axios'
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, FlatList, View } from 'react-native'
-import ReplyItem from '../../components/ReplayItem'
-import CreateReply from '../../components/CreateReply'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, Text, FlatList, View} from 'react-native';
+import ReplyItem from '../../components/ReplayItem';
+import CreateReply from '../../components/CreateReply';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ArticleDetailScreen({ route }) {
-  const [articleData, setArticleData] = useState([])
-  const [replyData, setReplyData] = useState([])
-  const [accessToken, setAccessToken] = useState('')
-  const [boardId, setBoardId] = useState(0)
+export default function ArticleDetailScreen({route}) {
+  const [articleData, setArticleData] = useState([]);
+  const [replyData, setReplyData] = useState([]);
+  const [accessToken, setAccessToken] = useState('');
+  const [boardId, setBoardId] = useState(0);
   // console.log('==== Now in [ArticleDetailScreen] : ', route.params.id)
-  useEffect(()=> {
+  const [ip, setIP] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
-      const UserInfo = JSON.parse(result)
-      setAccessToken(UserInfo.token)
-    })
+      const UserInfo = JSON.parse(result);
+      setAccessToken(UserInfo.token);
+    });
     axios({
       method: 'get',
-      url: `http://70.12.246.116:8080/board/${route.params.id}`,
+      url: `http://${ip}/board/${route.params.id}`,
       headers: {
-        "authorization": `Bearer ${accessToken}`,
-        "X-AUTH-TOKEN":`${accessToken}`
-      }
+        authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      },
     })
-    .then((res) => {
-      console.log(res.data)
-      setArticleData(res.data)
-      setReplyData(res.data.replyList)
-      setBoardId(res.data.boardId)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-  }, [])
+      .then(res => {
+        console.log(res.data);
+        setArticleData(res.data);
+        setReplyData(res.data.replyList);
+        setBoardId(res.data.boardId);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <View>
@@ -46,29 +51,24 @@ export default function ArticleDetailScreen({ route }) {
         <Text> 내용 : {articleData.content}</Text>
       </View>
       <View>
-        <CreateReply 
-          boardId={boardId}
-        />
+        <CreateReply boardId={boardId} />
       </View>
-      <FlatList 
+      <FlatList
         data={replyData}
         renderItem={({item}) => (
-          <ReplyItem
-            id={item.board_id}
-            content={item.content}
-          />
+          <ReplyItem id={item.board_id} content={item.content} />
         )}
       />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignContent:"center",
-    textAlign: "center"
+    alignContent: 'center',
+    textAlign: 'center',
   },
   title: {
-    fontSize: 25
+    fontSize: 25,
   },
-})
+});

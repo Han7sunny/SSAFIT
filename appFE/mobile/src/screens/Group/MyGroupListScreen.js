@@ -9,7 +9,12 @@ export default function MyGroupListScreen({navigation, route}) {
   const [Lists, setLists] = useState([]);
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id);
@@ -18,10 +23,11 @@ export default function MyGroupListScreen({navigation, route}) {
   }, []);
   useEffect(() => {
     getData();
-  }, [route.params]);
+  }, [route.params, ip]);
   const getData = async () => {
+    if (ip === '') return;
     const data = (
-      await axios.get(`http://70.12.246.116:8080/group/myGroupList`, {
+      await axios.get(`http://${ip}/group/myGroupList`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

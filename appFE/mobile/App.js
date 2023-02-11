@@ -275,12 +275,30 @@ const LoginSideNavigator = () => {
 };
 
 function App() {
+  AsyncStorage.setItem(
+    'ip',
+    JSON.stringify({
+      ip: '192.168.35.75:8090/api',
+      // ip: '172.29.65.25:8090/api',
+    }),
+    () => {
+      console.log('ip등록성공');
+    },
+  );
   return (
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName="Home"
         unmountOnBlur={true}
         screenOptions={({route}) => ({
+          activeTintColor: 'black',
+          inactiveTintColor: 'gray',
+          tabBarStyle: [
+            {
+              display: 'flex',
+            },
+            null,
+          ],
           tabBarIcon: ({focused, color, size}) => {
             let iconName;
 
@@ -301,11 +319,7 @@ function App() {
             // You can return any component that you like here!
             return <Icon name={iconName} size={size} color={color} />;
           },
-        })}
-        tabBarOptions={{
-          activeTintColor: 'black',
-          inactiveTintColor: 'gray',
-        }}>
+        })}>
         <Tab.Screen name="Home" component={MainSideNavigator} />
         <Tab.Screen name="Group" component={GroupSideNavigator} />
         <Tab.Screen name="Community" component={CommunitySideNavigator} />
@@ -339,80 +353,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-// import React, { useState } from 'react';
-// import { View, FlatList } from 'react-native';
-// import MultiSelect from 'react-native-multiple-select';
-// import { Text } from 'react-native-paper';
-
-// function App() {
-//   const items = [{
-//       id: '92iijs7yta',
-//       'name': 'Ondo'
-//     }, {
-//       id: 'a0s0a8ssbsd',
-//       name: 'Ogun'
-//     }, {
-//       id: '16hbajsabsd',
-//       name: 'Calabar'
-//     }, {
-//       id: 'nahs75a5sg',
-//       name: 'Lagos'
-//     }, {
-//       id: '667atsas',
-//       name: 'Maiduguri'
-//     }, {
-//       id: 'hsyasajs',
-//       name: 'Anambra'
-//     }, {
-//       id: 'djsjudksjd',
-//       name: 'Benue'
-//     }, {
-//       id: 'sdhyaysdj',
-//       name: 'Kaduna'
-//     }, {
-//       id: 'suudydjsjd',
-//       name: 'Abuja'
-//       }
-//   ];
-//   const [selectedItems, setSelectedItems] = useState([]);
-
-//   onSelectedItemsChange = selectedItems => {
-//     setSelectedItems(selectedItems);
-//   };
-
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <MultiSelect
-//         hideTags
-//         items={items}
-//         uniqueKey="name"
-//         // ref={(component) => { this.multiSelect = component }}
-//         onSelectedItemsChange={onSelectedItemsChange}
-//         selectedItems={selectedItems}
-//         selectText="Pick Items"
-//         searchInputPlaceholderText="Search Items..."
-//         onChangeInput={ (text)=> console.log(text)}
-//         altFontFamily="ProximaNova-Light"
-//         tagRemoveIconColor="#CCC"
-//         tagBorderColor="#CCC"
-//         tagTextColor="#CCC"
-//         selectedItemTextColor="#CCC"
-//         selectedItemIconColor="#CCC"
-//         itemTextColor="#000"
-//         displayKey="name"
-//         searchInputStyle={{ color: '#CCC' }}
-//         submitButtonColor="#CCC"
-//         submitButtonText="Submit"
-//       />
-//       <FlatList
-//           data={selectedItems}
-//           renderItem={({item}) => (
-//             <Text>{item}</Text>
-//           )}
-//           // keyExtractor={item => item.id.toString()}
-//         />
-//     </View>
-//   );
-// }
-// export default App;

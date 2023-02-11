@@ -10,25 +10,29 @@ export default function GroupSearchScreen({navigation, item}) {
   const [heartCnt, setIsHeartCnt] = useState(item.likes);
   const [accessToken, setAccessToken] = useState('');
   const [state, setState] = useState(false);
+  const [ip, setIP] = useState('');
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
     });
-    console.log(isClickHeart, heartCnt, accessToken, state);
+    // console.log(isClickHeart, heartCnt, accessToken, state);
   }, []);
   const clickHeart = async () => {
-    const result = (
-      await axios.get(
-        `http://70.12.246.116:8080/group/recruit/${item.groupId}/likes`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
+    const result = await axios.get(
+      `http://${ip}/group/recruit/${item.groupId}/likes`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
-      )
-    ).data;
+      },
+    );
+    // console.log(result);
     setIsClickHeart(result);
     setIsHeartCnt(heartCnt + (result ? 1 : -1));
     if (result) setState(!state);
@@ -55,8 +59,22 @@ export default function GroupSearchScreen({navigation, item}) {
           },
         ]}>
         <View style={{flex: 5}}>
-          <Text style={styles.box}>{item.title}</Text>
-          <Text style={styles.box}>{item.content}</Text>
+          <Text variant="headlineSmall" style={{fontWeight: 'bold'}}>
+            {item.title}
+          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
+            <Text>
+              {item.startRecruitDate} ~ {item.endRecruitDate}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
+            <Text>
+              {item.startDate} ~ {item.endDate}
+            </Text>
+          </View>
+          <Text variant="titleMedium">{item.content}</Text>
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <IconButton

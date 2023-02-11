@@ -29,20 +29,28 @@ export default function App({route}) {
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
 
+  const [ip, setIP] = useState('');
   useEffect(() => {
-    //  사용자 정보 가져오기
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
-      const UserInfo = result;
+      const UserInfo = JSON.parse(result);
+      console.log('토큰', UserInfo.token);
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
+    getData();
   }, []);
-  // axios 요청 보내기
-
   useEffect(() => {
-    axios({
+    getData();
+  }, [accessToken, route]);
+  const getData = async () => {
+    if (accessToken === '') return;
+    await axios({
       method: 'get',
-      url: `http://70.12.246.116:8080/record/get-exercise-record/${userId}?year=2023&month=2&day=8r`,
+      url: `http://${ip}/record/get-exercise-record/${userId}?year=2023&month=2&day=8r`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -55,7 +63,7 @@ export default function App({route}) {
       .catch(err => {
         console.log('record screen 실패 ', err);
       });
-  }, [route]);
+  };
 
   return (
     <View style={styles.container}>
