@@ -11,8 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // const userData = useSelector(store=>store.userData)
 export default function CreateRoutineScreen({navigation}) {
   let exerciseList = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
-  const [routineName, setRoutineName] = useState();
-  const [accessToken, setAccessToken] = useState();
+  const [routineName, setRoutineName] = useState('');
+  const [accessToken, setAccessToken] = useState('');
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
   useEffect(() => {

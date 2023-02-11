@@ -24,7 +24,7 @@ const data = {
   data: [0.8, 0.6, 0.3],
 };
 
-export default function App({route}) {
+export default function RecordScreen({route}) {
   const [recordData, setRecordData] = useState('');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -37,11 +37,9 @@ export default function App({route}) {
     });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
-      console.log('토큰', UserInfo.token);
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
-    getData();
   }, []);
   useEffect(() => {
     getData();
@@ -50,7 +48,7 @@ export default function App({route}) {
     if (accessToken === '') return;
     await axios({
       method: 'get',
-      url: `http://${ip}/record/get-exercise-record/${userId}?year=2023&month=2&day=8r`,
+      url: `http://${ip}/record/get-exercise-record?year=2023&month=2&day=8r`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,

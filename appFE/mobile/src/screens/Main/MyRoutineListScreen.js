@@ -23,9 +23,16 @@ export default function MyRoutineListScreen({navigation}) {
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
-    axios({
+  }, []);
+  useEffect(() => {
+    getData();
+  }, [accessToken]);
+
+  const getData = async () => {
+    if (accessToken === '') return;
+    await axios({
       method: 'get',
-      url: `http://${ip}/routine/get-user-routine/${userId}`,
+      url: `http://${ip}/routine/get-user-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -40,7 +47,7 @@ export default function MyRoutineListScreen({navigation}) {
       .catch(function (err) {
         console.log('My routine list screen', err);
       });
-  }, []);
+  };
 
   return (
     <View>

@@ -7,7 +7,7 @@ import base64 from 'base-64';
 
 export default function MainMyPageScreen({navigation, route}) {
   // console.log(route.params);
-  const [photo, setPhoto] = useState('undefined');
+  const [photo, setPhoto] = useState('null');
   const [role, setRole] = useState('');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -93,9 +93,7 @@ export default function MainMyPageScreen({navigation, route}) {
           <Avatar.Image
             size={100}
             source={
-              photo === 'undefined'
-                ? require('../Group/icon.png')
-                : {uri: photo}
+              photo === 'null' ? require('../Group/icon.png') : {uri: photo}
             }
             style={{backgroundColor: '#fff'}}
           />
@@ -128,7 +126,7 @@ export default function MainMyPageScreen({navigation, route}) {
             icon="cog"
             iconColor={MD3Colors.error50}
             size={20}
-            onPress={() => navigation.navigate('ResetPasswordScreen')}
+            onPress={() => navigation.navigate('ChangePasswordScreen')}
           />
         </View>
       </View>

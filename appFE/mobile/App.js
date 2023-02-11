@@ -20,6 +20,7 @@ import {
   RegisterScreen,
   ResetPasswordScreen,
   Dashboard,
+  ChangePasswordScreen,
 } from './src/screens/Login';
 
 import {
@@ -215,6 +216,11 @@ const MyPageSideNavigator = () => {
       <MyPageSide.Screen
         name="CancelScreen"
         component={CancelScreen}
+        options={{headerShown: false}}
+      />
+      <MyPageSide.Screen
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
         options={{headerShown: false}}
       />
     </MyPageSide.Navigator>

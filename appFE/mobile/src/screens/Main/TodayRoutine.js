@@ -20,7 +20,7 @@ export default function TodayRoutine() {
     });
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
-      console.log('토큰', UserInfo.token);
+      // console.log('토큰', UserInfo.token);
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
@@ -30,9 +30,10 @@ export default function TodayRoutine() {
   }, [accessToken]);
   const getData = async () => {
     if (accessToken === '') return;
+    console.log(ip, accessToken);
     await axios({
       method: 'get',
-      url: `http://${ip}/record/get-schedule/${userId}`,
+      url: `http://${ip}/record/get-schedule`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
