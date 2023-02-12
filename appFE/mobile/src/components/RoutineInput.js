@@ -3,46 +3,69 @@ import {View, StyleSheet} from 'react-native';
 import TextInput from './TextInput';
 import {SelectList} from 'react-native-dropdown-select-list';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Trouble issue : 이 컴포넌트를 재 렌더링 시, 이전 컴포넌트의 값이 그대로 들어옴
 //                 즉, useState로 세팅해 둔 초기값이 적용이 안됨.
 
 const exerciseArea = ['전신', '상체', '하체'];
-let exerciseList = [];
+// let exerciseList = []
 
 export default function RoutineInput({countNum, routineInfo}) {
   // const [routineName, setRoutineName] = useState('')
-  const [exerciseId, setExerciseId] = useState('');
-  const [exerciseSet, setExerciseSet] = useState(0);
-  const [reps, setReps] = useState(0);
-  const [restTimeMinutes, setRestTimeMinutes] = useState(0);
-  const [restTimeSeconds, setRestTimeSeconds] = useState(0);
+  const [exerciseId, setExerciseId] = useState(
+    routineInfo === false ? '' : routineInfo.exerciseId,
+  );
+  const [exerciseSet, setExerciseSet] = useState(
+    routineInfo === false ? '' : routineInfo.exerciseSet,
+  );
+  const [exerciseList, setExerciseList] = useState([]);
+  const [reps, setReps] = useState(
+    routineInfo === false ? '' : routineInfo.reps,
+  );
+  const [restTimeMinutes, setRestTimeMinutes] = useState(
+    routineInfo === false ? '' : routineInfo.restTimeMinutes,
+  );
+  const [restTimeSeconds, setRestTimeSeconds] = useState(
+    routineInfo === false ? '' : routineInfo.restTimeMinutes,
+  );
+  const [accessToken, setAccessToken] = useState('');
 
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
   const setRepsChangeHandler = e => {
     e.persist();
-    setReps(Number(e.nativeEvent.text));
+    setReps(e.nativeEvent.text);
   };
   const exerciseSetChangeHandler = e => {
     e.persist();
-    setExerciseSet(Number(e.nativeEvent.text));
+    setExerciseSet(e.nativeEvent.text);
   };
   const restTimeMinutesChangeHandler = e => {
     e.persist();
-    setRestTimeMinutes(Number(e.nativeEvent.text));
+    setRestTimeMinutes(e.nativeEvent.text);
   };
   const restTimeSecondsChangeHandler = e => {
     e.persist();
-    setRestTimeSeconds(Number(e.nativeEvent.text));
+    setRestTimeSeconds(e.nativeEvent.text);
     // console.log('마지막 data :', data)
   };
 
   let data = {
-    exerciseId: exerciseId.value,
+    exerciseId: exerciseId,
     exerciseSet: exerciseSet,
     reps: reps,
     restTimeMinutes: restTimeMinutes,
     restTimeSeconds: restTimeSeconds,
-    name: '',
+    name: 'exercise',
   };
   let sendData = undefined;
 
@@ -67,17 +90,22 @@ export default function RoutineInput({countNum, routineInfo}) {
                 console.log(exerciseId);
                 axios({
                   method: 'get',
-                  url: `http://70.12.246.102:8080/exercise/get-exercise-type?area=${exerciseId}`,
+                  url: `http://${ip}/exercise/get-exercise-type?area=${exerciseId}`,
+                  headers: {
+                    authorization: `Bearer ${accessToken}`,
+                    'X-AUTH-TOKEN': `${accessToken}`,
+                  },
                 }).then(function (res) {
                   console.log('어떤 운동 종류가 ㅣㅇㅆ는댝', res.data);
-                  const rawData = res.data;
-                  rawData.forEach(element => {
-                    exerciseList.push({
+                  let rawData = [];
+                  res.data.forEach(element => {
+                    rawData.push({
                       key: element.exerciseTypeId,
                       value: element.exerciseTypeName,
                     });
                   });
-                  console.log(exerciseList);
+                  setExerciseList(rawData);
+                  // console.log(exerciseList)
                 });
               }}
               placeholder="운동 부위 선택"
@@ -85,7 +113,9 @@ export default function RoutineInput({countNum, routineInfo}) {
             <SelectList
               data={exerciseList}
               save="key"
-              setSelected={value => setExerciseId(value)}
+              setSelected={value => {
+                setExerciseId(value), console.log(exerciseId);
+              }}
               placeholder="운동 종류 선택"
             />
             <TextInput

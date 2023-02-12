@@ -1,40 +1,51 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, StyleSheet, Dimensions, ScrollView} from 'react-native';
 // import Constants from 'expo-constants';
-import {ProgressChart} from 'react-native-chart-kit';
+import {ProgressChart, BarChart} from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get('window').width - 1;
 const chartConfig = {
-  backgroundGradientFrom: '#cc14aa',
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientFrom: '#7ff591',
-  backgroundGradientTo: '#f0f716',
-  backgroundGradientToOpacity: 0.5,
+  backgroundColor: '#1cc910',
+  backgroundGradientFrom: '#eff3ff',
+  // backgroundGradientFromOpacity: 0,
+  // backgroundGradientFrom: '#7ff591',
+  backgroundGradientTo: '#efefef',
+  // backgroundGradientToOpacity: 0.5,
   decimalPlaces: 2,
   color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0.5,
-  useShadowColorFromDataset: false, // optional
+  // strokeWidth: 2, // optional, default 3
+  // barPercentage: 0.5,
+  // useShadowColorFromDataset: false // optional
 };
 
 const data = {
   labels: ['전신', '상체', '하체'], // optional
-  data: [0.8, 0.6, 0.3],
+  datasets: [
+    {
+      data: [80, 60, 70],
+    },
+  ],
 };
+const date = new Date();
+const today = date.getDate();
+const month = date.getMonth() + 1;
+const year = date.getFullYear();
 
-export default function RecordScreen({route}) {
+export default function RecordScreen() {
   const [recordData, setRecordData] = useState('');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
-
+  // componentDidMount(() => {
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setIP(UserInfo.ip);
     });
+    //  사용자 정보 가져오기
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
       setUserId(UserInfo.id);
@@ -42,13 +53,11 @@ export default function RecordScreen({route}) {
     });
   }, []);
   useEffect(() => {
-    getData();
-  }, [accessToken, route]);
-  const getData = async () => {
+    // axios 요청 보내기
     if (accessToken === '') return;
-    await axios({
+    axios({
       method: 'get',
-      url: `http://${ip}/record/get-exercise-record?year=2023&month=2&day=8r`,
+      url: `http://${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${today}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -61,12 +70,12 @@ export default function RecordScreen({route}) {
       .catch(err => {
         console.log('record screen 실패 ', err);
       });
-  };
+  }, [accessToken]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> OOO 님의 운동 기록 </Text>
-      <ProgressChart
+      <Text style={styles.title}> 오늘의 운동 달성률 </Text>
+      {/* <ProgressChart
         data={data}
         width={Dimensions.get('window').width - 16}
         height={220}
@@ -74,6 +83,15 @@ export default function RecordScreen({route}) {
         radius={32}
         chartConfig={chartConfig}
         hideLegend={false}
+      /> */}
+      <BarChart
+        style={{marginVertical: 8, borderRadius: 16}}
+        data={data}
+        width={screenWidth}
+        height={220}
+        yAxisLabel={'%'}
+        chartConfig={chartConfig}
+        verticalLabelRotation={30}
       />
     </View>
   );

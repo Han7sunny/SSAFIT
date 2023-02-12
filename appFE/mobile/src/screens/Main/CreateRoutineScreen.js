@@ -1,20 +1,26 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, Button as Btn, StyleSheet, ScrollView} from 'react-native';
-import {Text} from 'react-native-paper';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {IconButton, Text} from 'react-native-paper';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import RoutineInput from '../../components/RoutineInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useSelector } from 'react-redux'
 
 // const userData = useSelector(store=>store.userData)
-export default function CreateRoutineScreen({navigation}) {
-  let exerciseList = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
-  const [routineName, setRoutineName] = useState('');
-  const [accessToken, setAccessToken] = useState('');
+let exerciseList = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+export default function CreateRoutineScreen({navigation, route}) {
+  const [routineName, setRoutineName] = useState(
+    data === false ? '' : route.params.data.name,
+  );
+  const [routineInfo, setRoutineInfo] = useState(
+    data === false ? [] : route.params.data,
+  );
+  const [exerciseList, setExerciseList] = useState([...exerciseList]);
+  const [accessToken, setAccessToken] = useState();
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -25,11 +31,12 @@ export default function CreateRoutineScreen({navigation}) {
       // console.log(UserInfo)
       setAccessToken(UserInfo.token);
       setUserId(UserInfo.id);
-      // console.log('[루틴생성] 토큰 :' , accessToken)
     });
   }, []);
   // axios 요청 보낼 함수
   function onPost() {
+    console.log('루틴 생성 전 확인 = ', exerciseList);
+    console.log(accessToken);
     axios({
       method: 'post',
       url: `http://${ip}/routine/generate-routine`,
@@ -38,29 +45,23 @@ export default function CreateRoutineScreen({navigation}) {
         'X-AUTH-TOKEN': `${accessToken}`,
       },
       data: {
-        routineName: `${routineName}`,
-        userId: userId,
         exerciseList: exerciseList,
+        routineName: routineName,
+        userId: userId,
         routineId: 0,
       },
     })
       .then(function (response) {
-        console.log(response.data);
         console.log('==== 루틴 생성 성공 ======');
-        // console.log('routineName :', routineName)
-        // console.log('exerciseList :', exerciseList)
+        console.log(response.data);
       })
       .catch(function (error) {
         console.log('==== 루틴 생성 실패 ======');
-        // console.log('routineName :', routineName)
-        // console.log('exerciseList :', exerciseList)
         console.log(error);
       });
   }
 
-  // const [routineName, setRoutineName] = useState('')
   // RoutineInput 컴포넌트 추가 코드
-
   const [countNum, setCountNum] = useState([0]);
   const onAddRoutine = () => {
     let countArr = [...countNum];
@@ -71,10 +72,9 @@ export default function CreateRoutineScreen({navigation}) {
   };
 
   // routine 정보 주고 받을 함수
-  const routineInfo = ({sendData}) => {
-    // sendData.push({"name" : "1번운동 별칭"})
-    // console.log(`========== sendData : ${sendData} ============`)
-    exerciseList.push(sendData);
+  const savedRoutine = ({sendData}) => {
+    // exerciseList.push(sendData)
+    setExerciseList([...exerciseList, sendData]);
     console.log('저장한 루틴 리스트 :', exerciseList);
     // console.log('======================')
   };
@@ -85,13 +85,12 @@ export default function CreateRoutineScreen({navigation}) {
       <TextInput
         label="루틴 이름을 설정하세요!"
         value={routineName}
-        onChangeText={text => {
-          setRoutineName(text);
+        onChangeText={value => {
+          setRoutineName(value);
         }}
-        // onEndEditing={() => {console.log('routineName 외않되 : ',routineName)}}
       />
       <RoutineInput countNum={countNum} routineInfo={routineInfo} />
-      <Btn onPress={onAddRoutine} title="+" style={styles.btn}></Btn>
+      <IconButton icon={plus - circle - outline} onPress={onAddRoutine} />
 
       <Button
         mode="contained"

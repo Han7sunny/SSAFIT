@@ -23,9 +23,9 @@ export default function MyGroupListScreen({navigation, route}) {
   }, []);
   useEffect(() => {
     getData();
-  }, [route.params, ip]);
+  }, [route.params, accessToken]);
   const getData = async () => {
-    if (ip === '') return;
+    if (accessToken === '') return;
     const data = (
       await axios.get(`http://${ip}/group/myGroupList`, {
         headers: {

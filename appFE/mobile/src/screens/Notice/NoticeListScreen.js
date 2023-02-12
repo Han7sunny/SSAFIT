@@ -7,11 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function NoticeListScreen({navigation, route}) {
   const [accessToken, setAccessToken] = useState('');
   const [role, setRole] = useState('');
-  const [findWord, setFindWord] = useState('');
-  const [checked, setChecked] = useState('title');
-  const [Notices, setNotices] = useState([]);
-  const [Filtering, setFiltering] = useState([]);
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -23,9 +20,12 @@ export default function NoticeListScreen({navigation, route}) {
       setAccessToken(UserInfo.token);
     });
   }, []);
+
   useEffect(() => {
     getData();
   }, [accessToken, route.params]);
+
+  const [Notices, setNotices] = useState([]);
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
@@ -39,8 +39,11 @@ export default function NoticeListScreen({navigation, route}) {
     setNotices(data);
     setFiltering(data);
   };
+
+  const [findWord, setFindWord] = useState('');
+  const [checked, setChecked] = useState('title');
+  const [Filtering, setFiltering] = useState([]);
   const filter = () => {
-    // console.log(item);
     setFiltering(
       Notices.filter(
         item =>
@@ -51,12 +54,14 @@ export default function NoticeListScreen({navigation, route}) {
       ),
     );
   };
+
   return (
     <View>
       <TextInput
         onChangeText={value => setFindWord(value)}
         onSubmitEditing={filter}
         placeholder="검색어를 입력하세요"
+        style={{backgroundColor: 'white'}}
         right={<TextInput.Icon icon="magnify" onPress={filter} />}
       />
       <View

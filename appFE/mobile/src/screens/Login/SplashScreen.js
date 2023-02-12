@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View } from 'react-native'
-import { connect } from 'react-redux'
-
-function mapReduxStateToReactProps(state) {
-  return state
-}
+// import { connect } from 'react-redux'
+import Splash from './Splash'
 
 export default function SplashScreen({ navigation }) {
   return (

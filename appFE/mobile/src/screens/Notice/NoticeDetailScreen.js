@@ -48,10 +48,7 @@ export default function NoticeDetailScreen({navigation, route}) {
     const date = data.registeredTime.split('T');
     setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
   };
-  const deleteReply = isDelete => {
-    console.log(isDelete);
-    if (isDelete) setChangeReply(true);
-  };
+
   const deleteNotice = async () => {
     const data = (
       await axios.delete(`http://${ip}/notice/${id}`, {
@@ -70,6 +67,10 @@ export default function NoticeDetailScreen({navigation, route}) {
         },
       ]);
     }
+  };
+  const deleteReply = isDelete => {
+    console.log(isDelete);
+    if (isDelete) setChangeReply(true);
   };
   const addReply = async () => {
     if (text.length === 0) return;
@@ -167,16 +168,6 @@ export default function NoticeDetailScreen({navigation, route}) {
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text>{'조회 ' + Notices.hits}</Text>
-            {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <IconButton
-              icon={isClickHeart ? 'heart' : 'heart-outline'}
-              iconColor={isClickHeart ? 'red' : 'black'}
-              size={20}
-              onPress={clickHeart}
-              style={styles.iconButton}
-            />
-            <Text>{heartCnt}</Text>
-          </View> */}
           </View>
         </View>
         <View>
@@ -185,7 +176,7 @@ export default function NoticeDetailScreen({navigation, route}) {
         </View>
       </View>
       <View>
-        <Text>댓글</Text>
+        <Text variant="titleLarge">댓글</Text>
         <FlatList
           data={Notices.replyList}
           style={{height: 220}}

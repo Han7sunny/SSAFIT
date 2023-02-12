@@ -17,7 +17,6 @@ export default function AddGroupScreen({navigation, route}) {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
     });
-    // getData();
   }, []);
 
   const accept = async () => {

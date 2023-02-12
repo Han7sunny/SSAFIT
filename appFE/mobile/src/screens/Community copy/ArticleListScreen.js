@@ -8,6 +8,7 @@ export default function ArticleListScreen({navigation}) {
   const [data, setData] = useState([]);
   const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -17,6 +18,9 @@ export default function ArticleListScreen({navigation}) {
       const UserInfo = JSON.parse(result);
       setAccessToken(UserInfo.token);
     });
+  }, []);
+  useEffect(() => {
+    if (accessToken === '') return;
     axios({
       method: 'get',
       url: `http://${ip}/board/QA`,
@@ -26,7 +30,7 @@ export default function ArticleListScreen({navigation}) {
       },
     })
       .then(function (res) {
-        // console.log(res.data)
+        console.log(res.data);
         const newData = res.data;
         setData(newData);
         // ArticleDataAction.getArticleData({
@@ -36,19 +40,20 @@ export default function ArticleListScreen({navigation}) {
       .catch(function (err) {
         console.log(err);
       });
-  }, []);
+  }, [accessToken]);
   return (
     <View style={styles.container}>
-      <FlatList
+      {/* <FlatList
         data={data}
         renderItem={({item}) => (
           <ArticleItem
             id={item.board_id}
             title={item.title}
             replyList={item.replyList}
+            replySize={item.replySize}
           />
         )}
-      />
+      /> */}
     </View>
   );
 }

@@ -7,7 +7,7 @@ import Button from '../../components/Button';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CreateArticleScreen({navigation, route}) {
+export default function CreateArticleScreen({navigation}) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -139,7 +139,8 @@ export default function CreateArticleScreen({navigation, route}) {
         onPress={() => {
           onPost, navigation.navigate('ArticleListScreen');
         }}>
-        {' 게시글 등록 '}
+        {' '}
+        게시글 등록{' '}
       </Button>
     </View>
   );

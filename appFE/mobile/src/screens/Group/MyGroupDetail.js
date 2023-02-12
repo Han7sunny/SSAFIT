@@ -26,11 +26,10 @@ export default function MyGroupSimple({navigation, route}) {
     });
   }, []);
   useEffect(() => {
-    console.log(id);
     getData();
-  }, [id]);
+  }, [id, accessToken]);
   const getData = async () => {
-    if (ip === '') return;
+    if (accessToken === '') return;
     const data = (
       await axios.get(`http://${ip}/group/${id}`, {
         headers: {

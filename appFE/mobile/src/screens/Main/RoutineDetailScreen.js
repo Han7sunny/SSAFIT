@@ -8,9 +8,13 @@ import axios from 'axios';
 
 export default function RoutineDetailScreen({route, navigation}) {
   const [routineInfo, setRoutineInfo] = useState([]);
+  const [routineName, setRoutineName] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [userId, setUserId] = useState('');
   let {routineId} = route.params;
+  console.log('루틴 아이디:', routineId);
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -19,7 +23,11 @@ export default function RoutineDetailScreen({route, navigation}) {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
       setAccessToken(UserInfo.token);
+      setUserId(UserInfo.id);
     });
+  }, []);
+  useEffect(() => {
+    if (accessToken === '') return;
     axios({
       method: 'get',
       url: `http://${ip}/routine/get-exercise-info/${routineId}`,
@@ -29,16 +37,46 @@ export default function RoutineDetailScreen({route, navigation}) {
       },
     })
       .then(function (response) {
-        setRoutineInfo(response.data);
+        console.log('routine detail : ', response.data);
+        setRoutineName(response.data.routineName);
+        setRoutineInfo(response.data.exerciseInfoList);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, []);
+  }, [accessToken]);
 
+  function addTodayRoutine() {
+    axios({
+      method: 'post',
+      url: `http://${ip}/routine/add-routine`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      },
+      data: {
+        routineId: routineId,
+        userId: userId,
+      },
+    })
+      .then(res => {
+        console.log('response :', res.data);
+      })
+      .catch(err => {
+        console.log('에러');
+      });
+  }
   return (
     <View style={styles.container}>
       <Text> Routine Detail Screen! </Text>
+      <Text style={styles.title}>{routineName}</Text>
+      <IconButton
+        // mode="contained"
+        icon="plus-circle-outline"
+        onPress={() => {
+          addTodayRoutine, console.log('오늘의 운동으로 추가');
+        }}
+      />
       <FlatList
         data={routineInfo}
         renderItem={({item}) => (
@@ -68,5 +106,8 @@ export default function RoutineDetailScreen({route, navigation}) {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 2,
+  },
+  title: {
+    fontSize: 30,
   },
 });

@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {TouchableOpacity, StyleSheet, View} from 'react-native';
+import {TouchableOpacity, StyleSheet, View, Alert} from 'react-native';
 import {Text} from 'react-native-paper';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
@@ -11,15 +11,27 @@ export default function LoginScreen({navigation}) {
   const [id, setId] = useState({value: '', error: ''});
   const [password, setPassword] = useState({value: '', error: ''});
   const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
-    AsyncStorage.getItem('ip', (err, result) => {
-      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
-      setIP(UserInfo.ip);
-    });
-  }, []);
+    async function isLogin() {
+      AsyncStorage.getItem('ip', (err, result) => {
+        const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+        setIP(UserInfo.ip);
+      });
+      AsyncStorage.getItem('username', (err, result) => {
+        const UserInfo = JSON.parse(result);
+        if (UserInfo) {
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'HomeScreen'}],
+          });
+        }
+      });
+    }
+    isLogin();
+  });
 
   const onLoginPressed = () => {
-    console.log(id, password);
     axios({
       method: 'post',
       url: `http://${ip}/user/login`,
@@ -32,7 +44,6 @@ export default function LoginScreen({navigation}) {
         console.log(response.data);
         if (response.data.success === true) {
           // response.data.token 저장
-          // console.warn(success);
           const username = response.data.name;
           const token = response.data.token;
           const userId = response.data.id;
@@ -44,24 +55,31 @@ export default function LoginScreen({navigation}) {
               id: userId,
               token: token,
               role: role,
-              imageUri: 'undefined',
             }),
             () => {
               console.log('AsyncStorage에 유저 정보 저장 완료');
-              alert(response.data.msg);
+              Alert.alert('OPPS', response.data.msg, [
+                {
+                  text: '확인',
+                  onPress: () =>
+                    navigation.reset({
+                      index: 0,
+                      routes: [{name: 'HomeScreen'}],
+                    }),
+                },
+              ]);
             },
           );
-          navigation.reset({
-            index: 0,
-            routes: [{name: 'HomeScreen'}],
-          });
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: 'HomeScreen'}],
+          // })
         } else {
-          alert(response.data.msg);
+          Alert.alert(response.data.msg);
         }
       })
       .catch(err => {
-        // console.log(err);
-        console.warn(err);
+        console.log(err);
       });
   };
 

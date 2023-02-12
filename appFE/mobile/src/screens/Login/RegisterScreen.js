@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text, Button as Btn} from 'react-native-paper';
 import Button from '../../components/Button';
@@ -41,29 +41,31 @@ export default function RegisterScreen({navigation}) {
         const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
         setIP(UserInfo.ip);
       });
-    });
-    axios({
-      method: 'post',
-      url: `http://${ip}/user/join`,
-      data: {
-        name: name.value,
-        id: id.value,
-        password: password.value,
-        email: email.value,
-      },
-    })
-      .then(res => {
-        console.log(res.data, '성공');
-        if (res.success === true) {
-          navigation.push('HomeScreen');
-        }
+    }, []);
+    useEffect(() => {
+      axios({
+        method: 'post',
+        url: `http://${ip}/user/join`,
+        data: {
+          name: name.value,
+          id: id.value,
+          password: password.value,
+          email: email.value,
+        },
       })
-      .catch(err => {
-        console.log(err);
+        .then(res => {
+          console.log(res.data, '성공');
+          if (res.success === true) {
+            navigation.push('HomeScreen');
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'LoginScreen'}],
       });
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'LoginScreen'}],
     });
   };
   return (

@@ -10,7 +10,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Pressable} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -44,8 +44,7 @@ import {
   CommunityScreen,
   ArticleDetailScreen,
   CreateArticleScreen,
-  ArticleListScreen,
-  RoutineListScreen,
+  RoutineArticleDetailScreen,
 } from './src/screens/Community';
 
 import {
@@ -63,11 +62,11 @@ import {
   NoticeDetailScreen,
 } from './src/screens/Notice';
 
-import {MyRecordScreen} from './src/screens/Record';
+// import {MyRecordScreen, RoutineReservationScreen} from './src/screens/Record';
 
 import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
-import {Text} from 'react-native-paper';
+import {Text, Button} from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
@@ -176,11 +175,10 @@ const CommunitySideNavigator = () => {
         options={{headerShown: false}}
       />
       <CommunitySide.Screen
-        name="ArticleListScreen"
-        component={ArticleListScreen}
+        name="RoutineArticleDetailScreen"
+        component={RoutineArticleDetailScreen}
         options={{headerShown: false}}
       />
-      <CommunitySide.Screen name="ArticleItem" component={ArticleItem} />
     </CommunitySide.Navigator>
   );
 };
@@ -326,12 +324,192 @@ function App() {
             return <Icon name={iconName} size={size} color={color} />;
           },
         })}>
-        <Tab.Screen name="Home" component={MainSideNavigator} />
-        <Tab.Screen name="Group" component={GroupSideNavigator} />
-        <Tab.Screen name="Community" component={CommunitySideNavigator} />
-        <Tab.Screen name="MyPage" component={MyPageSideNavigator} />
-        <Tab.Screen name="Login" component={LoginSideNavigator} />
-        <Tab.Screen name="Notice" component={NoticeNavigator} />
+        <Tab.Screen
+          name="Home"
+          component={MainSideNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Tab.Screen
+          name="Group"
+          component={GroupSideNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Tab.Screen
+          name="Community"
+          component={CommunitySideNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Tab.Screen
+          name="MyPage"
+          component={MyPageSideNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Tab.Screen
+          name="Login"
+          component={LoginSideNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
+        <Tab.Screen
+          name="Notice"
+          component={NoticeNavigator}
+          options={{
+            headerTitle: props => (
+              <Pressable onPress={() => console.log('click')}>
+                <Text
+                  variant="displayMedium"
+                  style={{
+                    fontWeight: 'bold',
+                    paddingRight: 30,
+                    paddingLeft: 30,
+                  }}>
+                  SSAFIT
+                </Text>
+              </Pressable>
+            ),
+            // Header 블록에 대한 스타일
+            headerStyle: {
+              backgroundColor: '#29b6f6',
+            },
+            // Header의 텍스트, 버튼 색상
+            headerTintColor: '#ffffff',
+            // 타이틀 텍스트의 스타일
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: 500,
+            },
+            headerTitleAlign: 'center',
+          }}
+        />
 
         {/* components */}
       </Tab.Navigator>

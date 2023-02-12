@@ -43,7 +43,6 @@ export default function MainMyPageScreen({navigation, route}) {
   useEffect(() => {
     getData();
   }, [accessToken, changeState, route.params]);
-
   const getData = async () => {
     if (accessToken === '') return;
     console.log(ip, accessToken);
@@ -149,13 +148,13 @@ export default function MainMyPageScreen({navigation, route}) {
             renderItem={({item}) => (
               <Pressable
                 onPress={() => {
-                  deleteNotification(item.notificationId);
-                  // navigation.navigate('AddGroupScreen', {id: item.groupId})
+                  // deleteNotification(item.notificationId);
+                  navigation.navigate('AddGroupScreen', {id: item.groupId});
                 }}>
                 <Text variant="titleMedium">{item.notificationMessage}</Text>
               </Pressable>
             )}
-            keyExtractor={item => item.notificationId.toString()}
+            keyExtractor={item => item.groupId}
           />
         </View>
       </View>
