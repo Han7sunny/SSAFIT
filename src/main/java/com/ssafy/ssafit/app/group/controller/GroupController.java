@@ -210,8 +210,10 @@ public class GroupController {
     @ApiOperation(value = "그룹원 추가", notes = "해당 댓글의 회원을 그룹원에 추가한다. acceptInvitation = true", response = Boolean.class)
     public ResponseEntity<Boolean> addToGroup(@RequestBody @ApiParam(value = "댓글 정보", required = true) GroupMemberReqDto groupMember) throws Exception {
         LOGGER.info("Called addToGroup. ");
-        groupMemberService.addGroupMember(groupMember);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        groupMemberService.addGroupMember(groupMember); //  ReplyRespDto의 includedGroup (그룹 포함 여부) true로 변경됨
+        // groupRequestStatus : true(그룹 포함 상태 : 그룹 초대 요청 수락함), false (그룹 초대 요청 수락 아직 안 함)
+        boolean groupRequestStatus = groupMemberService.groupInvitationRequestStatus(groupMember.getGroupId(), groupMember.getUserId());
+        return new ResponseEntity<Boolean>(groupRequestStatus, HttpStatus.OK);
     }
 
     @PostMapping("/recruit/{groupId}/{replyId}/delete")
@@ -219,7 +221,8 @@ public class GroupController {
     public ResponseEntity<Boolean> deleteFromGroup(@RequestBody @ApiParam(value = "댓글 정보", required = true) GroupMemberReqDto groupMember) throws Exception {
         LOGGER.info("Called deleteFromGroup. ");
         groupMemberService.deleteGroupMember(groupMember);
-        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        //  ReplyRespDto의 includedGroup (그룹 포함 여부) false로 변경됨
+        return new ResponseEntity<Boolean>(false, HttpStatus.OK);
     }
 
     @GetMapping("/search")

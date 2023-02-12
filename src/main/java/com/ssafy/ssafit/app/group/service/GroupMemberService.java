@@ -14,6 +14,8 @@ public interface GroupMemberService {
 
     boolean findGroupMember(long groupId, String userId);
 
+    boolean groupInvitationRequestStatus(long groupId, String userId);
+
     void addGroupMembers(Group group, List<String> userIdList);
 
     void addGroupMember(GroupMemberReqDto groupMember);
