@@ -42,6 +42,14 @@ public class GroupMemberServiceImpl implements GroupMemberService{
     }
 
     @Override
+    public boolean groupInvitationRequestStatus(long groupId, String userId) {
+        GroupMember groupMember = groupMemberRepository.findByGroupIdAndUserId(groupId, userId);
+        if(groupMember.isAcceptInvitation()) // 그룹 초대 요청 수락함
+            return true;
+        return false; // 그룹 초대 요청 아직 수락 안 함
+    }
+
+    @Override
     public void addGroupMembers(Group group, List<String> userIdList) {
         for (String userId : userIdList) {
             User user = userRepository.findById(userId).get();

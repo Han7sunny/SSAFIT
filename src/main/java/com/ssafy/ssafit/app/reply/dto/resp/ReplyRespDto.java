@@ -30,7 +30,7 @@ public class ReplyRespDto extends CommonResp {
 
     private LocalDateTime registered_time;
 
-    private boolean includedGroup; // 그룹 포함 여부
+    private int includedGroup; // 그룹 포함 여부 [0 : 그룹 미포함, 1 : 그룹 포함, 2 : 그룹 초대 요청 대기 상태]
 
     public ReplyRespDto(Reply reply, boolean success){
         this.setSuccess(success);

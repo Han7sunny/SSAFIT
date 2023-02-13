@@ -65,6 +65,8 @@ public class GroupRecruitRespDto extends BoardRespDto {
         this.achievementRate = group.getAchievementRate();
         this.startDate = group.getStartDate();
         this.endDate = group.getEndDate();
+        this.startRecruitDate = group.getStartRecruitDate();
+        this.endRecruitDate = group.getEndRecruitDate();
         this.period = group.getPeriod();
         this.maximumMember = group.getMaximumMember();
         this.currentMember = group.getCurrentMember();

@@ -310,6 +310,7 @@ public class GroupServiceImpl implements GroupService{
         }
 
         String userId = SecurityUtil.getCurrentUserId().get().getUserId();
+        LOGGER.info("userID : {}",userId);
         Group group = getGroup.get();
         Board board = boardRepository.findByGroupId(groupId);
         board.setHits(board.getHits() + 1);
@@ -321,6 +322,7 @@ public class GroupServiceImpl implements GroupService{
         groupRecruitRespDto.setBoardId(board.getId());
         groupRecruitRespDto.setContent(board.getContent());
         groupRecruitRespDto.setUserId(board.getUser().getId());
+        groupRecruitRespDto.setUserName(board.getUser().getName());
         groupRecruitRespDto.setRegisteredTime(board.getRegisteredTime());
         groupRecruitRespDto.setModifiedTime(board.getModifiedTime());
         groupRecruitRespDto.setSharePost(board.isSharePost());
@@ -366,10 +368,18 @@ public class GroupServiceImpl implements GroupService{
             for (Reply reply :
                     getReplyList) {
                 ReplyRespDto replyRespDto = new ReplyRespDto(reply, true);
-                if (groupMemberRepository.findByGroupIdAndUserId(group.getId(), reply.getUser().getId()) == null)
-                    replyRespDto.setIncludedGroup(false);
-                else
-                    replyRespDto.setIncludedGroup(true);
+                LOGGER.info("userId : {}, group register id : {}", userId, board.getUser().getId());
+                if(userId.equals(board.getUser().getId())) {
+                    GroupMember checkIncludedGroup = groupMemberRepository.findByGroupIdAndUserId(group.getId(), reply.getUser().getId());
+                    if (checkIncludedGroup == null) // 없음 ( 그룹 포함 X)
+                        replyRespDto.setIncludedGroup(0); // boolean -> int로 바꾸기 0
+                    else {
+                        if(checkIncludedGroup.isAcceptInvitation()) // 초대 요청 수락 -> 그룹에 포함된 상태
+                            replyRespDto.setIncludedGroup(1); // int 1
+                        else
+                            replyRespDto.setIncludedGroup(2); // 초대 요청 수락 아직 안 함 2 -> 그룹에 포함된 것 아님
+                    }
+                }
                 replyRespDtoList.add(replyRespDto);
             }
             groupRecruitRespDto.setGroupRecruitReplyList(replyRespDtoList);
