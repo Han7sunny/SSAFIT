@@ -8,6 +8,7 @@ import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorOutOfRoutineRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public interface MirrorService {
 
     Long startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto);
 
-    Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
+    MirrorOutOfRoutineRespDto startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
 
     void startExercise(LocalDateTime startTime, Long recordId, String userId);
 

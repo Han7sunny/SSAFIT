@@ -257,15 +257,15 @@ public class UserServiceImpl implements UserService{
             if(type == 0)
                 toAdd.setGroupId(notification.getGroup().getId());
 
-            else if(type == 1)
+            else if(type == 1 || type == 2)
                 toAdd.setBoardId(notification.getBoard().getId());
 
-            else if(type == 2){
+            else if(type == 3){
                 toAdd.setGroupId(notification.getGroup().getId());
                 toAdd.setBoardId(notification.getBoard().getId());
             }
 
-            else if(type == 3)
+            else if(type == 4)
                 toAdd.setBoardId(notification.getBoard().getId());
 
             else

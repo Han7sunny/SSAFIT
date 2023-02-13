@@ -205,7 +205,7 @@ public class RecordServiceImpl implements RecordService{
                     .user(user)
                     .record(record)
                     .message("예약한 " + routine.getName() + " 루틴이 아직 완료되지 않았습니다.")
-                    .notification_type(2)
+                    .notification_type(5)
                     .build();
 
             notificationRepository.save(notification);

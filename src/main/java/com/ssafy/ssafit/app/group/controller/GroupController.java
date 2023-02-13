@@ -78,6 +78,7 @@ public class GroupController {
         return new ResponseEntity<List<GroupRespDto>>(myGroupList, status);
     }
 
+
         //  그룹 현황 보기
     //  그룹 초대 받았을 때 확인 가능
     @GetMapping("/{groupId}")

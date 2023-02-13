@@ -10,6 +10,7 @@ import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorOutOfRoutineRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.mirror.service.MirrorService;
 import io.swagger.annotations.ApiOperation;
@@ -121,8 +122,8 @@ public class MirrorController {
     public ResponseEntity<?> startOutOfRoutine(@RequestBody MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto, @AuthenticationPrincipal CustomUserDetails user) {
         try {
             mirrorRecordGenerateReqDto.setUserId(user.getUser().getId());
-            Long recordDetailId = mirrorService.startOutOfRoutine(mirrorRecordGenerateReqDto);
-            return new ResponseEntity<Long>(recordDetailId, HttpStatus.OK);
+            MirrorOutOfRoutineRespDto mirrorOutOfRoutineRespDto = mirrorService.startOutOfRoutine(mirrorRecordGenerateReqDto);
+            return new ResponseEntity<MirrorOutOfRoutineRespDto>(mirrorOutOfRoutineRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

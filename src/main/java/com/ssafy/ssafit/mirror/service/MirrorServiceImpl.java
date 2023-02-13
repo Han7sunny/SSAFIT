@@ -27,6 +27,7 @@ import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.MirrorOutOfRoutineRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.util.FileMultipartFileConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +105,7 @@ public class MirrorServiceImpl implements MirrorService{
     }
 
     @Override
-    public Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto) {
+    public MirrorOutOfRoutineRespDto startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto) {
         Optional<Record> record = recordRepository.findByUser_IdAndRoutine_RoutineIdAndStartDate(mirrorRecordGenerateReqDto.getUserId(), 4L, LocalDate.now(ZoneId.of("Asia/Seoul")));
 
         if(record.isEmpty()) {
@@ -136,7 +137,12 @@ public class MirrorServiceImpl implements MirrorService{
 
         userRepository.updateOnOff(mirrorRecordGenerateReqDto.getUserId(), true);
 
-        return recordDetail.get().getRecordDetailId();
+        MirrorOutOfRoutineRespDto mirrorOutOfRoutineRespDto = MirrorOutOfRoutineRespDto.builder()
+                .recordDetailId(recordDetail.get().getRecordDetailId())
+                .recordId(record.get().getId())
+                .build();
+
+        return mirrorOutOfRoutineRespDto;
     }
 
     @Override
