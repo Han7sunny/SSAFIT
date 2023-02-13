@@ -46,12 +46,13 @@ public class RoutineServiceImpl implements RoutineService {
                 .name(routineGenerateReqDto.getRoutineName())
                 .build();
 
-        System.out.println(SecurityUtil.getCurrentUserId().get().getUserId());
-
         routine.getUser().add(userRepository.findById(SecurityUtil.getCurrentUserId().get().getUserId()).get());
         routineRepository.save(routine);
 
         int sz = routineGenerateReqDto.getExerciseList().size();
+
+        if(sz == 0) return -1;
+
         for(int i = 0; i < sz; i++) {
             RoutineGenerateReqDto.Exercise tmp_exercise = routineGenerateReqDto.getExerciseList().get(i);
 
