@@ -246,38 +246,37 @@ public class UserServiceImpl implements UserService{
 
         List<UserMyPageRespDto.Notification> notificationList = new ArrayList<UserMyPageRespDto.Notification>();
         for(Notification notification : notifications) {
-            if(notification.getNotification_type() == 0) {
-                notificationList.add(UserMyPageRespDto.Notification.builder()
-                                .groupId(notification.getGroup().getId())
-                                .notification_type(notification.getNotification_type())
-                                .notificationId(notification.getId())
-                                .notificationMessage(notification.getMessage())
-                                .build());
+            UserMyPageRespDto.Notification toAdd = UserMyPageRespDto.Notification.builder()
+                    .notification_type(notification.getNotification_type())
+                    .notificationId(notification.getId())
+                    .notificationMessage(notification.getMessage())
+                    .build();
+
+            int type = notification.getNotification_type();
+
+            if(type == 0)
+                toAdd.setGroupId(notification.getGroup().getId());
+
+            else if(type == 1)
+                toAdd.setBoardId(notification.getBoard().getId());
+
+            else if(type == 2){
+                toAdd.setGroupId(notification.getGroup().getId());
+                toAdd.setBoardId(notification.getBoard().getId());
             }
 
-            else if(notification.getNotification_type() == 1) {
-                notificationList.add(UserMyPageRespDto.Notification.builder()
-                                .boardId(notification.getBoard().getId())
-                                .notification_type(notification.getNotification_type())
-                                .notificationId(notification.getId())
-                                .notificationMessage(notification.getMessage())
-                                .build());
-            }
+            else if(type == 3)
+                toAdd.setBoardId(notification.getBoard().getId());
 
-            else {
-                notificationList.add(UserMyPageRespDto.Notification.builder()
-                                .recordId(notification.getRecord().getId())
-                                .notification_type(notification.getNotification_type())
-                                .notificationId(notification.getId())
-                                .notificationMessage(notification.getMessage())
-                                .build());
-            }
+            else
+                toAdd.setRecordId(notification.getRecord().getId());
+
+            notificationList.add(toAdd);
         }
 
         User user = userRepository.findById(userId).get();
 
         MultipartFile image = FileMultipartFileConverter.FiletoMultipartFile(user.getPhoto());
-
         String myImage = null;
         if(image != null) {
             Base64.Encoder encoder = Base64.getEncoder();

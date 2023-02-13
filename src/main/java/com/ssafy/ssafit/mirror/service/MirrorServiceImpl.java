@@ -13,7 +13,7 @@ import com.ssafy.ssafit.app.group.entity.GroupMember;
 import com.ssafy.ssafit.app.group.repository.GroupMemberRepository;
 import com.ssafy.ssafit.app.group.repository.GroupRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import com.ssafy.ssafit.app.record.repository.RecordDetailRepository;
@@ -30,12 +30,9 @@ import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
 import com.ssafy.ssafit.util.FileMultipartFileConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.DateFormatter;
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -100,9 +97,10 @@ public class MirrorServiceImpl implements MirrorService{
 
     @Override
     @Transactional
-    public void startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto) {
+    public Long startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto) {
         Long recordId = recordService.registerExercise(recordRegisterReqDto, LocalDate.now(ZoneId.of("Asia/Seoul")));
         startExercise(LocalDateTime.now(ZoneId.of("Asia/Seoul")), recordId, recordRegisterReqDto.getUserId());
+        return recordId;
     }
 
     @Override
@@ -165,7 +163,7 @@ public class MirrorServiceImpl implements MirrorService{
             allCount += recordDetail.getCount();
             allCountRez += recordDetail.getCountRez();
         }
-        double achievementRate = (double) allCount / allCountRez;
+        double achievementRate = allCountRez == 0 ? 0.0 : (double) allCount / allCountRez;
 
         record = Record.builder()
                 .id(record.getId())
@@ -222,7 +220,7 @@ public class MirrorServiceImpl implements MirrorService{
     }
 
     @Override
-    public RecordInfoRespDto getRecord(Long id) {
+    public RecordDetailInfoRespDto getRecord(Long id) {
         return recordService.getRecord(id);
     }
 

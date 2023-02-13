@@ -28,6 +28,10 @@ public class RecordDetail {
     @JoinColumn(name="exercise_type_id")
     private ExerciseType exerciseType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="exercise_id")
+    private Exercise exercise;
+
     @Column(nullable = false)
     private Long count;
 
@@ -35,10 +39,11 @@ public class RecordDetail {
     private Long countRez;
 
     @Builder
-    public RecordDetail(Long recordDetailId, Record record, ExerciseType exerciseType, Long count, Long countRez) {
+    public RecordDetail(Long recordDetailId, Record record, ExerciseType exerciseType, Exercise exercise, Long count, Long countRez) {
         this.recordDetailId = recordDetailId;
         this.record = record;
         this.exerciseType = exerciseType;
+        this.exercise = exercise;
         this.count = count;
         this.countRez = countRez;
     }

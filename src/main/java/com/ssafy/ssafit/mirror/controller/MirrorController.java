@@ -4,7 +4,7 @@ import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
@@ -61,7 +61,7 @@ public class MirrorController {
     }
 
     @GetMapping("/mirror-login/{id}")
-    @ApiOperation(value = "운동 부위 종류 가져오기",
+    @ApiOperation(value = "로그인",
             notes = "미러용 로그인 기능",
             response = List.class)
     public ResponseEntity<?> mirrorLogin(@PathVariable String id) {
@@ -92,8 +92,8 @@ public class MirrorController {
             response = List.class)
     public ResponseEntity<?> getRecordInfo(@PathVariable Long id) {
         try {
-            RecordInfoRespDto recordInfoRespDto = mirrorService.getRecord(id);
-            return new ResponseEntity<RecordInfoRespDto>(recordInfoRespDto, HttpStatus.OK);
+            RecordDetailInfoRespDto recordDetailInfoRespDto = mirrorService.getRecord(id);
+            return new ResponseEntity<RecordDetailInfoRespDto>(recordDetailInfoRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
@@ -106,8 +106,8 @@ public class MirrorController {
     public ResponseEntity<?> startBasicRoutine(@RequestBody RecordRegisterReqDto recordRegisterReqDto, @AuthenticationPrincipal CustomUserDetails user) {
         try {
             recordRegisterReqDto.setUserId(user.getUser().getId());
-            mirrorService.startBasicRoutine(recordRegisterReqDto);
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("추가 성공").build(), HttpStatus.OK);
+            Long recordId = mirrorService.startBasicRoutine(recordRegisterReqDto);
+            return new ResponseEntity<Long>(recordId, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
@@ -122,7 +122,7 @@ public class MirrorController {
         try {
             mirrorRecordGenerateReqDto.setUserId(user.getUser().getId());
             Long recordDetailId = mirrorService.startOutOfRoutine(mirrorRecordGenerateReqDto);
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(recordDetailId)).build(), HttpStatus.OK);
+            return new ResponseEntity<Long>(recordDetailId, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

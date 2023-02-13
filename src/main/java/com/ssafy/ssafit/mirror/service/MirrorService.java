@@ -3,7 +3,7 @@ package com.ssafy.ssafit.mirror.service;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeAreaRespDto;
 import com.ssafy.ssafit.app.exercise.dto.resp.ExerciseTypeRespDto;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
 import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
@@ -20,7 +20,7 @@ public interface MirrorService {
 
     ExerciseTypeAreaRespDto getExerciseTypeArea();
 
-    void startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto);
+    Long startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto);
 
     Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
 
@@ -32,7 +32,7 @@ public interface MirrorService {
 
     List<MirrorRoutineRespDto> getSchedule(String id);
 
-    RecordInfoRespDto getRecord(Long id);
+    RecordDetailInfoRespDto getRecord(Long id);
 
     List<MirrorFaceEncodingRespDto> getFaceEncodingList();
 

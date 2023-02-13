@@ -41,8 +41,8 @@ public class RoutineController {
     public ResponseEntity<?> generateRoutine(@RequestBody RoutineGenerateReqDto routineGenerateReqDto) {
         LOGGER.info("[Enter] generateRoutine");
         try {
-            routineService.generateRoutine(routineGenerateReqDto);
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("추가 성공").build(), HttpStatus.OK);
+            long id = routineService.generateRoutine(routineGenerateReqDto);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(id)).build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

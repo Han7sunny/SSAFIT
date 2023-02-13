@@ -41,7 +41,7 @@ public class RoutineServiceImpl implements RoutineService {
 
     @Override
     @Transactional
-    public void generateRoutine(RoutineGenerateReqDto routineGenerateReqDto) {
+    public long generateRoutine(RoutineGenerateReqDto routineGenerateReqDto) {
         Routine routine = Routine.builder()
                 .name(routineGenerateReqDto.getRoutineName())
                 .build();
@@ -66,6 +66,8 @@ public class RoutineServiceImpl implements RoutineService {
 
             exerciseRepository.save(exercise);
         }
+
+        return routine.getRoutineId();
     }
 
     @Override

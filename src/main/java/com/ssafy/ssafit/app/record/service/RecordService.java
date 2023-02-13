@@ -1,8 +1,8 @@
 package com.ssafy.ssafit.app.record.service;
 
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ public interface RecordService {
 
     List<RecordScheduleRespDto> getSchedule(LocalDate time, String userId);
 
-    RecordInfoRespDto getRecord(Long id);
+    RecordDetailInfoRespDto getRecord(Long id);
 
     void removeSchedule(Long recordId);
 

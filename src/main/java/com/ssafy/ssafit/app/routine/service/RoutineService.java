@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface RoutineService {
-    void generateRoutine(RoutineGenerateReqDto routineGenerateReqDto);
+    long generateRoutine(RoutineGenerateReqDto routineGenerateReqDto);
 
     void deleteRoutine(Long routineId);
 

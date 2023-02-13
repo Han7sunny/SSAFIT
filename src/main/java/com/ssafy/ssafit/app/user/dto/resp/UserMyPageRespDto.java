@@ -1,10 +1,7 @@
 package com.ssafy.ssafit.app.user.dto.resp;
 
 import com.ssafy.ssafit.app.common.CommonResp;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -38,6 +35,7 @@ public class UserMyPageRespDto extends CommonResp {
 
     @SuperBuilder
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Notification {

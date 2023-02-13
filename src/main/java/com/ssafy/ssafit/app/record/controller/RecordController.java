@@ -2,11 +2,10 @@ package com.ssafy.ssafit.app.record.controller;
 
 import com.ssafy.ssafit.app.common.CommonResp;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.service.RecordService;
-import com.ssafy.ssafit.app.user.controller.UserController;
 import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -73,12 +72,12 @@ public class RecordController {
     @GetMapping("/get-record/{id}")
     @ApiOperation(value = "특정 운동 루틴 정보", notes = "예약한 운동 루틴 하나의 정보를 얻어온다.\n" +
             "id : 조회하고 싶은 record의 아이디",
-            response = RecordInfoRespDto.class)
+            response = RecordDetailInfoRespDto.class)
     public ResponseEntity<?> getRecord(@PathVariable Long id) {
         LOGGER.info("[Enter] getRecord");
         try {
-            RecordInfoRespDto recordInfoRespDto = recordService.getRecord(id);
-            return new ResponseEntity<RecordInfoRespDto>(recordInfoRespDto, HttpStatus.OK);
+            RecordDetailInfoRespDto recordDetailInfoRespDto = recordService.getRecord(id);
+            return new ResponseEntity<RecordDetailInfoRespDto>(recordDetailInfoRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }

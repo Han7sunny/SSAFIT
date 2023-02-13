@@ -1,21 +1,20 @@
 package com.ssafy.ssafit.app.record.service;
 
 import com.ssafy.ssafit.app.exercise.entity.Exercise;
+import com.ssafy.ssafit.app.exercise.entity.ExerciseType;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseRepository;
 import com.ssafy.ssafit.app.exercise.repository.ExerciseTypeRepository;
 import com.ssafy.ssafit.app.group.repository.GroupRepository;
 import com.ssafy.ssafit.app.notification.entity.Notification;
 import com.ssafy.ssafit.app.notification.repository.NotificationRepository;
 import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
+import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordExerciseRecordRespDto;
-import com.ssafy.ssafit.app.record.dto.resp.RecordInfoRespDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordScheduleRespDto;
 import com.ssafy.ssafit.app.record.entity.Record;
 import com.ssafy.ssafit.app.record.entity.RecordDetail;
 import com.ssafy.ssafit.app.record.repository.RecordDetailRepository;
 import com.ssafy.ssafit.app.record.repository.RecordRepository;
-import com.ssafy.ssafit.app.routine.dto.resp.RoutineExerciseRespDto;
-import com.ssafy.ssafit.app.routine.dto.resp.RoutineInfoRespDto;
 import com.ssafy.ssafit.app.routine.entity.Routine;
 import com.ssafy.ssafit.app.routine.repository.RoutineRepository;
 import com.ssafy.ssafit.app.routine.service.RoutineService;
@@ -82,6 +81,7 @@ public class RecordServiceImpl implements RecordService{
         for (Exercise exercise: exerciseList) {
             RecordDetail recordDetail = RecordDetail.builder()
                     .record(record)
+                    .exercise(exercise)
                     .exerciseType(exercise.getExerciseType())
                     .count(0L)
                     .countRez(exercise.getExerciseSet() * exercise.getReps())
@@ -113,18 +113,41 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public RecordInfoRespDto getRecord(Long id) {
+    public RecordDetailInfoRespDto getRecord(Long id) {
         Record record = recordRepository.findById(id).get();
-        Routine routine = record.getRoutine();
-        RoutineExerciseRespDto routineExerciseRespDto = routineService.getExerciseInfo(routine.getRoutineId());
+        List<RecordDetail> recordDetailList = record.getRecordDetails();
 
-        RecordInfoRespDto recordInfoRespDto = RecordInfoRespDto.builder()
+        List<RecordDetailInfoRespDto.RecordDetailInfo> recordDetailInfoList = new ArrayList<>();
+
+        for(RecordDetail recordDetail : recordDetailList) {
+            Exercise exercise = recordDetail.getExercise();
+            ExerciseType exerciseType = recordDetail.getExerciseType();
+
+            RecordDetailInfoRespDto.RecordDetailInfo recordDetailInfo = RecordDetailInfoRespDto.RecordDetailInfo.builder()
+                    .recordDetailId(recordDetail.getRecordDetailId())
+                    .exerciseTypeId(exerciseType.getExerciseTypeId())
+                    .exerciseId(exercise.getId())
+                    .exerciseTypeName(exerciseType.getExerciseTypeName())
+                    .exerciseArea(exerciseType.getExerciseArea())
+                    .exerciseSet(exercise.getExerciseSet())
+                    .reps(exercise.getReps())
+                    .restTimeMinutes(exercise.getRestTime() / 60)
+                    .restTimeSeconds(exercise.getRestTime() % 60)
+                    .name(exercise.getName())
+                    .build();
+
+            recordDetailInfoList.add(recordDetailInfo);
+        }
+
+        Routine routine = record.getRoutine();
+
+        RecordDetailInfoRespDto recordInfoRespDto = RecordDetailInfoRespDto.builder()
                 .success(true)
-                .msg("예약한 루틴의 상세정보입니다.")
-                .recordId(id)
-                .exerciseInfoList(routineExerciseRespDto.getExerciseInfoList())
-                .routineName(routineExerciseRespDto.getRoutineName())
-                .routineId(routineExerciseRespDto.getRoutineId())
+                .msg("저장된 레코드의 정보입니다.")
+                .recordId(record.getId())
+                .routineId(routine.getRoutineId())
+                .routineName(routine.getName())
+                .recordDetailInfoList(recordDetailInfoList)
                 .build();
 
         return recordInfoRespDto;
