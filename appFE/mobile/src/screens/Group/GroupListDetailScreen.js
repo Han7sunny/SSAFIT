@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, Image, FlatList, StyleSheet} from 'react-native';
+import {View, Image, FlatList, StyleSheet, ScrollView} from 'react-native';
 import {Button, TextInput, IconButton, Text} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
 
 export default function GroupDetailScreen({navigation, route}) {
   const groupId = route.params.id;
@@ -14,12 +15,15 @@ export default function GroupDetailScreen({navigation, route}) {
   const [text, setText] = useState('');
   const [info, setInfo] = useState({});
 
+  const [role, setRole] = useState('USER');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
 
   const [Reply, setReply] = useState([]);
   const [changeReply, setChangeReply] = useState(false);
+  const [isChange, setIsChange] = useState(role === 'ADMIN');
+  const [Routines, setRoutines] = useState([]);
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -29,6 +33,7 @@ export default function GroupDetailScreen({navigation, route}) {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
+      setRole(UserInfo.role);
     });
   }, []);
   useEffect(() => {
@@ -50,8 +55,10 @@ export default function GroupDetailScreen({navigation, route}) {
     setHeartCnt(data.likes);
     setIsClickHeart(data.clickLikes);
     setChangeReply(false);
+    setRoutines(data.routineList);
     const date = data.registeredTime.split('T');
     setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
+    setIsChange(role === 'ADMIN' || userId === data.userId);
   };
   const clickHeart = async () => {
     const result = (
@@ -105,17 +112,7 @@ export default function GroupDetailScreen({navigation, route}) {
   };
   return (
     <View>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignContent: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <Text
-          variant="headlineLarge"
-          style={{fontWeight: 'bold', marginTop: 10}}>
-          {' ' + info.title + ' '}
-        </Text>
+      {isChange && (
         <View style={{flexDirection: 'row'}}>
           <Button
             mode="contained"
@@ -136,9 +133,100 @@ export default function GroupDetailScreen({navigation, route}) {
             삭제
           </Button>
         </View>
+      )}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignContent: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10}}>
+          {' ' + info.title + ' '}
+        </Text>
       </View>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderBottomWidth: 2,
+            justifyContent: 'space-around',
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              variant="titleLarge"
+              style={{
+                fontWeight: 'bold',
+                borderRightWidth: 1,
+                paddingRight: 5,
+              }}>
+              {info.userId}
+            </Text>
+            <Text> {registeredTime}</Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text>{'조회 ' + info.hits}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <IconButton
+                icon={isClickHeart ? 'heart' : 'heart-outline'}
+                iconColor={isClickHeart ? 'red' : 'black'}
+                size={20}
+                onPress={clickHeart}
+                style={styles.iconButton}
+              />
+              <Text>{heartCnt}</Text>
+            </View>
+          </View>
+        </View>
+
         <View>
+          <ScrollView>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
+              <Text>
+                {info.startRecruitDate} ~ {info.endRecruitDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
+              <Text>
+                {info.startDate} ~ {info.endDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>그룹목표 : </Text>
+              <Text>{info.goal}</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>인원 : </Text>
+              <Text>
+                {info.currentMember}/{info.maximumMember} 명
+              </Text>
+            </View>
+            <View>
+              <Text style={{fontWeight: 'bold'}}>운동 루틴 </Text>
+              <FlatList
+                data={info.routineList}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                renderItem={({item}) => <Text>{item.name}</Text>}
+                keyExtractor={item => item.routineId}
+                style={{maxHeight: 100, padding: 0, height: 100}}
+              />
+            </View>
+            <Text
+              style={{marginBottom: 20, height: 175, backgroundColor: 'blue'}}>
+              {info.content}
+            </Text>
+          </ScrollView>
+        </View>
+      </View>*/}
+
+      <View style={{alignItems: 'center'}}>
+        <View
+          style={[
+            styles.container,
+            {maxHeight: isChange ? 400 : 435, minHeight: isChange ? 400 : 435},
+          ]}>
           <View
             style={{
               flexDirection: 'row',
@@ -172,44 +260,80 @@ export default function GroupDetailScreen({navigation, route}) {
               </View>
             </View>
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
-            <Text>
-              {info.startRecruitDate} ~ {info.endRecruitDate}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
-            <Text>
-              {info.startDate} ~ {info.endDate}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontWeight: 'bold'}}>그룹목표 : </Text>
-            <Text>{info.goal}</Text>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontWeight: 'bold'}}>인원 : </Text>
-          <Text>
-            {info.currentMember}/{info.maximumMember} 명
-          </Text>
-        </View>
-        <View>
-          <Text style={{fontWeight: 'bold'}}>운동 루틴 </Text>
-          <FlatList
-            data={info.routineList}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            renderItem={({item}) => <Text>{item.name}</Text>}
-            keyExtractor={item => item.routineId}
-            style={{maxHeight: 100, padding: 0, height: 100}}
-          />
-        </View>
-        <Text style={{marginBottom: 20, height: 175, backgroundColor: 'blue'}}>
-          {info.content}
-        </Text>
-      </View>
+          <ScrollView>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>모집 기간</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.startRecruitDate} ~ {info.endRecruitDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.startDate} ~ {info.endDate}
+              </Text>
+            </View>
 
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.goal}
+              </Text>
+              {/* <Text
+                style={{
+                  marginLeft: 30,
+                  paddingLeft: 20,
+                  borderLeftWidth: 2,
+                }}
+              />
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '60%',
+                  height: 20,
+                  flexDirection: 'row',
+                }}>
+                <View style={{backgroundColor: 'red', width: `${item.goal}%`}}>
+                  <Text> </Text>
+                </View>
+                <Text style={{paddingLeft: 15}}>{item.goal}</Text>
+              </View> */}
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>인원</Text>
+              <Text
+                style={{marginLeft: 71, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.currentMember}/{info.maximumMember} 명
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  paddingLeft: 20,
+                  borderLeftWidth: 2,
+                  width: '65%',
+                }}>
+                {info.penalty}
+              </Text>
+            </View>
+            <Text style={{fontSize: 20, fontWeight: 600}}>루틴정보</Text>
+            <View style={{alignItems: 'center'}}>
+              {Routines.map(item => (
+                <RoutineSimpleScreen
+                  navigation={navigation}
+                  id={item.routineId}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      </View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image source={require('./comment.png')} />
         <Text>{Reply ? Reply.length : 0}</Text>
@@ -247,12 +371,12 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    minHeight: 400,
-    maxHeight: 400,
+    minHeight: 435,
+    maxHeight: 435,
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,
-    margin: 20,
+    // margin: 20,
   },
   button: {
     width: 80,

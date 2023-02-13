@@ -1,17 +1,29 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {View, Image, FlatList, StyleSheet} from 'react-native';
-import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import {
+  View,
+  Image,
+  FlatList,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import {Button, Text, Avatar} from 'react-native-paper';
 import MemberScreen from './MemberScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
+
 export default function MyGroupSimple({navigation, route}) {
   const id = route.params.id;
+  console.log(id);
 
   const [userId, setUserId] = useState('');
   const [role, setRole] = useState('USER1');
   const [accessToken, setAccessToken] = useState('');
   const [item, setItem] = useState({});
+  const [Members, setMembers] = useState([]);
+  const [Routines, setRoutines] = useState([]);
   const [ip, setIP] = useState('');
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -29,6 +41,7 @@ export default function MyGroupSimple({navigation, route}) {
     getData();
   }, [id, accessToken]);
   const getData = async () => {
+    console.log(ip, accessToken);
     if (accessToken === '') return;
     const data = (
       await axios.get(`http://${ip}/group/${id}`, {
@@ -39,75 +52,112 @@ export default function MyGroupSimple({navigation, route}) {
       })
     ).data;
     setItem(data);
-    console.log(data);
+    setMembers(data.groupMemberList);
+    setRoutines(data.routineList);
+    console.log('data', data);
   };
   const deleteGroup = async () => {
     const result = (
       await axios.delete(`http://${ip}/group/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'X-AUTH-TOKEN': `${token}`,
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
       })
     ).data;
     if (result) navigation.navigate('MainMyPageScreen', {state: true});
   };
   return (
+    // <View></View>
     <View>
       <Text
-        variant="displayLarge"
-        style={{fontWeight: 'bold', margin: 20, marginBottom: 0}}>
+        variant="headlineLarge"
+        style={{fontWeight: 'bold', marginLeft: 20, marginBottom: 0}}>
         {item.name}
       </Text>
       <View style={styles.container}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            source={require('./icon.png')}
-            style={{width: 70, height: 70, margin: 10}}
-          />
-          <View>
-            <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
-            <Text>sfg</Text>
+        <ScrollView>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={require('./icon.png')}
+              style={{width: 50, height: 50, margin: 10}}
+            />
+            <View>
+              <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
+              <Text>sfg</Text>
+            </View>
           </View>
-        </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
-          <Text>
-            {item.start_date} ~ {item.end_date}
-          </Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
+            <Text style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+              {item.start_date} ~ {item.end_date}
+            </Text>
+          </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
-          <Text>{item.goal}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
+            {/* <Text
+              style={{
+                marginLeft: 30,
+                paddingLeft: 20,
+                borderLeftWidth: 2,
+              }}
+            />
+            <View
+              style={{
+                borderWidth: 1,
+                width: '60%',
+                height: 20,
+                flexDirection: 'row',
+              }}>
+              <View style={{backgroundColor: 'red', width: `${item.goal}%`}}>
+                <Text> </Text>
+              </View>
+              <Text style={{paddingLeft: 15}}>{item.goal}</Text>
+            </View> */}
+          </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
-          <Text>{item.penalty}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
+            <Text style={{marginLeft: 12, paddingLeft: 20, borderLeftWidth: 2}}>
+              {item.penalty}
+            </Text>
+          </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 달성률</Text>
-          <Text>{item.totalResult}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 달성률</Text>
+            <Text style={{marginLeft: 12, paddingLeft: 20, borderLeftWidth: 2}}>
+              {item.totalResult}
+            </Text>
+          </View>
 
-        <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
-        <FlatList
-          data={item.groupMemberList}
-          style={{height: 290}}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => <MemberScreen member={item} />}
-          keyExtractor={item => item.userName.toString()}
-        />
+          <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
+          {Members.map(item => (
+            <MemberScreen member={item} />
+          ))}
+          {Routines.map(item => (
+            <RoutineSimpleScreen navigation={navigation} id={item.routineId} />
+          ))}
+        </ScrollView>
       </View>
       <Button
         mode="contained"
         buttonColor="red"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={deleteGroup}>
+        onPress={() =>
+          Alert.alert(`그룹을 탈퇴하시겠습니까?`, `${item.name}탈퇴합니다.`, [
+            {
+              text: '아니요',
+              style: 'cancel',
+            },
+            {
+              text: '네',
+              onPress: () => deleteGroup(),
+            },
+          ])
+        }>
         그룹 탈퇴
       </Button>
     </View>
@@ -122,8 +172,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    minHeight: 550,
-    maxHeight: 550,
+    minHeight: 615,
+    maxHeight: 615,
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,

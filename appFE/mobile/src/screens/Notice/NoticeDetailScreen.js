@@ -96,56 +96,47 @@ export default function NoticeDetailScreen({navigation, route}) {
   };
   return (
     <View>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignContent: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <Text
-          variant="headlineLarge"
-          style={{fontWeight: 'bold', marginTop: 10}}>
-          {Notices.title}
-        </Text>
-        {role === 'ADMIN' && (
-          <View style={{flexDirection: 'row'}}>
-            <Button
-              mode="contained"
-              buttonColor="black"
-              style={styles.button}
-              labelStyle={styles.label}
-              onPress={() =>
-                navigation.navigate('AddNoticeScreen', {data: Notices})
-              }>
-              수정
-            </Button>
-            <Button
-              mode="contained"
-              buttonColor="red"
-              style={styles.button}
-              labelStyle={styles.label}
-              onPress={() =>
-                Alert.alert(
-                  `해당 글을 삭제하시겠습니까?`,
-                  `현재 글은 ${Notices.title} 입니다.`,
-                  [
-                    {
-                      text: '아니요',
-                      style: 'cancel',
-                    },
-                    {
-                      text: '네',
-                      onPress: () => deleteNotice(),
-                    },
-                  ],
-                )
-              }>
-              삭제
-            </Button>
-          </View>
-        )}
-      </View>
-      <View style={styles.container}>
+      {role === 'ADMIN' && (
+        <View style={{flexDirection: 'row'}}>
+          <Button
+            mode="contained"
+            buttonColor="black"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={() =>
+              navigation.navigate('AddNoticeScreen', {data: Notices})
+            }>
+            수정
+          </Button>
+          <Button
+            mode="contained"
+            buttonColor="red"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={() =>
+              Alert.alert(
+                `해당 글을 삭제하시겠습니까?`,
+                `현재 글은 ${Notices.title} 입니다.`,
+                [
+                  {
+                    text: '아니요',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '네',
+                    onPress: () => deleteNotice(),
+                  },
+                ],
+              )
+            }>
+            삭제
+          </Button>
+        </View>
+      )}
+      <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10}}>
+        {Notices.title}
+      </Text>
+      <View style={[styles.container, {height: role === 'ADMIN' ? 335 : 370}]}>
         <View
           style={{
             flexDirection: 'row',
@@ -205,8 +196,6 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    minHeight: 370,
-    maxHeight: 370,
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,

@@ -33,6 +33,7 @@ export default function ArticleDetailScreen({route}) {
   }, []);
   useEffect(() => {
     if (accessToken === '') return;
+    setChangeReply(false);
     axios
       .get(`http://${ip}/board/${id}`, {
         headers: {
@@ -143,7 +144,7 @@ export default function ArticleDetailScreen({route}) {
                   },
                   {
                     text: '네',
-                    onPress: () => deleteNotice(),
+                    onPress: () => deleteArticle(),
                   },
                 ],
               )

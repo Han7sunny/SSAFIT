@@ -66,7 +66,7 @@ export default function RegisterScreen({navigation}) {
         index: 0,
         routes: [{name: 'LoginScreen'}],
       });
-    });
+    }, []);
   };
   return (
     <View>

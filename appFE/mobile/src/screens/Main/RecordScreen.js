@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {Text, View, StyleSheet, Dimensions} from 'react-native';
 // import Constants from 'expo-constants';
 import {ProgressChart, BarChart} from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';

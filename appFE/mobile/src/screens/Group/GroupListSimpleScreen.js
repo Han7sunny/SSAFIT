@@ -23,15 +23,14 @@ export default function GroupSearchScreen({navigation, item}) {
     // console.log(isClickHeart, heartCnt, accessToken, state);
   }, []);
   const clickHeart = async () => {
-    const result = await axios.get(
-      `http://${ip}/group/recruit/${item.groupId}/likes`,
-      {
+    const result = (
+      await axios.get(`http://${ip}/group/recruit/${item.groupId}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
         },
-      },
-    );
+      })
+    ).data;
     // console.log(result);
     setIsClickHeart(result);
     setIsHeartCnt(heartCnt + (result ? 1 : -1));

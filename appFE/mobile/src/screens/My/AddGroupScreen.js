@@ -5,9 +5,11 @@ import {Button, Text} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AddGroupScreen({navigation, route}) {
-  const [accessToken, setAccessToken] = useState('');
   const id = route.params.id;
+  const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
+  const [userId, setUserId] = useState('');
+  const [groupName, setGroupName] = useState('');
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -16,8 +18,27 @@ export default function AddGroupScreen({navigation, route}) {
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setAccessToken(UserInfo.token);
+      setUserId(UserInfo.id);
     });
   }, []);
+  useEffect(() => {
+    getData();
+  }, [id, accessToken]);
+  const getData = async () => {
+    console.log(ip, accessToken);
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`http://${ip}/group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    // setItem(data);
+    setGroupName(data.name);
+    console.log('data', data);
+  };
 
   const accept = async () => {
     const result = (
@@ -53,10 +74,10 @@ export default function AddGroupScreen({navigation, route}) {
             source={require('../Group/icon.png')}
             style={{width: 150, height: 150, marginBottom: 15}}
           />
-          <Text variant="headlineMedium">OOO님</Text>
+          <Text variant="headlineMedium">{userId}님</Text>
         </View>
         <Text variant="titleLarge" style={{margin: 30}}>
-          그룹 초대 요청을 수락하시겠습니까?
+          {groupName}그룹 초대 요청을 수락하시겠습니까?
         </Text>
       </View>
       <View style={{alignItems: 'center'}}>

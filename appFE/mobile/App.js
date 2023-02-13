@@ -29,7 +29,6 @@ import {
   MyRoutineListScreen,
   RoutineDetailScreen,
   MyGroup,
-  RoutineReservationScreen,
 } from './src/screens/Main';
 
 import {
@@ -62,7 +61,7 @@ import {
   NoticeDetailScreen,
 } from './src/screens/Notice';
 
-// import {MyRecordScreen, RoutineReservationScreen} from './src/screens/Record';
+import {MyRecordScreen, RoutineReservationScreen} from './src/screens/Record';
 
 import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
@@ -282,8 +281,8 @@ function App() {
   AsyncStorage.setItem(
     'ip',
     JSON.stringify({
-      ip: '192.168.35.75:8090/api',
-      // ip: '172.29.65.25:8090/api',
+      // ip: '192.168.35.75:8090/api', // 집
+      ip: '70.12.246.83:8090/api', // 싸피
     }),
     () => {
       console.log('ip등록성공');
@@ -329,7 +328,10 @@ function App() {
           component={MainSideNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{
@@ -360,7 +362,10 @@ function App() {
           component={GroupSideNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{
@@ -391,7 +396,10 @@ function App() {
           component={CommunitySideNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{
@@ -422,7 +430,10 @@ function App() {
           component={MyPageSideNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{
@@ -453,7 +464,10 @@ function App() {
           component={LoginSideNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{
@@ -484,7 +498,10 @@ function App() {
           component={NoticeNavigator}
           options={{
             headerTitle: props => (
-              <Pressable onPress={() => console.log('click')}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('HomeScreen', {change: true})
+                }>
                 <Text
                   variant="displayMedium"
                   style={{

@@ -5,7 +5,7 @@ import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import base64 from 'base-64';
 
-export default function MainMyPageScreen({navigation, route}) {
+export default function ArticleDetailScreen({navigation, route}) {
   // console.log(route.params);
   const [photo, setPhoto] = useState('null');
   const [role, setRole] = useState('');
@@ -83,6 +83,7 @@ export default function MainMyPageScreen({navigation, route}) {
         },
       )
     ).data;
+    console.log('ttt', result);
     if (result) setChangeState(true);
   };
   return (
@@ -148,7 +149,7 @@ export default function MainMyPageScreen({navigation, route}) {
             renderItem={({item}) => (
               <Pressable
                 onPress={() => {
-                  // deleteNotification(item.notificationId);
+                  deleteNotification(item.notificationId);
                   navigation.navigate('AddGroupScreen', {id: item.groupId});
                 }}>
                 <Text variant="titleMedium">{item.notificationMessage}</Text>
@@ -180,22 +181,29 @@ export default function MainMyPageScreen({navigation, route}) {
                   {
                     switch (item.notification_type) {
                       case 1:
-                        navigation.navigate('AddGroupScreen', {id: item.id});
-                        break; // 커뮤니티글 댓글
+                        navigation.navigate('ArticleDetailScreen', {
+                          id: item.id,
+                        });
+                        break; // 커뮤니티 질문글 댓글
                       case 2:
+                        navigation.navigate('RoutineArticleDetailScreen', {
+                          id: item.id,
+                        });
+                        break; // 커뮤니티 루틴글 댓글
+                      case 3:
                         navigation.navigate('GroupListDetailScreen', {
                           id: item.groupId,
                           state: state,
                         });
                         break; // 그룹모집글 댓글
-                      case 3:
+                      case 4:
                         navigation.navigate('NoticeDetailScreen', {
                           id: item.boardId,
                         });
                         break; // 공지글 댓글
-                      case 4:
+                      case 5:
                         navigation.navigate('AddGroupScreen', {id: item.id});
-                        break; // 운동 안한경우
+                        break; // 운동 안한경우 ->  오늘의 운동으로 이동
                     }
                   }
                   // navigation.navigate('AddGroupScreen', {id: item.id})

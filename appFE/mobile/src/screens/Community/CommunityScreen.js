@@ -64,7 +64,7 @@ export default function CommunityScreen({navigation, route}) {
   };
 
   return (
-    <ScrollView>
+    <View>
       <View
         style={{
           flexDirection: 'row',
@@ -179,7 +179,6 @@ export default function CommunityScreen({navigation, route}) {
                 else
                   navigation.navigate('RoutineArticleDetailScreen', {
                     boardId: item.boardId,
-                    routineId: item.routineId,
                   });
               }}>
               <Text style={{flex: 2.5, fontSize: 20}}>{item.title}</Text>
@@ -194,7 +193,7 @@ export default function CommunityScreen({navigation, route}) {
           keyExtractor={item => item.boardId.toString()}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

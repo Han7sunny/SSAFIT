@@ -44,7 +44,7 @@ export default function MyGroupListScreen({navigation, route}) {
         variant="headlineLarge"
         style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
         {' ' + userId}
-        님의 그룹 목록{' '}
+        {'님의 그룹 목록 '}
       </Text>
       <View style={{maxHeight: 570, minHeight: 570}}>
         <FlatList
@@ -53,7 +53,7 @@ export default function MyGroupListScreen({navigation, route}) {
           renderItem={({item}) => (
             <MyGroupSimple item={item} navigation={navigation} />
           )}
-          keyExtractor={item => item.name.toString()}
+          keyExtractor={item => item.groupId}
         />
       </View>
       <Button
@@ -61,7 +61,7 @@ export default function MyGroupListScreen({navigation, route}) {
         buttonColor="black"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={() => navigation.navigate('CreateGroupScreen')}>
+        onPress={() => navigation.navigate('CreateGroupScreen', {data: false})}>
         그룹 생성하기
       </Button>
     </View>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Alert} from 'react-native';
 import {Button, TextInput, IconButton, Text, Avatar} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -145,7 +145,22 @@ export default function ReplyScreen({groupId, reply, leader, send}) {
             mode="text"
             style={styles.button}
             labelStyle={styles.label}
-            onPress={deleteReply}>
+            onPress={() =>
+              Alert.alert(
+                `${reply.user_id}님의댓글을 삭제하시겠습니까?`,
+                `내용\n${text}`,
+                [
+                  {
+                    text: '아니요',
+                    style: 'cancel',
+                  },
+                  {
+                    text: '네',
+                    onPress: () => deleteReply(),
+                  },
+                ],
+              )
+            }>
             삭제
           </Button>
         </View>

@@ -9,6 +9,7 @@ import {
 import {IconButton, Text} from 'react-native-paper';
 import Button from '../../components/Button';
 import TodayRoutine from './TodayRoutine';
+import CommunitySimpleScreen from './CommunitySimpleScreen';
 import RecordScreen from './RecordScreen';
 import RoutineListItem from '../../components/RoutineListItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -80,14 +81,18 @@ export default function HomeScreen({navigation}) {
               routineId: todayRoutine[0].routineId,
             })
           }>
-          <FlatList
+          {todayRoutine.map(item => (
+            <RoutineListItem routineId={item.routineId} name={item.name} />
+          ))}
+          {/* <FlatList
             data={todayRoutine}
             renderItem={({item}) => (
               <RoutineListItem routineId={item.routineId} name={item.name} />
             )}
-          />
+          /> */}
         </TouchableOpacity>
       </View>
+      <CommunitySimpleScreen />
 
       <Button
         mode="contained"
