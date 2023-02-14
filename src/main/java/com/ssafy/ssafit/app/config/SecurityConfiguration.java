@@ -42,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests() // 리퀘스트에 대한 사용권한 체크
-                .antMatchers("/api/user/check-code","/api/user/create-code","/api/user/find-password","/api/user/password-verification","/api/user/email-check","/api/user/name-check","/api/user/id-check","/api/user/findId","/api/user/join", "/api/user/login", "/swagger-ui/**","/swagger-ui.html").permitAll() // 가입 및 로그인 주소는 허용 ,"/sign-api/exception"
+                .antMatchers("/api/mirror/mirror-login/{id}","/api/mirror/get-face-encoding-list","/api/user/check-code","/api/user/create-code","/api/user/find-password","/api/user/password-verification","/api/user/email-check","/api/user/name-check","/api/user/id-check","/api/user/findId","/api/user/join", "/api/user/login", "/swagger-ui/**","/swagger-ui.html").permitAll() // 가입 및 로그인 주소는 허용 ,"/sign-api/exception"
 //                .antMatchers("/**").permitAll() // 가입 및 로그인 주소는 허용 ,"/sign-api/exception"
 //                .antMatchers(HttpMethod.GET, "/product/**").permitAll() // product로 시작하는 Get 요청은 허용
 

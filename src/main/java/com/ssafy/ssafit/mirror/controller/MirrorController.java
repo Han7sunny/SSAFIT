@@ -199,4 +199,10 @@ public class MirrorController {
         }
     }
 
+//    @PutMapping("/update-challenge-time")
+//    @ApiOperation(value = "챌린지 모드 시간 갱신", notes = "챌린지 모드 결과를 갱신합니다.", response = CommonResp.class)
+//    public ResponseEntity<?> updateChallengeTime(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("time") int time) {
+//
+//    }
+
 }

@@ -2,20 +2,15 @@ package com.ssafy.ssafit.app.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.ssafit.app.notification.entity.Notification;
-import com.ssafy.ssafit.app.user.dto.Role;
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import com.ssafy.ssafit.app.exercise.entity.Exercise;
 import com.ssafy.ssafit.app.record.entity.Record;
+import com.ssafy.ssafit.app.user.dto.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -62,6 +57,9 @@ public class User {
 
     private long mileage;
 
+    @Column(name = "challenge_record_time")
+    private Long challengeRecordTime;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> record;
 
@@ -69,7 +67,8 @@ public class User {
     private List<Notification> notification;
 
     @Builder
-    public User(String id, String name, String password, String email, String photo, String photoEncoding, boolean onOff, Role role, List<String> roles, long mileage, List<Record> record, List<Notification> notification) {
+
+    public User(String id, String name, String password, String email, String photo, String photoEncoding, boolean onOff, Role role, List<String> roles, long mileage, Long challengeRecordTime, List<Record> record, List<Notification> notification) {
         this.id = id;
         this.name = name;
         this.password = password;
@@ -80,6 +79,7 @@ public class User {
         this.role = role;
         this.roles = roles;
         this.mileage = mileage;
+        this.challengeRecordTime = challengeRecordTime;
         this.record = record;
         this.notification = notification;
     }
