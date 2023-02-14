@@ -65,9 +65,9 @@ public class UserController {
 //    })
     @PostMapping("/findId")
     @ApiOperation(value = "아이디 찾기", notes = "입력한 회원 이메일에 해당하는 아이디를 반환한다.", response = String.class)
-    public ResponseEntity<String> findId(@PathVariable("email") String email){
-        LOGGER.info("[Enter] findId email : {} ", email);
-        User user = userService.findId(email);
+    public ResponseEntity<String> findId(@RequestBody UserJoinReqDto info){
+        LOGGER.info("[Enter] findId email : {} ", info.getEmail());
+        User user = userService.findId(info.getEmail());
         HttpStatus status = HttpStatus.NO_CONTENT;
         if(user != null)
             status = HttpStatus.OK;
@@ -179,15 +179,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/password-verification")
+    @PostMapping("/password-verification")
     @ApiOperation(value = "비밀번호 유효성 검사",
             notes = "유효한 비밀번호인 경우 true, 아닐 경우 false 반환\n" +
             "비밀번호 조건 : 영문자, 숫자, 특수기호가 최소한 하나씩 들어간 8 ~ 16자리 비밀번호",
             response = CommonResp.class)
-    public ResponseEntity<?> passwordCheck(@RequestParam String password) {
-        LOGGER.info("[Enter] passwordCheck password : {} ", password);
+    public ResponseEntity<?> passwordCheck(@RequestBody UserJoinReqDto info) {
+        LOGGER.info("[Enter] passwordCheck password : {} ", info.getPassword());
         try {
-            boolean validation = userService.passwordCheck(password);
+            boolean validation = userService.passwordCheck(info.getPassword());
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(validation)).build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -228,17 +228,17 @@ public class UserController {
         }
     }
 
-//    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @PostMapping(value = "/join")
+    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping(value = "/join")
     @ApiOperation(value = "회원가입 기능",
             notes = "회원가입 기능",
             response = CommonResp.class)
-    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
-//    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
+//    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
+    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
 
         LOGGER.info("[Enter] userJoin");
 
-        MultipartFile file = null;
+//        MultipartFile file = null;
         try {
             userService.userJoin(userJoinReqDto, file);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);
