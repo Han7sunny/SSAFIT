@@ -25,7 +25,7 @@ export default function CreateReply(props) {
   const onPost = () => {
     axios({
       method: 'post',
-      url: `http://${ip}/board/${props.boardId}/regist`,
+      url: `${ip}/board/${props.boardId}/regist`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,

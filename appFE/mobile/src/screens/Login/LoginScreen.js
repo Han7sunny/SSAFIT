@@ -34,7 +34,7 @@ export default function LoginScreen({navigation}) {
   const onLoginPressed = () => {
     axios({
       method: 'post',
-      url: `http://${ip}/user/login`,
+      url: `${ip}/user/login`,
       data: {
         id: id.value,
         password: password.value,

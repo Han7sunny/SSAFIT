@@ -12,7 +12,7 @@ import {Button, Text, Avatar} from 'react-native-paper';
 import MemberScreen from './MemberScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function MyGroupSimple({navigation, route}) {
   const id = route.params.id;
@@ -44,7 +44,7 @@ export default function MyGroupSimple({navigation, route}) {
     console.log(ip, accessToken);
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/group/${id}`, {
+      await axios.get(`${ip}/group/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -58,7 +58,7 @@ export default function MyGroupSimple({navigation, route}) {
   };
   const deleteGroup = async () => {
     const result = (
-      await axios.delete(`http://${ip}/group/${id}`, {
+      await axios.delete(`${ip}/group/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -68,25 +68,14 @@ export default function MyGroupSimple({navigation, route}) {
     if (result) navigation.navigate('MainMyPageScreen', {state: true});
   };
   return (
-    // <View></View>
     <View>
-      <Text
-        variant="headlineLarge"
-        style={{fontWeight: 'bold', marginLeft: 20, marginBottom: 0}}>
-        {item.name}
-      </Text>
       <View style={styles.container}>
         <ScrollView>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image
-              source={require('./icon.png')}
-              style={{width: 50, height: 50, margin: 10}}
-            />
-            <View>
-              <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
-              <Text>sfg</Text>
-            </View>
-          </View>
+          <Text
+            variant="headlineLarge"
+            style={{fontWeight: 'bold', marginLeft: 20, marginBottom: 0}}>
+            {item.name}
+          </Text>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>

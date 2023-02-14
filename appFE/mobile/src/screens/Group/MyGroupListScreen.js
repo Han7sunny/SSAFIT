@@ -27,7 +27,7 @@ export default function MyGroupListScreen({navigation, route}) {
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/group/myGroupList`, {
+      await axios.get(`${ip}/group/myGroupList`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

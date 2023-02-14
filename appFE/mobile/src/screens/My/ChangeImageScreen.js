@@ -59,7 +59,7 @@ export default function ChangeImageScreen({navigation, route}) {
     };
     body.append('image', photo);
     const result = (
-      await axios.put(`http://${ip}/user/modifyFaceAuth`, body, {
+      await axios.put(`${ip}/user/modifyFaceAuth`, body, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

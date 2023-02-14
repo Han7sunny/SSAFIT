@@ -24,7 +24,7 @@ export default function RoutineListItem(props) {
   function addTodayRoutine() {
     axios({
       method: 'post',
-      url: `http://${ip}/routine/add-routine`,
+      url: `${ip}/routine/add-routine`,
       data: {
         routineId: props.routineId,
         userId: props.userId,

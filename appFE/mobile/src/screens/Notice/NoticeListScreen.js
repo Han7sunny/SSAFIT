@@ -29,7 +29,7 @@ export default function NoticeListScreen({navigation, route}) {
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/notice/`, {
+      await axios.get(`${ip}/notice/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

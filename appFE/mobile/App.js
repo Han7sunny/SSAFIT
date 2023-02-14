@@ -27,7 +27,6 @@ import {
   HomeScreen,
   CreateRoutineScreen,
   MyRoutineListScreen,
-  RoutineDetailScreen,
   MyGroup,
 } from './src/screens/Main';
 
@@ -62,6 +61,7 @@ import {
 } from './src/screens/Notice';
 
 import {MyRecordScreen, RoutineReservationScreen} from './src/screens/Record';
+import {RoutineDetailScreen} from './src/screens/Routine';
 
 import RoutineItem from './src/components/RoutineItem';
 import ArticleItem from './src/components/ArticleItem';
@@ -119,6 +119,26 @@ const MainSideNavigator = () => {
       <MainSide.Screen
         name="MyGroupListScreen"
         component={MyGroupListScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="RoutineReservationScreen"
+        component={RoutineReservationScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="CommunityScreen"
+        component={CommunityScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="ArticleDetailScreen"
+        component={ArticleDetailScreen}
+        options={{headerShown: false}}
+      />
+      <MainSide.Screen
+        name="RoutineArticleDetailScreen"
+        component={RoutineArticleDetailScreen}
         options={{headerShown: false}}
       />
     </MainSide.Navigator>
@@ -281,8 +301,10 @@ function App() {
   AsyncStorage.setItem(
     'ip',
     JSON.stringify({
-      // ip: '192.168.35.75:8090/api', // 집
-      ip: '70.12.246.83:8090/api', // 싸피
+      // ip: 'http://192.168.35.75:8090/api', // 집
+      // ip: 'http://70.12.246.83:8090/api', // 싸피
+      // ip: 'http://192.168.0.10:8090/api', // 롯데
+      ip: 'https://i8a204.p.ssafy.io/api', // aws
     }),
     () => {
       console.log('ip등록성공');

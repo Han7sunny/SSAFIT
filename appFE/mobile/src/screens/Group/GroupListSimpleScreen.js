@@ -24,7 +24,7 @@ export default function GroupSearchScreen({navigation, item}) {
   }, []);
   const clickHeart = async () => {
     const result = (
-      await axios.get(`http://${ip}/group/recruit/${item.groupId}/likes`, {
+      await axios.get(`${ip}/group/recruit/${item.groupId}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

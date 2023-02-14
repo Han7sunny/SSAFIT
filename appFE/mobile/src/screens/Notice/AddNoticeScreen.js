@@ -6,12 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AddNoticeScreen({navigation, route}) {
   const data = route.params.data;
-  const [Title, setTitle] = useState(
-    data === false ? '' : route.params.data.title,
-  );
-  const [Content, setContent] = useState(
-    data === false ? '' : route.params.data.content,
-  );
+  const [Title, setTitle] = useState(data === false ? '' : data.title);
+  const [Content, setContent] = useState(data === false ? '' : data.content);
   const [accessToken, setAccessToken] = useState('');
   const file = useRef();
   const content = useRef();
@@ -28,7 +24,7 @@ export default function AddNoticeScreen({navigation, route}) {
   }, []);
   const addNotice = async () => {
     const result = await axios.post(
-      `http://${ip}/notice/regist`,
+      `${ip}/notice/regist`,
       {
         categoryId: Number(1),
         content: Content,
@@ -47,7 +43,7 @@ export default function AddNoticeScreen({navigation, route}) {
 
   const changeNotice = async () => {
     const result = await axios.put(
-      `http://${ip}/notice/${data.boardId}`,
+      `${ip}/notice/${data.boardId}`,
       {
         boardId: data.boardId,
         categoryId: data.categoryId,

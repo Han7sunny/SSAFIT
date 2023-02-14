@@ -4,7 +4,7 @@ import {Button, Text} from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MemberScreen from '../Group/MemberScreen';
-import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function AddGroupScreen({navigation, route}) {
   console.log(route.params.id);
@@ -31,7 +31,7 @@ export default function AddGroupScreen({navigation, route}) {
     console.log(ip, accessToken);
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/group/${id}`, {
+      await axios.get(`${ip}/group/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

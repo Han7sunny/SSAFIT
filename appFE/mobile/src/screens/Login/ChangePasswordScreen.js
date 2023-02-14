@@ -39,7 +39,7 @@ export default function ChangePasswordScreen({navigation}) {
     }
     const result = (
       await axios.put(
-        `http://${ip}/user/change-password`,
+        `${ip}/user/change-password`,
         {
           password: password.value,
         },

@@ -28,7 +28,7 @@ export default function AddGroupScreen({navigation, route}) {
     console.log(ip, accessToken);
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/group/${id}`, {
+      await axios.get(`${ip}/group/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -42,25 +42,25 @@ export default function AddGroupScreen({navigation, route}) {
 
   const accept = async () => {
     const result = (
-      await axios.get(`http://${ip}/group/invitation/accept/${id}`, {
+      await axios.get(`${ip}/group/invitation/accept/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
         },
       })
     ).data;
-    if (result) navigation.navigate('AddScreen', {id: id});
+    if (result) navigation.navigate('AddScreen', {groupName: groupName});
   };
   const deny = async () => {
     const result = (
-      await axios.get(`http://${ip}/group/invitation/deny/${id}`, {
+      await axios.get(`${ip}/group/invitation/deny/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
         },
       })
     ).data;
-    if (result) navigation.navigate('CancelScreen', {id: id});
+    if (result) navigation.navigate('CancelScreen', {groupName: groupName});
   };
 
   return (

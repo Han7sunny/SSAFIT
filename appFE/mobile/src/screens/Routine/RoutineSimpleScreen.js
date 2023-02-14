@@ -3,7 +3,6 @@ import React, {useState, useEffect} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import {Text, IconButton, MD3Colors} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useNavigation  } from '@react-navigation/native'
 
 export default function RoutineSimpleScreen({navigation, id}) {
   const [accessToken, setAccessToken] = useState('');
@@ -30,7 +29,7 @@ export default function RoutineSimpleScreen({navigation, id}) {
     if (accessToken === '') return;
     console.log('id', id);
     const data = (
-      await axios.get(`http://${ip}/routine/get-exercise-info/${id}`, {
+      await axios.get(`${ip}/routine/get-exercise-info/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

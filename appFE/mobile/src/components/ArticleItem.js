@@ -28,7 +28,7 @@ export default function ArticleItem(props) {
 
   const clickHeart = async () => {
     const data = (
-      await axios.get(`http://${ip}/group/recruit/${props.id}/likes`, {
+      await axios.get(`${ip}/group/recruit/${props.id}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,

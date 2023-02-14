@@ -7,13 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function ReplyScreen({groupId, reply, leader, send}) {
   const [userId, setUserId] = useState('');
   const [isMember, SetIsMember] = useState(reply.includedGroup); // 0: 비회원, 1: 회원, 2: 대기중
+  console.log('member', reply.includedGroup);
   const [role, setRole] = useState('user');
   const [accessToken, setAccessToken] = useState('');
   const [text, setText] = useState(reply.content);
   const [isClick, setIsCkick] = useState(false);
-  const [isChange, setIsChange] = useState(
-    role === 'ADMIN' || userId === reply.user_id || userId === leader,
-  );
+  const [isChange, setIsChange] = useState(userId === leader);
   const [ip, setIP] = useState('');
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -25,7 +24,9 @@ export default function ReplyScreen({groupId, reply, leader, send}) {
       setAccessToken(UserInfo.token);
       setRole(UserInfo.role);
       setUserId(UserInfo.id);
-      setIsChange(UserInfo.role === 'ADMIN' || UserInfo.id === reply.user_id);
+      setIsChange(
+        UserInfo.role === 'ADMIN' || UserInfo.id === reply.user_id || isChange,
+      );
     });
   }, []);
   const click = () => {
@@ -35,7 +36,7 @@ export default function ReplyScreen({groupId, reply, leader, send}) {
   const changeMember = async () => {
     const result = (
       await axios.post(
-        `http://${ip}/group/recruit/${groupId}/${reply.user_id}/` +
+        `${ip}/group/recruit/${groupId}/${reply.user_id}/` +
           (isMember ? 'delete' : 'add'),
         {
           acceptInvitation: isMember ? false : true,
@@ -58,15 +59,12 @@ export default function ReplyScreen({groupId, reply, leader, send}) {
 
   const deleteReply = async () => {
     const result = (
-      await axios.delete(
-        `http://${ip}/group/recruit/${groupId}/${reply.reply_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
+      await axios.delete(`${ip}/group/recruit/${groupId}/${reply.reply_id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
-      )
+      })
     ).data;
     if (result) send(true);
   };
@@ -74,7 +72,7 @@ export default function ReplyScreen({groupId, reply, leader, send}) {
   const changeReply = async () => {
     const result = (
       await axios.put(
-        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
+        `${ip}/notice/${reply.board_id}/${reply.reply_id}`,
         {
           board_id: Number(reply.board_id),
           content: text,

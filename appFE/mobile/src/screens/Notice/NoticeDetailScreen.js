@@ -34,7 +34,7 @@ export default function NoticeDetailScreen({navigation, route}) {
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/notice/${id}`, {
+      await axios.get(`${ip}/notice/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -51,7 +51,7 @@ export default function NoticeDetailScreen({navigation, route}) {
 
   const deleteNotice = async () => {
     const data = (
-      await axios.delete(`http://${ip}/notice/${id}`, {
+      await axios.delete(`${ip}/notice/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -76,7 +76,7 @@ export default function NoticeDetailScreen({navigation, route}) {
     if (text.length === 0) return;
     const data = (
       await axios.post(
-        `http://${ip}/notice/${id}/regist`,
+        `${ip}/notice/${id}/regist`,
         {
           board_id: Number(id),
           content: text,

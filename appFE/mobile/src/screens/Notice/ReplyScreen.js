@@ -33,15 +33,12 @@ export default function ReplyScreen({reply, send}) {
   };
   const deleteReply = async () => {
     const result = (
-      await axios.delete(
-        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
+      await axios.delete(`${ip}/notice/${reply.board_id}/${reply.reply_id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
-      )
+      })
     ).data;
     if (result)
       Alert.alert(
@@ -59,7 +56,7 @@ export default function ReplyScreen({reply, send}) {
   const changeReply = async () => {
     const result = (
       await axios.put(
-        `http://${ip}/notice/${reply.board_id}/${reply.reply_id}`,
+        `${ip}/notice/${reply.board_id}/${reply.reply_id}`,
         {
           board_id: Number(reply.board_id),
           content: text,

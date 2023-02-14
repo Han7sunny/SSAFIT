@@ -1,19 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {Text, Button as Btn, IconButton} from 'react-native-paper';
+import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {Text, Button, IconButton} from 'react-native-paper';
 import LogContext from '../../../contexts/LogContext';
-import RoutineListItem from '../../components/RoutineListItem';
-import Button from '../../components/Button';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MyRoutineListScreen({navigation}) {
+  const [change, setChange] = useState(false);
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [routineData, setRoutineData] = useState([]);
@@ -39,7 +33,7 @@ export default function MyRoutineListScreen({navigation}) {
     if (accessToken === '') return;
     axios({
       method: 'get',
-      url: `http://${ip}/routine/get-user-routine`,
+      url: `${ip}/routine/get-user-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -52,12 +46,12 @@ export default function MyRoutineListScreen({navigation}) {
       .catch(err => {
         console.log('My routine list screen 실패 :', err);
       });
-  }, [accessToken]);
+  }, [accessToken, change]);
 
   function onDelete() {
     axios({
       method: 'put',
-      url: `http://${ip}/routine/delete-routine`,
+      url: `${ip}/routine/delete-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -72,50 +66,32 @@ export default function MyRoutineListScreen({navigation}) {
   }
 
   return (
-    <ScrollView>
+    <View>
       <Text style={styles.title}> 나의 운동 루틴 목록 </Text>
       <Button
         mode="contained"
         onPress={() =>
-          navigation.navigate('CreateRoutineScreen', {routineInfo: false})
+          navigation.navigate('CreateRoutineScreen', {data: false})
         }>
         운동 루틴 만들기
       </Button>
-      {/* <IconButton 
-          icon="trash-cah-outline"
-          onPress={onDelete}
-        /> */}
       <FlatList
         data={routineData}
+        style={{height: 640}}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({item}) => (
-          <View style={{flexDirection: 'row'}}>
-            <IconButton
-              icon="trash-can-outline"
-              onPress={() => {
-                onDelete, console.log('루틴 삭제');
-              }}
-            />
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('RoutineDetailScreen', {
-                  routineId: item.routineId,
-                })
-              }>
-              <View style={{flexDirection: 'row'}}>
-                <RoutineListItem
-                  routineId={item.routineId}
-                  name={item.name}
-                  userId={userId}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('RoutineDetailScreen', {
+                id: item.routineId,
+              })
+            }>
+            <RoutineSimpleScreen id={item.routineId} />
+          </TouchableOpacity>
         )}
+        keyExtractor={item => item.reply_id}
       />
-      {/* <LogContext.Consumer>
-        {(value) => <Text>{value}</Text>}
-      </LogContext.Consumer> */}
-    </ScrollView>
+    </View>
   );
 }
 

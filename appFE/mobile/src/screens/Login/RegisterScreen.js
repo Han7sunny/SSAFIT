@@ -45,7 +45,7 @@ export default function RegisterScreen({navigation}) {
     useEffect(() => {
       axios({
         method: 'post',
-        url: `http://${ip}/user/join`,
+        url: `${ip}/user/join`,
         data: {
           name: name.value,
           id: id.value,
@@ -84,7 +84,7 @@ export default function RegisterScreen({navigation}) {
         onPress={() => {
           axios({
             method: 'get',
-            url: `http://${ip}/user/name-check?name=${name.value}`,
+            url: `${ip}/user/name-check?name=${name.value}`,
           })
             .then(res => {
               console.log(res.data);
@@ -114,7 +114,7 @@ export default function RegisterScreen({navigation}) {
         onPress={() => {
           axios({
             method: 'get',
-            url: `http://${ip}/user/id-check?id=${id.value}`,
+            url: `${ip}/user/id-check?id=${id.value}`,
             // url: `http://70.12.246.102:8080/user/id-check?id=${id}`
           })
             .then(res => {
@@ -168,7 +168,7 @@ export default function RegisterScreen({navigation}) {
         onPress={() => {
           axios({
             method: 'get',
-            url: `http://${ip}/user/create-code`,
+            url: `${ip}/user/create-code`,
           })
             .then(res => {
               console.log(res.data);

@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {Button, Text, Avatar} from 'react-native-paper';
 
 export default function AddScreen({navigation, route}) {
-  const id = route.params.id;
+  const groupName = route.params.groupName;
   return (
     <View style={{marginTop: 150, alignItems: 'center'}}>
       <Avatar.Icon
@@ -12,7 +12,8 @@ export default function AddScreen({navigation, route}) {
         style={{backgroundColor: 'black'}}
       />
       <Text variant="headlineMedium" style={{margin: 50, textAlign: 'center'}}>
-        <Text style={{fontWeight: 'bold'}}>"{id}"</Text>에 추가되었습니다.
+        <Text style={{fontWeight: 'bold'}}>"{groupName}"</Text>에
+        추가되었습니다.
       </Text>
       <Button
         mode="contained"
@@ -20,7 +21,7 @@ export default function AddScreen({navigation, route}) {
         style={styles.button}
         labelStyle={styles.label}
         onPress={() => navigation.navigate('MainMyPageScreen', {state: true})}>
-        그룹 목록으로 가기
+        마이페이지로 가기
       </Button>
     </View>
   );

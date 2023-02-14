@@ -36,7 +36,7 @@ export default function CommunitySimpleScreen({navigation}) {
     if (accessToken === '') return;
     axios({
       method: 'get',
-      url: `http://${ip}/board/`,
+      url: `${ip}/board/`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -60,7 +60,12 @@ export default function CommunitySimpleScreen({navigation}) {
     <View>
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ArticleListScreen')}>
+          onPress={() =>
+            navigation.navigate('CommunityScreen', {
+              community: 'QA',
+              state: false,
+            })
+          }>
           <Text style={styles.title}> 질문 게시판 </Text>
         </TouchableOpacity>
         <View>
@@ -75,7 +80,12 @@ export default function CommunitySimpleScreen({navigation}) {
 
       <View style={styles.container}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('RoutineListScreen')}>
+          onPress={() =>
+            navigation.navigate('CommunityScreen', {
+              community: 'shareRoutine',
+              state: false,
+            })
+          }>
           <Text style={styles.title}>
             {' 다른 유저의 운동 루틴을 살펴보세용! '}
           </Text>

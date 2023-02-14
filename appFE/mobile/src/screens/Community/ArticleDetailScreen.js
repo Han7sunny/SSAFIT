@@ -1,11 +1,11 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, FlatList, View} from 'react-native';
+import {StyleSheet, FlatList, View, Alert} from 'react-native';
 import {Text, TextInput, IconButton, Button} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ArticleDetailScreen({route}) {
+export default function ArticleDetailScreen({navigation, route}) {
   const id = route.params.id;
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -18,7 +18,7 @@ export default function ArticleDetailScreen({route}) {
   const [articleData, setArticleData] = useState([]);
   const [registeredTime, setRegisteredTime] = useState('');
   const [changeReply, setChangeReply] = useState(false);
-  const [isChange, setIsChange] = useState(role === 'ADMIN');
+  const [isChange, setIsChange] = useState(false);
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
@@ -35,29 +35,36 @@ export default function ArticleDetailScreen({route}) {
     if (accessToken === '') return;
     setChangeReply(false);
     axios
-      .get(`http://${ip}/board/${id}`, {
+      .get(`${ip}/board/${id}`, {
         headers: {
           authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
         },
       })
       .then(res => {
-        console.log(res.data);
+        console.log('------', res.data);
         setArticleData(res.data);
         setHeartCnt(res.data.likes);
         setIsClickHeart(res.data.clickLikes);
         const date = res.data.registeredTime.split('T');
         setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
         setIsChange(role === 'ADMIN' || userId === res.data.userId);
+        console.log(
+          '------------',
+          role,
+          userId,
+          role === 'ADMIN' || userId === res.data.userId,
+        );
       })
       .catch(err => {
         console.log(err);
       });
   }, [accessToken, id, changeReply]);
+  useEffect(() => {}, [isChange]);
 
   const clickHeart = async () => {
     const result = (
-      await axios.get(`http://${ip}/board/${id}/likes`, {
+      await axios.get(`${ip}/board/${id}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -70,7 +77,7 @@ export default function ArticleDetailScreen({route}) {
 
   const deleteArticle = async () => {
     const data = (
-      await axios.delete(`http://${ip}/board/${id}`, {
+      await axios.delete(`${ip}/board/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -81,7 +88,11 @@ export default function ArticleDetailScreen({route}) {
       Alert.alert(`글 삭제 성공`, `${articleData.title} 글을 삭제하셨습니다.`, [
         {
           text: '확인',
-          onPress: () => navigation.navigate('CommunityScreen', {change: true}),
+          onPress: () =>
+            navigation.navigate('CommunityScreen', {
+              community: 'QA',
+              state: true,
+            }),
         },
       ]);
     }
@@ -94,7 +105,7 @@ export default function ArticleDetailScreen({route}) {
     if (text.length === 0) return;
     const data = (
       await axios.post(
-        `http://${ip}/board/${id}/regist`,
+        `${ip}/board/${id}/regist`,
         {
           board_id: Number(id),
           content: text,
@@ -124,7 +135,10 @@ export default function ArticleDetailScreen({route}) {
             style={styles.button}
             labelStyle={styles.label}
             onPress={() =>
-              navigation.navigate('CreateArticleScreen', {data: articleData})
+              navigation.navigate('CreateArticleScreen', {
+                data: articleData,
+                categoryId: 2,
+              })
             }>
             수정
           </Button>

@@ -4,7 +4,7 @@ import {View, Image, FlatList, StyleSheet, ScrollView} from 'react-native';
 import {Button, TextInput, IconButton, Text} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function GroupDetailScreen({navigation, route}) {
   const groupId = route.params.id;
@@ -42,7 +42,7 @@ export default function GroupDetailScreen({navigation, route}) {
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/group/recruit/${groupId}`, {
+      await axios.get(`${ip}/group/recruit/${groupId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -54,15 +54,15 @@ export default function GroupDetailScreen({navigation, route}) {
     setReply(data.groupRecruitReplyList);
     setHeartCnt(data.likes);
     setIsClickHeart(data.clickLikes);
-    setChangeReply(false);
     setRoutines(data.routineList);
     const date = data.registeredTime.split('T');
     setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
     setIsChange(role === 'ADMIN' || userId === data.userId);
+    setChangeReply(false);
   };
   const clickHeart = async () => {
     const result = (
-      await axios.get(`http://${ip}/group/recruit/${groupId}/likes`, {
+      await axios.get(`${ip}/group/recruit/${groupId}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -73,7 +73,7 @@ export default function GroupDetailScreen({navigation, route}) {
     setHeartCnt(heartCnt + (result ? 1 : -1));
   };
   const deleteRecruit = async () => {
-    const result = await axios.delete(`http://${ip}/group/recruit/${groupId}`, {
+    const result = await axios.delete(`${ip}/group/recruit/${groupId}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -87,15 +87,13 @@ export default function GroupDetailScreen({navigation, route}) {
     if (isDelete) setChangeReply(true);
   };
   const addReply = async () => {
-    // console.log(text)
     if (text.length === 0) return;
-    // console.log(text);
     const uploadReply = await axios.post(
-      `http://${ip}/group/recruit/${groupId}/regist`,
+      `${ip}/group/recruit/${groupId}/regist`,
       {
         board_id: Number(info.boardId),
         content: text,
-        registered_time: '2023-02-07T02:01:16.776Z',
+        registered_time: new Date(),
         reply_id: Number(0),
         user_id: userId,
       },
@@ -106,7 +104,6 @@ export default function GroupDetailScreen({navigation, route}) {
         },
       },
     );
-    // console.log(uploadReply);
     setChangeReply(true);
     setText('');
   };

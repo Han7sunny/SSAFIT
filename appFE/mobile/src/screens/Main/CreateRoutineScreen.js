@@ -1,25 +1,25 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {IconButton, Text} from 'react-native-paper';
-import Button from '../../components/Button';
-import TextInput from '../../components/TextInput';
+import {IconButton, Text, TextInput, Button} from 'react-native-paper';
 import RoutineInput from '../../components/RoutineInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const userData = useSelector(store=>store.userData)
-let exerciseList = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
 export default function CreateRoutineScreen({navigation, route}) {
+  // const data = route.params.data;
   const [routineName, setRoutineName] = useState(
-    data === false ? '' : route.params.data.name,
+    '',
+    // data === false ? '' : route.params.data.name,
   );
-  const [routineInfo, setRoutineInfo] = useState(
-    data === false ? [] : route.params.data,
-  );
-  const [exerciseList, setExerciseList] = useState([...exerciseList]);
+  let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
   const [accessToken, setAccessToken] = useState();
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
+  const routineInfo = ({sendData}) => {
+    exerciseLists.push(sendData);
+    console.log('저장한 루틴 리스트 :', exerciseLists);
+  };
   // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -35,18 +35,19 @@ export default function CreateRoutineScreen({navigation, route}) {
   }, []);
   // axios 요청 보낼 함수
   function onPost() {
-    console.log('루틴 생성 전 확인 = ', exerciseList);
-    console.log(accessToken);
+    if (accessToken === '') return;
+    let setExercise = [...new Set(exerciseLists)];
+    console.log('se', setExercise);
     axios({
       method: 'post',
-      url: `http://${ip}/routine/generate-routine`,
+      url: `${ip}/routine/generate-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
       },
       data: {
-        exerciseList: exerciseList,
-        routineName: routineName,
+        exerciseList: setExercise,
+        routineName: `${routineName}`,
         userId: userId,
         routineId: 0,
       },
@@ -71,32 +72,28 @@ export default function CreateRoutineScreen({navigation, route}) {
     setCountNum(countArr);
   };
 
-  // routine 정보 주고 받을 함수
-  const savedRoutine = ({sendData}) => {
-    // exerciseList.push(sendData)
-    setExerciseList([...exerciseList, sendData]);
-    console.log('저장한 루틴 리스트 :', exerciseList);
-    // console.log('======================')
-  };
-
   return (
     <ScrollView>
-      <Text> Create New Routine! </Text>
       <TextInput
         label="루틴 이름을 설정하세요!"
         value={routineName}
-        onChangeText={value => {
-          setRoutineName(value);
+        onChangeText={text => {
+          setRoutineName(text);
         }}
       />
       <RoutineInput countNum={countNum} routineInfo={routineInfo} />
-      <IconButton icon={plus - circle - outline} onPress={onAddRoutine} />
+      <IconButton
+        style={{marginHorizontal: '50%'}}
+        size={20}
+        onPress={onAddRoutine}
+        icon="plus-outline"
+      />
 
       <Button
         mode="contained"
         onPress={() => {
           onPost();
-          navigation.navigate('MyRoutineListScreen');
+          // navigation.navigate('MyRoutineListScreen');
           // navigator 인덱스 초기화하기
         }}>
         저장하기

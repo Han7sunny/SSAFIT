@@ -14,8 +14,9 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import GroupListSimpleScreen from './GroupListSimpleScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function GroupListScreen({navigation}) {
+export default function GroupListScreen({navigation, route}) {
   const [ip, setIP] = useState('');
+  const [accessToken, setAccessToken] = useState('');
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [Lists, setLists] = useState([]);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -36,13 +37,24 @@ export default function GroupListScreen({navigation}) {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setIP(UserInfo.ip);
     });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setAccessToken(UserInfo.token);
+    });
   }, []);
   useEffect(() => {
     getData();
-  }, [ip]);
+  }, [accessToken, route.params]);
   const getData = async () => {
-    if (ip === '') return;
-    const data = (await axios.get(`http://${ip}/group/recruit`)).data;
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`${ip}/group/recruit`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
     setLists(data);
     setFilteredLists(data);
     console.log(data);

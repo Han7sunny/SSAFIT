@@ -4,7 +4,7 @@ import {Text, Button, TextInput, IconButton} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import ReplyScreen from './ReplyScreen';
-import RoutineSimpleScreen from '../Record/RoutineSimpleScreen';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function RoutineArticleDetailScreen({route, navigation}) {
   let {boardId} = route.params;
@@ -16,9 +16,9 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
   const [isClickHeart, setIsClickHeart] = useState(false);
   const [text, setText] = useState('');
   const [registeredTime, setRegisteredTime] = useState('');
-  const [isChange, setIsChange] = useState(role === 'ADMIN');
 
   const [role, setRole] = useState('USER');
+  const [isChange, setIsChange] = useState(role === 'ADMIN');
   const [accessToken, setAccessToken] = useState('');
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
@@ -42,7 +42,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
     // 게시글 디테일 정보 가져오기
     axios({
       method: 'get',
-      url: `http://${ip}/board/${boardId}`,
+      url: `${ip}/board/${boardId}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -65,7 +65,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
   function addToMyRoutine() {
     axios({
       method: 'post',
-      url: `http://${ip}/routine/add-routine`,
+      url: `${ip}/routine/add-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -85,7 +85,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
 
   const clickHeart = async () => {
     const result = (
-      await axios.get(`http://${ip}/board/${boardId}/likes`, {
+      await axios.get(`${ip}/board/${boardId}/likes`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -98,7 +98,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
 
   const deleteArticle = async () => {
     const data = (
-      await axios.delete(`http://${ip}/board/${boardId}`, {
+      await axios.delete(`${ip}/board/${boardId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -109,7 +109,11 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
       Alert.alert(`글 삭제 성공`, `${articleInfo.title} 글을 삭제하셨습니다.`, [
         {
           text: '확인',
-          onPress: () => navigation.navigate('CommunityScreen', {change: true}),
+          onPress: () =>
+            navigation.navigate('CommunityScreen', {
+              community: 'shareRoutine',
+              state: true,
+            }),
         },
       ]);
     }
@@ -122,7 +126,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
     if (text.length === 0) return;
     const data = (
       await axios.post(
-        `http://${ip}/board/${boardId}/regist`,
+        `${ip}/board/${boardId}/regist`,
         {
           board_id: Number(boardId),
           content: text,
@@ -152,7 +156,10 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
             style={styles.button}
             labelStyle={styles.label}
             onPress={() =>
-              navigation.navigate('CreateArticleScreen', {data: articleInfo})
+              navigation.navigate('CreateArticleScreen', {
+                data: articleInfo,
+                categoryId: 3,
+              })
             }>
             수정
           </Button>

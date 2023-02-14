@@ -30,37 +30,20 @@ export default function CreateGroupScreen({navigation, route}) {
   const [CheckedRoutine, setCheckedRoutine] = useState('my');
   const [myRoutines, setMyRoutines] = useState([]);
 
-  const [Data, setData] = useState(
-    data === false
-      ? {
-          title: '',
-          name: '',
-          member: [],
-          routine: [],
-          maxMemberNum: 0,
-          startDate: '',
-          endDate: '',
-          startRecruitDate: '',
-          endRecruitDate: '',
-          goal: '',
-          penalty: '',
-          content: '',
-        }
-      : {
-          title: data.title,
-          name: data.groupName,
-          member: data.groupMemberId,
-          routine: data.routine,
-          maxMemberNum: data.maximum_member,
-          startDate: data.start_date,
-          endDate: data.end_date,
-          startRecruitDate: data.startRecruitDate,
-          endRecruitDate: data.endRecruitDate,
-          goal: data.goal,
-          penalty: data.penalty,
-          content: data.content,
-        },
-  );
+  const [Data, setData] = useState({
+    title: '',
+    name: '',
+    member: [],
+    routine: [],
+    maxMemberNum: 0,
+    startDate: '',
+    endDate: '',
+    startRecruitDate: '',
+    endRecruitDate: '',
+    goal: '',
+    penalty: '',
+    content: '',
+  });
 
   const showDatePicker = date => {
     setDatePickerVisibility(true);
@@ -77,6 +60,40 @@ export default function CreateGroupScreen({navigation, route}) {
       setAccessToken(UserInfo.token);
     });
   }, []);
+  useEffect(() => {
+    setIsEnabled(data === false ? false : true);
+    setData(
+      data === false
+        ? {
+            title: '',
+            name: '',
+            member: [],
+            routine: [],
+            maxMemberNum: '',
+            startDate: '',
+            endDate: '',
+            startRecruitDate: '',
+            endRecruitDate: '',
+            goal: '',
+            penalty: '',
+            content: '',
+          }
+        : {
+            title: data.title,
+            name: data.groupName,
+            member: data.groupMemberId, // 수정필요
+            routine: data.routine, // 수정필요
+            maxMemberNum: data.maximumMember + '',
+            startDate: data.startDate,
+            endDate: data.endDate,
+            startRecruitDate: data.startRecruitDate,
+            endRecruitDate: data.endRecruitDate,
+            goal: data.goal + '',
+            penalty: data.penalty,
+            content: data.content,
+          },
+    );
+  }, [route.params]);
 
   useEffect(() => {
     getRoutine();
@@ -85,7 +102,7 @@ export default function CreateGroupScreen({navigation, route}) {
   const getRoutine = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/routine/get-user-routine`, {
+      await axios.get(`${ip}/routine/get-user-routine`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -98,14 +115,15 @@ export default function CreateGroupScreen({navigation, route}) {
   };
   const onPost = async () => {
     if (accessToken === '') return;
-    console.log(ip, accessToken);
+    let setExercise = [...new Set(exerciseLists)];
+    console.log('se', setExercise);
     const result = (
       await axios.post(
-        `http://${ip}/routine/generate-routine`,
+        `${ip}/routine/generate-routine`,
         {
           routineName: `${routineName}`,
           userId: userId,
-          exerciseList: exerciseLists,
+          exerciseList: setExercise,
           routineId: 0,
         },
         {
@@ -164,9 +182,9 @@ export default function CreateGroupScreen({navigation, route}) {
   const createGroup = async () => {
     setData(pre => Object.assign({}, pre, {title: ''}));
     const result = await axios.post(
-      `http://${ip}/group/regist`,
+      `${ip}/group/regist`,
       {
-        categoryId: Number(0),
+        categoryId: isEnabled ? Number(4) : Number(0),
         content: Data.content,
         currentMember: Number(Data.member ? Data.member.length : 0),
         endDate: Data.endDate,
@@ -193,7 +211,9 @@ export default function CreateGroupScreen({navigation, route}) {
     );
     console.log(result);
     if (result)
-      navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen');
+      navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen', {
+        change: true,
+      });
   };
 
   const [Lists, setLists] = useState([]);
@@ -218,7 +238,7 @@ export default function CreateGroupScreen({navigation, route}) {
     if (text.length !== 1) return;
     const getData = async () => {
       const data = (
-        await axios.get(`http://${ip}/group/search?name=${text}`, {
+        await axios.get(`${ip}/group/search?name=${text}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'X-AUTH-TOKEN': `${accessToken}`,
@@ -316,7 +336,7 @@ export default function CreateGroupScreen({navigation, route}) {
             </View>
           </View>
           <MultiSelect
-            hideTags
+            // hideTags
             items={Lists ? Lists : [{userId: '1', userName: '1'}]}
             displayKey={CheckedMember === 'id' ? 'userId' : 'userName'}
             uniqueKey="userId"
@@ -335,7 +355,6 @@ export default function CreateGroupScreen({navigation, route}) {
             searchInputStyle={{color: '#999'}}
             submitButtonColor="#bbb"
             submitButtonText="Submit"
-            fixedHeight={true}
           />
           <View>
             <Text>루틴추가</Text>
@@ -384,7 +403,7 @@ export default function CreateGroupScreen({navigation, route}) {
             searchInputStyle={{color: '#999'}}
             submitButtonColor="#bbb"
             submitButtonText="Submit"
-            fixedHeight={true}
+            // fixedHeight={true}
           />
 
           {isEnabled && (
@@ -569,7 +588,6 @@ export default function CreateGroupScreen({navigation, route}) {
         onDismiss={hideModal}
         contentContainerStyle={{backgroundColor: 'white'}}>
         <ScrollView>
-          <Text> Create New Routine! </Text>
           <TextInput
             label="루틴 이름을 설정하세요!"
             value={routineName}
@@ -578,7 +596,12 @@ export default function CreateGroupScreen({navigation, route}) {
             }}
           />
           <RoutineInput countNum={countNum} routineInfo={routineInfo} />
-          <IconButton size={20} onPress={onAddRoutine} icon="plus-outline" />
+          <IconButton
+            style={{marginHorizontal: '50%'}}
+            size={20}
+            onPress={onAddRoutine}
+            icon="plus-outline"
+          />
 
           <Button
             mode="contained"

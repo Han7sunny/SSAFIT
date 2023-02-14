@@ -57,7 +57,7 @@ export default function RecordScreen() {
     if (accessToken === '') return;
     axios({
       method: 'get',
-      url: `http://${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${today}`,
+      url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${today}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,

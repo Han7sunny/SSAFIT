@@ -8,10 +8,9 @@ import {
 } from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
 import Button from '../../components/Button';
-import TodayRoutine from './TodayRoutine';
 import CommunitySimpleScreen from './CommunitySimpleScreen';
 import RecordScreen from './RecordScreen';
-import RoutineListItem from '../../components/RoutineListItem';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -45,7 +44,7 @@ export default function HomeScreen({navigation}) {
     console.log('Home Screen 토큰', accessToken);
     axios({
       method: 'get',
-      url: `http://${ip}/record/get-schedule?year=${year}&month=${month}&day=${today}`,
+      url: `${ip}/record/get-schedule?year=${year}&month=${month}&day=${today}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -72,27 +71,30 @@ export default function HomeScreen({navigation}) {
             iconColor="black"
             size={50}
             onPress={() => navigation.navigate('RoutineReservationScreen')}
-            // style={styles.iconButton}
           />
         </View>
         <TouchableOpacity
+          style={{alignSelf: 'center'}}
           onPress={() =>
             navigation.navigate('RoutineDetailScreen', {
               routineId: todayRoutine[0].routineId,
             })
           }>
           {todayRoutine.map(item => (
-            <RoutineListItem routineId={item.routineId} name={item.name} />
+            <RoutineSimpleScreen id={item.routineId} />
           ))}
-          {/* <FlatList
-            data={todayRoutine}
-            renderItem={({item}) => (
-              <RoutineListItem routineId={item.routineId} name={item.name} />
-            )}
-          /> */}
         </TouchableOpacity>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.text}> 나의 루틴 </Text>
+          <IconButton
+            icon="plus-circle-outline"
+            iconColor="black"
+            size={50}
+            onPress={() => navigation.navigate('MyRoutineListScreen')}
+          />
+        </View>
       </View>
-      <CommunitySimpleScreen />
+      <CommunitySimpleScreen navigation={navigation} />
 
       <Button
         mode="contained"
@@ -100,11 +102,6 @@ export default function HomeScreen({navigation}) {
           navigation.navigate('CreateRoutineScreen', {routineInfo: false})
         }>
         운동 루틴 만들기
-      </Button>
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('CommunityScreen')}>
-        커뮤니티
       </Button>
       <Button
         mode="contained"

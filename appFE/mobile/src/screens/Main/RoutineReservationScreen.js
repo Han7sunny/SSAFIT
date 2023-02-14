@@ -37,7 +37,7 @@ export default function RoutineReservationScreen({navigation}) {
   const onPost = () => {
     axios({
       method: 'post',
-      url: `http://${ip}/record/record-registration`,
+      url: `${ip}/record/record-registration`,
       headers: {
         authorization: `${accessToken}`,
       },
@@ -61,7 +61,7 @@ export default function RoutineReservationScreen({navigation}) {
     // 선택한 날짜에 예약된 운동 루틴 가져오기
     axios({
       method: 'get',
-      url: `http://${ip}/record/get-schedule/${userId}`,
+      url: `${ip}/record/get-schedule/${userId}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,

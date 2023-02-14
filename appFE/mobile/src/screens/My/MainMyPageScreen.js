@@ -47,7 +47,7 @@ export default function ArticleDetailScreen({navigation, route}) {
     if (accessToken === '') return;
     console.log(ip, accessToken);
     const data = (
-      await axios.get(`http://${ip}/user/get-mypage`, {
+      await axios.get(`${ip}/user/get-mypage`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -62,7 +62,7 @@ export default function ArticleDetailScreen({navigation, route}) {
 
   const deleteUser = async () => {
     const result = (
-      await axios.delete(`http://${ip}/user/user_delete`, {
+      await axios.delete(`${ip}/user/user_delete`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -73,15 +73,12 @@ export default function ArticleDetailScreen({navigation, route}) {
   };
   const deleteNotification = async id => {
     const result = (
-      await axios.delete(
-        `http://${ip}/notification/delete-notification/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
+      await axios.delete(`${ip}/notification/delete-notification/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
-      )
+      })
     ).data;
     console.log('ttt', result);
     if (result) setChangeState(true);

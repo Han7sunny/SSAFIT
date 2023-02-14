@@ -30,6 +30,7 @@ export default function RoutineInput({countNum, routineInfo}) {
     routineInfo === false ? '' : routineInfo.restTimeMinutes,
   );
   const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
 
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -90,7 +91,7 @@ export default function RoutineInput({countNum, routineInfo}) {
                 console.log(exerciseId);
                 axios({
                   method: 'get',
-                  url: `http://${ip}/exercise/get-exercise-type?area=${exerciseId}`,
+                  url: `${ip}/exercise/get-exercise-type?area=${exerciseId}`,
                   headers: {
                     authorization: `Bearer ${accessToken}`,
                     'X-AUTH-TOKEN': `${accessToken}`,

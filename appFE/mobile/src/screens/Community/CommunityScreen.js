@@ -31,10 +31,13 @@ export default function CommunityScreen({navigation, route}) {
   useEffect(() => {
     getData();
   }, [accessToken, value, route.params]);
+  // useEffect(() => {
+  //   setValue(route.params.community);
+  // }, [route.params && route.params.community]);
   const getData = async () => {
     if (accessToken === '') return;
     const data = (
-      await axios.get(`http://${ip}/board/${value}`, {
+      await axios.get(`${ip}/board/${value}`, {
         headers: {
           authorization: `Bearer ${accessToken}`,
           'X-AUTH-TOKEN': `${accessToken}`,
@@ -88,7 +91,12 @@ export default function CommunityScreen({navigation, route}) {
         />
         <Button
           mode="contained"
-          onPress={() => navigation.navigate('CreateArticleScreen')}>
+          onPress={() =>
+            navigation.navigate('CreateArticleScreen', {
+              data: false,
+              categoryId: value === 'QA' ? 2 : 3,
+            })
+          }>
           글 쓰기
         </Button>
       </View>
@@ -175,10 +183,12 @@ export default function CommunityScreen({navigation, route}) {
                 if (value === 'QA')
                   navigation.navigate('ArticleDetailScreen', {
                     id: item.boardId,
+                    navigation: {navigation},
                   });
                 else
                   navigation.navigate('RoutineArticleDetailScreen', {
                     boardId: item.boardId,
+                    navigation: {navigation},
                   });
               }}>
               <Text style={{flex: 2.5, fontSize: 20}}>{item.title}</Text>

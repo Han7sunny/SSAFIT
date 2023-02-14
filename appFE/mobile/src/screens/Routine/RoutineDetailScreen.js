@@ -30,7 +30,7 @@ export default function RoutineDetailScreen({route, navigation}) {
     if (accessToken === '') return;
     axios({
       method: 'get',
-      url: `http://${ip}/routine/get-exercise-info/${routineId}`,
+      url: `${ip}/routine/get-exercise-info/${routineId}`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
@@ -49,7 +49,7 @@ export default function RoutineDetailScreen({route, navigation}) {
   function addTodayRoutine() {
     axios({
       method: 'post',
-      url: `http://${ip}/routine/add-routine`,
+      url: `${ip}/routine/add-routine`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'X-AUTH-TOKEN': `${accessToken}`,
