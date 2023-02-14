@@ -43,6 +43,7 @@ public class GroupRespDto extends CommonResp {
 
     private List<RoutineInfoRespDto> routineList;
 
+    private int type;
 
     public GroupRespDto(Group group){
         this.groupId = group.getId();

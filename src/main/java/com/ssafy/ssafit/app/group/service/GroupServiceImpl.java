@@ -195,6 +195,7 @@ public class GroupServiceImpl implements GroupService{
             groupMemberList.add(groupMember);
 //            groupMemberList.add(GroupMember.builder().group(getGroup).user(user).build());
         }
+
         User registerUser = userRepository.findById(group.getUserId()).get();
         GroupMember groupRegister = GroupMember.builder().user(registerUser).group(getGroup).acceptInvitation(true).build();
         groupMemberList.add(groupRegister);
@@ -431,13 +432,22 @@ public class GroupServiceImpl implements GroupService{
 
         List<GroupRespDto> myGroupList = new ArrayList<>();
 
-        List<Group> groupList = groupRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate.now(), LocalDate.now());
+//        List<Group> groupList = groupRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate.now(), LocalDate.now());
+        List<Group> groupList = groupRepository.findAll();
         if(groupList.isEmpty())
             return myGroupList;
 
         for (Group group : groupList) {
             if(groupMemberRepository.findByGroupIdAndUserId(group.getId(), userId) != null) { // 있으면
-                myGroupList.add(new GroupRespDto(group));
+                GroupRespDto groupRespDto = new GroupRespDto(group);
+                if(LocalDate.now(ZoneId.of("Asia/Seoul")).isBefore(group.getStartDate()))
+                    groupRespDto.setType(1);
+                else if(LocalDate.now(ZoneId.of("Asia/Seoul")).isAfter(group.getEndDate()))
+                    groupRespDto.setType(2);
+                else
+                    groupRespDto.setType(0);
+
+                myGroupList.add(groupRespDto);
             }
         }
 
