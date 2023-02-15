@@ -214,11 +214,11 @@ public class UserController {
             notes = "유저의 아이디와 바꿀 비밀번호 정보를 통해 비밀번호를 변경" +
             "{ password : String } 형태의 데이터 필요",
             response = CommonResp.class)
-    public ResponseEntity<?> changePassword(@AuthenticationPrincipal CustomUserDetails user, @RequestBody Map<String, String> password) {
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> password) {
         LOGGER.info("[Enter] changePassword");
         try {
             Map<String, String> idPwd = new HashMap<>();
-            idPwd.put("id", user.getUser().getId());
+            idPwd.put("id", password.get("id"));
             idPwd.put("password", password.get("password"));
             userService.changePassword(idPwd);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("변경 성공").build(), HttpStatus.OK);
@@ -228,17 +228,17 @@ public class UserController {
         }
     }
 
-//    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    @PostMapping(value = "/join")
+    @PostMapping(value = "/join", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping(value = "/join")
     @ApiOperation(value = "회원가입 기능",
             notes = "회원가입 기능",
             response = CommonResp.class)
-    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
-//    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
+//    public ResponseEntity<?> userJoin(@Valid @RequestBody UserJoinReqDto userJoinReqDto) {
+    public ResponseEntity<?> userJoin(@Valid @RequestPart("join-info") UserJoinReqDto userJoinReqDto, @RequestPart("image") MultipartFile file) {
 
         LOGGER.info("[Enter] userJoin");
 
-        MultipartFile file = null;
+//        MultipartFile file = null;
         try {
             userService.userJoin(userJoinReqDto, file);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("회원가입 성공").build(), HttpStatus.OK);

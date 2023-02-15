@@ -59,3 +59,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// for deployment
+jar {
+	enabled = false
+}
