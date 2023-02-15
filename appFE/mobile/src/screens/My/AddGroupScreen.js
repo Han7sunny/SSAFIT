@@ -49,7 +49,11 @@ export default function AddGroupScreen({navigation, route}) {
         },
       })
     ).data;
-    if (result) navigation.navigate('AddScreen', {groupName: groupName});
+    if (result)
+      navigation.navigate('MyPage', {
+        screen: 'AddScreen',
+        params: {groupName: groupName},
+      });
   };
   const deny = async () => {
     const result = (
@@ -60,7 +64,11 @@ export default function AddGroupScreen({navigation, route}) {
         },
       })
     ).data;
-    if (result) navigation.navigate('CancelScreen', {groupName: groupName});
+    if (result)
+      navigation.navigate('MyPage', {
+        screen: 'CancelScreen',
+        params: {groupName: groupName},
+      });
   };
 
   return (

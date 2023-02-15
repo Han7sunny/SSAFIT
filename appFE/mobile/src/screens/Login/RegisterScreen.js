@@ -52,7 +52,10 @@ export default function RegisterScreen({navigation}) {
       setCheckPassword({...checkPassword, error: checkPasswordError});
       return;
     }
-    navigation.navigate('AddFacePhotoScreen', {data: Data});
+    navigation.navigate('Home', {
+      screen: 'AddFacePhotoScreen',
+      params: {data: Data},
+    });
   };
   return (
     <View>

@@ -35,7 +35,10 @@ export default function ResetPasswordScreen({navigation}) {
     ).data.msg;
     console.log(checked);
     if (checked === 'true') {
-      navigation.navigate('ChangePasswordScreen', {id: id.value});
+      navigation.navigate('Home', {
+        screen: 'ChangePasswordScreen',
+        params: {id: id.value},
+      });
     } else setCheckCode2({...checkCode2, error: '인증코드가 다릅니다.'});
   };
   const sendResetPasswordEmail = async () => {

@@ -44,7 +44,10 @@ export default function ArticleItem(props) {
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('ArticleDetailScreen', {id: props.id})
+          navigation.navigate('Community', {
+            screen: 'ArticleDetailScreen',
+            params: {id: props.id},
+          })
         }>
         <Text> Show Article Item </Text>
         <Text>글 번호 : {props.id}</Text>

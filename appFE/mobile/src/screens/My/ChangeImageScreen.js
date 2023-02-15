@@ -82,7 +82,10 @@ export default function ChangeImageScreen({navigation, route}) {
           console.log('AsyncStorage에 유저 정보 저장 완료');
         },
       );
-      navigation.navigate('MainMyPageScreen', {state: true});
+      navigation.navigate('MyPage', {
+        screen: 'MainMyPageScreen',
+        params: {state: true},
+      });
     }
   };
 

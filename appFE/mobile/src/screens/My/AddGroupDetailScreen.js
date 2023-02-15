@@ -160,7 +160,12 @@ export default function AddGroupScreen({navigation, route}) {
           buttonColor="black"
           style={styles.button}
           labelStyle={styles.label}
-          onPress={() => navigation.navigate('AddScreen', {id: id})}>
+          onPress={() =>
+            navigation.navigate('MyPage', {
+              screen: 'AddScreen',
+              params: {id: id},
+            })
+          }>
           수락
         </Button>
         <Button
@@ -168,7 +173,12 @@ export default function AddGroupScreen({navigation, route}) {
           buttonColor="red"
           style={styles.button}
           labelStyle={styles.label}
-          onPress={() => navigation.navigate('CancelScreen', {id: id})}>
+          onPress={() =>
+            navigation.navigate('MyPage', {
+              screen: 'CancelScreen',
+              params: {id: id},
+            })
+          }>
           거절
         </Button>
       </View>

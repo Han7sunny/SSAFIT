@@ -47,11 +47,19 @@ export default function AddFacePhotoScreen({navigation, route}) {
       type: 'multipart/form-data',
       name: `${data.name}.jpg`,
     };
-    body.append('join', JSON.stringify(data));
+    body.append(
+      'join',
+      new Blob([JSON.stringify(data)], {type: 'application/json'}),
+    );
+
     body.append('image', photo);
     console.log(body);
     axios
-      .post(`${ip}/user/join`, body)
+      .post(`${ip}/user/join`, body, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then(res => {
         console.log(res.data, '성공');
         if (res.success === true) {

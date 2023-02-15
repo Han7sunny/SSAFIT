@@ -83,7 +83,11 @@ export default function HomeScreen({navigation}) {
             }}>
             <Text style={styles.text}> 오늘의 운동 </Text>
             <Button
-              onPress={() => navigation.navigate('RoutineReservationScreen')}>
+              onPress={() =>
+                navigation.navigate('Home', {
+                  screen: 'RoutineReservationScreen',
+                })
+              }>
               오늘의 운동 추가하기
             </Button>
           </View>
@@ -96,8 +100,11 @@ export default function HomeScreen({navigation}) {
           <TouchableOpacity
             style={{alignSelf: 'center'}}
             onPress={() =>
-              navigation.navigate('RoutineDetailScreen', {
-                routineId: todayRoutine[0].routineId,
+              navigation.navigate('Home', {
+                screen: 'RoutineDetailScreen',
+                params: {
+                  routineId: todayRoutine[0].routineId,
+                },
               })
             }>
             {todayRoutine.map(item => (

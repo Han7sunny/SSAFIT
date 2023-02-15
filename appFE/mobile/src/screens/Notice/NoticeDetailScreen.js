@@ -63,7 +63,10 @@ export default function NoticeDetailScreen({navigation, route}) {
         {
           text: '확인',
           onPress: () =>
-            navigation.navigate('NoticeListScreen', {change: true}),
+            navigation.navigate('Notice', {
+              screen: 'NoticeListScreen',
+              params: {change: true},
+            }),
         },
       ]);
     }
@@ -104,7 +107,10 @@ export default function NoticeDetailScreen({navigation, route}) {
             style={styles.button}
             labelStyle={styles.label}
             onPress={() =>
-              navigation.navigate('AddNoticeScreen', {data: Notices})
+              navigation.navigate('Notice', {
+                screen: 'AddNoticeScreen',
+                params: {data: Notices},
+              })
             }>
             수정
           </Button>

@@ -93,7 +93,7 @@ export default function CreateRoutineScreen({navigation, route}) {
         mode="contained"
         onPress={() => {
           onPost();
-          // navigation.navigate('MyRoutineListScreen');
+          // navigation.navigate('Home', {screen:'MyRoutineListScreen'});
           // navigator 인덱스 초기화하기
         }}>
         저장하기

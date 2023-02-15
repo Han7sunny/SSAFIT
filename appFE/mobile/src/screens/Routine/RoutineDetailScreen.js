@@ -95,7 +95,10 @@ export default function RoutineDetailScreen({route, navigation}) {
       {/* <Text>{routineTitle}</Text> */}
       <Button
         onPress={() =>
-          navigation.navigate('CreateRoutineScreen', {routineInfo: routineInfo})
+          navigation.navigate('Home', {
+            screen: 'CreateRoutineScreen',
+            params: {routineInfo: routineInfo},
+          })
         }>
         수정하기
       </Button>

@@ -61,9 +61,12 @@ export default function CommunitySimpleScreen({navigation}) {
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('CommunityScreen', {
-              community: 'QA',
-              state: false,
+            navigation.navigate('Community', {
+              screen: 'CommunityScreen',
+              params: {
+                community: 'QA',
+                state: false,
+              },
             })
           }>
           <Text style={styles.title}> 질문 게시판 </Text>
@@ -81,9 +84,12 @@ export default function CommunitySimpleScreen({navigation}) {
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('CommunityScreen', {
-              community: 'shareRoutine',
-              state: false,
+            navigation.navigate('Community', {
+              screen: 'CommunityScreen',
+              params: {
+                community: 'shareRoutine',
+                state: false,
+              },
             })
           }>
           <Text style={styles.title}>
@@ -96,9 +102,12 @@ export default function CommunitySimpleScreen({navigation}) {
             renderItem={({item}) => (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('RoutineArticleDetailScreen', {
-                    boardId: item.boardId,
-                    routineId: item.routineId,
+                  navigation.navigate('Community', {
+                    screen: 'RoutineArticleDetailScreen',
+                    params: {
+                      boardId: item.boardId,
+                      routineId: item.routineId,
+                    },
                   })
                 }>
                 <RoutineListItem routineId={item.routineId} name={item.title} />

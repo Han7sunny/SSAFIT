@@ -22,14 +22,13 @@ const year = date.getFullYear();
 export default function RecordScreen() {
   const days = [];
   const achievementRate = [];
-  const [recordData, setRecordData] = useState('');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [data, setData] = useState({
-    labels: ['전신', '상체', '하체'], // optional
+    labels: [], // optional
     datasets: [
       {
-        data: [80, 60, 70],
+        data: [0, 0, 0, 0, 0, 0, 0],
       },
     ],
   });
@@ -53,28 +52,27 @@ export default function RecordScreen() {
     if (accessToken === '') return;
 
     const getData = async () => {
-      // for (let i = 0; i <= 6; i++) {
-      await axios({
-        method: 'get',
-        url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${15}`,
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          'X-AUTH-TOKEN': `${accessToken}`,
-        },
-      })
-        .then(res => {
-          console.log('운동기록 : ', res.data);
-          // days.push(month + '/' + (today + i));
-          achievementRate.push(
-            res.data.length > 0 ? res.data.totalAchievementRate : 0,
-          );
-          console.log(days, achievementRate);
+      for (let i = 0; i <= 6; i++) {
+        await axios({
+          method: 'get',
+          url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${15}`,
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
         })
-        .catch(err => {
-          console.log('record screen 실패 ', err);
-        });
-
-      // }
+          .then(res => {
+            console.log('운동기록 : ', res.data);
+            days.push(month + '/' + (today + i));
+            achievementRate.push(
+              res.data.length > 0 ? res.data.totalAchievementRate : 0,
+            );
+            console.log(days, achievementRate);
+          })
+          .catch(err => {
+            console.log('record screen 실패 ', err);
+          });
+      }
       setData(pre =>
         Object.assign({}, pre, {
           labels: days,

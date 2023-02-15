@@ -69,7 +69,7 @@ export default function ArticleDetailScreen({navigation, route}) {
         },
       })
     ).data;
-    if (result) navigation.navigate('LoginScreen');
+    if (result) navigation.navigate('Home', {screen: 'LoginScreen'});
   };
   const deleteNotification = async id => {
     const result = (
@@ -105,7 +105,10 @@ export default function ArticleDetailScreen({navigation, route}) {
               padding: 5,
             }}
             onPress={() =>
-              navigation.navigate('ChangeImageScreen', {uri: photo})
+              navigation.navigate('MyPage', {
+                screen: 'ChangeImageScreen',
+                params: {uri: photo},
+              })
             }
           />
         </View>
@@ -124,7 +127,10 @@ export default function ArticleDetailScreen({navigation, route}) {
             iconColor={MD3Colors.error50}
             size={20}
             onPress={() =>
-              navigation.navigate('ChangePasswordScreen', {id: userId})
+              navigation.navigate('Home', {
+                screen: 'ChangePasswordScreen',
+                params: {id: userId},
+              })
             }
           />
         </View>
@@ -135,18 +141,14 @@ export default function ArticleDetailScreen({navigation, route}) {
         style={styles.button}
         labelStyle={styles.label}
         onPress={() =>
-          AsyncStorage.setItem(
-            'username',
-            JSON.stringify({
-              username: '',
-              id: '',
-              token: '',
-              role: '',
-            }),
-            () => {
-              Alert.alert('로그아웃', '로그아웃 되었습니다.');
-            },
-          )
+          AsyncStorage.removeItem('username', () => {
+            Alert.alert('로그아웃', '로그아웃 되었습니다.', [
+              {
+                test: '확인',
+                onPress: navigation.navigate('Home', {screen: 'LoginScreen'}),
+              },
+            ]);
+          })
         }>
         로그아웃
       </Button>
@@ -170,7 +172,10 @@ export default function ArticleDetailScreen({navigation, route}) {
               <Pressable
                 onPress={() => {
                   deleteNotification(item.notificationId);
-                  navigation.navigate('AddGroupScreen', {id: item.groupId});
+                  navigation.navigate('MyPage', {
+                    screen: 'AddGroupScreen',
+                    params: {id: item.groupId},
+                  });
                 }}>
                 <Text variant="titleMedium">{item.notificationMessage}</Text>
               </Pressable>
@@ -201,32 +206,43 @@ export default function ArticleDetailScreen({navigation, route}) {
                   {
                     switch (item.notification_type) {
                       case 1:
-                        navigation.navigate('ArticleDetailScreen', {
-                          id: item.id,
+                        navigation.navigate('Community', {
+                          screen: 'ArticleDetailScreen',
+                          params: {
+                            id: item.id,
+                          },
                         });
                         break; // 커뮤니티 질문글 댓글
                       case 2:
-                        navigation.navigate('RoutineArticleDetailScreen', {
-                          id: item.id,
+                        navigation.navigate('Community', {
+                          screen: 'RoutineArticleDetailScreen',
+                          params: {
+                            id: item.id,
+                          },
                         });
                         break; // 커뮤니티 루틴글 댓글
                       case 3:
-                        navigation.navigate('GroupListDetailScreen', {
-                          id: item.groupId,
-                          state: state,
+                        navigation.navigate('Group', {
+                          screen: 'GroupListDetailScreen',
+                          params: {
+                            id: item.groupId,
+                            state: state,
+                          },
                         });
                         break; // 그룹모집글 댓글
                       case 4:
-                        navigation.navigate('NoticeDetailScreen', {
-                          id: item.boardId,
+                        navigation.navigate('Notice', {
+                          screen: 'NoticeDetailScreen',
+                          params: {
+                            id: item.boardId,
+                          },
                         });
                         break; // 공지글 댓글
                       case 5:
-                        navigation.navigate('AddGroupScreen', {id: item.id});
+                        // navigation.navigate('', {screen:'AddGroupScreen', {id: item.id});
                         break; // 운동 안한경우 ->  오늘의 운동으로 이동
                     }
                   }
-                  // navigation.navigate('AddGroupScreen', {id: item.id})
                 }}>
                 <Text variant="titleMedium">{item.notificationMessage}</Text>
               </Pressable>

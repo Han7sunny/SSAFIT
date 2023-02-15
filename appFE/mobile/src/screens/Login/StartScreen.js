@@ -8,12 +8,12 @@ export default function StartScreen({navigation}) {
     <View>
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('LoginScreen')}>
+        onPress={() => navigation.navigate('Home', {screen: 'LoginScreen'})}>
         Login
       </Button>
       <Button
         mode="outlined"
-        onPress={() => navigation.navigate('RegisterScreen')}>
+        onPress={() => navigation.navigate('Home', {screen: 'RegisterScreen'})}>
         Sign Up
       </Button>
     </View>

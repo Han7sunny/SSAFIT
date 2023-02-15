@@ -136,11 +136,14 @@ export default function NoticeListScreen({navigation, route}) {
           <Pressable
             style={{flexDirection: 'row', height: 30, alignItems: 'center'}}
             onPress={() =>
-              navigation.navigate('NoticeDetailScreen', {
-                id: item.boardId,
+              navigation.navigate('Notice', {
+                screen: 'NoticeDetailScreen',
+                params: {
+                  id: item.boardId,
+                },
               })
             }>
-            <Text style={{flex: 2.5, fontSize: 20}}>[공지]{item.title}</Text>
+            <Text style={{flex: 2.5, fontSize: 20}}>{item.title}</Text>
             <Text style={{flex: 1, textAlign: 'center', fontSize: 17}}>
               {item.userName}
             </Text>
@@ -158,7 +161,10 @@ export default function NoticeListScreen({navigation, route}) {
           style={styles.button}
           labelStyle={styles.label}
           onPress={() => {
-            navigation.navigate('AddNoticeScreen', {data: false});
+            navigation.navigate('Notice', {
+              screen: 'AddNoticeScreen',
+              params: {data: false},
+            });
           }}>
           작성
         </Button>

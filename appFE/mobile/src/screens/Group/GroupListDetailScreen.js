@@ -80,7 +80,7 @@ export default function GroupDetailScreen({navigation, route}) {
       },
     });
     console.log(result);
-    // if (result) navigation.navigate('MainMyPageScreen');
+    // if (result) navigation.navigate('MyPage', {screen:'MainMyPageScreen'});
   };
   const deleteReply = isDelete => {
     console.log(isDelete);

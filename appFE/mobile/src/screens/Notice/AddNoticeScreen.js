@@ -38,7 +38,11 @@ export default function AddNoticeScreen({navigation, route}) {
         },
       },
     );
-    if (result) navigation.navigate('NoticeListScreen', {change: true});
+    if (result)
+      navigation.navigate('Notice', {
+        screen: 'NoticeListScreen',
+        params: {change: true},
+      });
   };
 
   const changeNotice = async () => {
@@ -59,7 +63,11 @@ export default function AddNoticeScreen({navigation, route}) {
         },
       },
     );
-    if (result) navigation.navigate('NoticeListScreen', {change: true});
+    if (result)
+      navigation.navigate('Notice', {
+        screen: 'NoticeListScreen',
+        params: {change: true},
+      });
   };
 
   return (

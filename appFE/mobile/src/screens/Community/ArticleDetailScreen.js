@@ -89,9 +89,12 @@ export default function ArticleDetailScreen({navigation, route}) {
         {
           text: '확인',
           onPress: () =>
-            navigation.navigate('CommunityScreen', {
-              community: 'QA',
-              state: true,
+            navigation.navigate('Community', {
+              screen: 'CommunityScreen',
+              params: {
+                community: 'QA',
+                state: true,
+              },
             }),
         },
       ]);
@@ -135,9 +138,12 @@ export default function ArticleDetailScreen({navigation, route}) {
             style={styles.button}
             labelStyle={styles.label}
             onPress={() =>
-              navigation.navigate('CreateArticleScreen', {
-                data: articleData,
-                categoryId: 2,
+              navigation.navigate('Community', {
+                screen: 'CreateArticleScreen',
+                params: {
+                  data: articleData,
+                  categoryId: 2,
+                },
               })
             }>
             수정

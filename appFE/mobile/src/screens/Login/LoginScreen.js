@@ -72,10 +72,7 @@ export default function LoginScreen({navigation}) {
                 {
                   text: '확인',
                   onPress: () =>
-                    navigation.reset({
-                      index: 0,
-                      routes: [{name: 'HomeScreen'}],
-                    }),
+                    navigation.navigate('Home', {screen: 'HomeScreen'}),
                 },
               ]);
             },
@@ -128,7 +125,9 @@ export default function LoginScreen({navigation}) {
 
       <View style={styles.forgotPassword}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('ResetPasswordScreen')}>
+          onPress={() =>
+            navigation.navigate('Home', {screen: 'ResetPasswordScreen'})
+          }>
           <Text style={[styles.forgot, {marginBottom: 24}]}>
             {' '}
             비밀번호를 잊으셨나요?{' '}
@@ -138,7 +137,10 @@ export default function LoginScreen({navigation}) {
 
       <View style={styles.row}>
         <Text> 계정이 없으신가요? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Home', {screen: 'RegisterScreen'})
+          }>
           <Text style={styles.link}> Sign Up </Text>
         </TouchableOpacity>
       </View>

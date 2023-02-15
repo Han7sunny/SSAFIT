@@ -20,7 +20,12 @@ export default function AddScreen({navigation, route}) {
         buttonColor="black"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={() => navigation.navigate('MainMyPageScreen', {state: true})}>
+        onPress={() =>
+          navigation.navigate('MyPage', {
+            screen: 'MainMyPageScreen',
+            params: {state: true},
+          })
+        }>
         마이페이지로 가기
       </Button>
     </View>

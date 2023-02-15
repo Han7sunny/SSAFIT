@@ -65,7 +65,11 @@ export default function MyGroupSimple({navigation, route}) {
         },
       })
     ).data;
-    if (result) navigation.navigate('MainMyPageScreen', {state: true});
+    if (result)
+      navigation.navigate('MyPage', {
+        screen: 'MainMyPageScreen',
+        params: {state: true},
+      });
   };
   return (
     <View>

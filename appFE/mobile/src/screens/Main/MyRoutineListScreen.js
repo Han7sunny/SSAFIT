@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {Text, Button, IconButton} from 'react-native-paper';
-import LogContext from '../../../contexts/LogContext';
 import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,30 +66,29 @@ export default function MyRoutineListScreen({navigation}) {
 
   return (
     <View>
-      <Text style={styles.title}> 나의 운동 루틴 목록 </Text>
       <Button
         mode="contained"
         onPress={() =>
-          navigation.navigate('CreateRoutineScreen', {data: false})
+          navigation.navigate('Home', {
+            screen: 'CreateRoutineScreen',
+            params: {data: false},
+          })
         }>
         운동 루틴 만들기
       </Button>
-      <FlatList
-        data={routineData}
-        style={{height: 640}}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('RoutineDetailScreen', {
+      {routineData.map(item => (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Home', {
+              screen: 'RoutineDetailScreen',
+              params: {
                 id: item.routineId,
-              })
-            }>
-            <RoutineSimpleScreen id={item.routineId} />
-          </TouchableOpacity>
-        )}
-        keyExtractor={item => item.reply_id}
-      />
+              },
+            })
+          }>
+          <RoutineSimpleScreen id={item.routineId} />
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
