@@ -162,7 +162,6 @@ export default function NoticeDetailScreen({navigation, route}) {
           </View>
         </View>
         <View>
-          <Text>내용</Text>
           <Text>{Notices.content}</Text>
         </View>
       </View>

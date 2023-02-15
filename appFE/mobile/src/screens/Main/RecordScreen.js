@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
 // import Constants from 'expo-constants';
-import {ProgressChart, BarChart} from 'react-native-chart-kit';
+import {BarChart} from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -9,34 +9,30 @@ const screenWidth = Dimensions.get('window').width - 1;
 const chartConfig = {
   backgroundColor: '#1cc910',
   backgroundGradientFrom: '#eff3ff',
-  // backgroundGradientFromOpacity: 0,
-  // backgroundGradientFrom: '#7ff591',
   backgroundGradientTo: '#efefef',
-  // backgroundGradientToOpacity: 0.5,
   decimalPlaces: 2,
   color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-  // strokeWidth: 2, // optional, default 3
-  // barPercentage: 0.5,
-  // useShadowColorFromDataset: false // optional
 };
 
-const data = {
-  labels: ['전신', '상체', '하체'], // optional
-  datasets: [
-    {
-      data: [80, 60, 70],
-    },
-  ],
-};
 const date = new Date();
-const today = date.getDate();
+const today = date.getDate() - 6;
 const month = date.getMonth() + 1;
 const year = date.getFullYear();
 
 export default function RecordScreen() {
+  const days = [];
+  const achievementRate = [];
   const [recordData, setRecordData] = useState('');
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [data, setData] = useState({
+    labels: ['전신', '상체', '하체'], // optional
+    datasets: [
+      {
+        data: [80, 60, 70],
+      },
+    ],
+  });
   // componentDidMount(() => {
   const [ip, setIP] = useState('');
   // 마운팅 될때 한번만 실행
@@ -55,21 +51,42 @@ export default function RecordScreen() {
   useEffect(() => {
     // axios 요청 보내기
     if (accessToken === '') return;
-    axios({
-      method: 'get',
-      url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${today}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'X-AUTH-TOKEN': `${accessToken}`,
-      },
-    })
-      .then(res => {
-        console.log('운동기록 : ', res.data);
-        setRecordData(res.data);
+
+    const getData = async () => {
+      // for (let i = 0; i <= 6; i++) {
+      await axios({
+        method: 'get',
+        url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${15}`,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
       })
-      .catch(err => {
-        console.log('record screen 실패 ', err);
-      });
+        .then(res => {
+          console.log('운동기록 : ', res.data);
+          // days.push(month + '/' + (today + i));
+          achievementRate.push(
+            res.data.length > 0 ? res.data.totalAchievementRate : 0,
+          );
+          console.log(days, achievementRate);
+        })
+        .catch(err => {
+          console.log('record screen 실패 ', err);
+        });
+
+      // }
+      setData(pre =>
+        Object.assign({}, pre, {
+          labels: days,
+          datasets: [
+            {
+              data: achievementRate,
+            },
+          ],
+        }),
+      );
+    };
+    getData();
   }, [accessToken]);
 
   return (
@@ -87,7 +104,7 @@ export default function RecordScreen() {
       <BarChart
         style={{marginVertical: 8, borderRadius: 16}}
         data={data}
-        width={screenWidth}
+        width={screenWidth - 50}
         height={220}
         yAxisLabel={'%'}
         chartConfig={chartConfig}

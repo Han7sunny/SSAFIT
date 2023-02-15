@@ -123,10 +123,33 @@ export default function ArticleDetailScreen({navigation, route}) {
             icon="cog"
             iconColor={MD3Colors.error50}
             size={20}
-            onPress={() => navigation.navigate('ChangePasswordScreen')}
+            onPress={() =>
+              navigation.navigate('ChangePasswordScreen', {id: userId})
+            }
           />
         </View>
       </View>
+      <Button
+        mode="contained"
+        buttonColor="red"
+        style={styles.button}
+        labelStyle={styles.label}
+        onPress={() =>
+          AsyncStorage.setItem(
+            'username',
+            JSON.stringify({
+              username: '',
+              id: '',
+              token: '',
+              role: '',
+            }),
+            () => {
+              Alert.alert('로그아웃', '로그아웃 되었습니다.');
+            },
+          )
+        }>
+        로그아웃
+      </Button>
       <View>
         <IconButton
           icon={

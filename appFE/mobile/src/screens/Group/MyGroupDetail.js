@@ -8,7 +8,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import {Button, Text, Avatar} from 'react-native-paper';
+import {Button, Text, Avatar, ProgressBar} from 'react-native-paper';
 import MemberScreen from './MemberScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -86,6 +86,7 @@ export default function MyGroupSimple({navigation, route}) {
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
+            {/* <ProgressBar progress={item.goal / 100.0} color="red" /> */}
             {/* <Text
               style={{
                 marginLeft: 30,

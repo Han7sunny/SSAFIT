@@ -61,7 +61,13 @@ export default function MyGroupListScreen({navigation, route}) {
         buttonColor="black"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={() => navigation.navigate('CreateGroupScreen', {data: false})}>
+        onPress={() =>
+          navigation.navigate(
+            'Group',
+            // {screen: 'CreateGroupScreen'},
+            // {data: false},
+          )
+        }>
         그룹 생성하기
       </Button>
     </View>

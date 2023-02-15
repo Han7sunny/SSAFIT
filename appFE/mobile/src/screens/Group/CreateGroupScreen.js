@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RoutineInput from '../../components/RoutineInput';
 
 export default function CreateGroupScreen({navigation, route}) {
-  const data = route.params.data;
+  const data = route === false ? false : route.params.data;
   let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
   const [routineName, setRoutineName] = useState('');
   const [userId, setUserId] = useState('');
@@ -180,10 +180,13 @@ export default function CreateGroupScreen({navigation, route}) {
   };
 
   const createGroup = async () => {
-    setData(pre => Object.assign({}, pre, {title: ''}));
-    const result = await axios.post(
-      `${ip}/group/regist`,
-      {
+    console.log('id', data.groupId);
+    await axios({
+      method: data === false ? 'post' : 'put',
+      url:
+        `${ip}/group/` +
+        (data === false ? `regist` : `recruit/${data.groupId}`),
+      data: {
         categoryId: isEnabled ? Number(4) : Number(0),
         content: Data.content,
         currentMember: Number(Data.member ? Data.member.length : 0),
@@ -202,18 +205,17 @@ export default function CreateGroupScreen({navigation, route}) {
         title: Data.title,
         userId: userId,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'X-AUTH-TOKEN': `${accessToken}`,
-        },
+
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
       },
-    );
-    console.log(result);
-    if (result)
+    }).then(res => {
       navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen', {
         change: true,
-      });
+      }),
+        setData(pre => Object.assign({}, pre, {title: ''}));
+    });
   };
 
   const [Lists, setLists] = useState([]);

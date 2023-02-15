@@ -10,19 +10,14 @@ import {
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ChangePasswordScreen({navigation}) {
+export default function ChangePasswordScreen({navigation, route}) {
   const [password, setPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
-  const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
       const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
       setIP(UserInfo.ip);
-    });
-    AsyncStorage.getItem('username', (err, result) => {
-      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
-      setAccessToken(UserInfo.token);
     });
   }, []);
 
@@ -38,18 +33,10 @@ export default function ChangePasswordScreen({navigation}) {
       return;
     }
     const result = (
-      await axios.put(
-        `${ip}/user/change-password`,
-        {
-          password: password.value,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'X-AUTH-TOKEN': `${accessToken}`,
-          },
-        },
-      )
+      await axios.put(`${ip}/user/change-password`, {
+        password: password.value,
+        id: route.params.id,
+      })
     ).data.success;
     console.log(result);
   };

@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {TouchableOpacity, StyleSheet, View, Alert} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, Modal} from 'react-native-paper';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import {theme} from '../../components/theme';
@@ -9,7 +9,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen({navigation}) {
   const [id, setId] = useState({value: '', error: ''});
+  const [findId, setFindId] = useState('');
   const [password, setPassword] = useState({value: '', error: ''});
+  const [email, setEmail] = useState({value: '', error: ''});
   const [ip, setIP] = useState('');
   // 마운팅 될때 한번만 실행
   useEffect(() => {
@@ -30,6 +32,14 @@ export default function LoginScreen({navigation}) {
     }
     isLogin();
   });
+
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const showModal = () => {
+    setIsOpenModal(true);
+  };
+  const hideModal = () => {
+    setIsOpenModal(false);
+  };
 
   const onLoginPressed = () => {
     axios({
@@ -84,7 +94,7 @@ export default function LoginScreen({navigation}) {
   };
 
   return (
-    <View>
+    <View style={{height: '100%'}}>
       <Text style={styles.header}>SSAFIT</Text>
       <TextInput
         label="ID"
@@ -108,9 +118,21 @@ export default function LoginScreen({navigation}) {
       </Button>
 
       <View style={styles.forgotPassword}>
+        <TouchableOpacity onPress={() => showModal()}>
+          <Text style={[styles.forgot, {marginBottom: 5}]}>
+            {' '}
+            아이디를 잊으셨나요?{' '}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.forgotPassword}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ResetPasswordScreen')}>
-          <Text style={styles.forgot}> 비밀번호를 잊으셨나요? </Text>
+          <Text style={[styles.forgot, {marginBottom: 24}]}>
+            {' '}
+            비밀번호를 잊으셨나요?{' '}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -120,6 +142,44 @@ export default function LoginScreen({navigation}) {
           <Text style={styles.link}> Sign Up </Text>
         </TouchableOpacity>
       </View>
+      <Modal
+        presentationStyle={'FullScreen'}
+        visible={isOpenModal}
+        onDismiss={hideModal}
+        contentContainerStyle={{backgroundColor: 'white', height: 300}}>
+        {findId === '' && (
+          <View>
+            <Text>아이디 찾기</Text>
+            <TextInput
+              label="Email"
+              value={email.value}
+              onChangeText={text => setEmail({value: text, error: ''})}
+              error={!!email.error}
+              errorText={email.error}
+            />
+            <Button
+              mode="contained"
+              onPress={() => {
+                axios
+                  .post(`${ip}/user/findId`, {
+                    email: email.value,
+                  })
+                  .then(res => {
+                    setFindId(res.data);
+                    console.log(res.data);
+                  });
+              }}>
+              확인
+            </Button>
+          </View>
+        )}
+        {findId !== '' && (
+          <View>
+            <Text>ID</Text>
+            <Text>{findId}</Text>
+          </View>
+        )}
+      </Modal>
     </View>
   );
 }
@@ -128,7 +188,6 @@ const styles = StyleSheet.create({
   forgotPassword: {
     width: '100%',
     alignItems: 'flex-end',
-    marginBottom: 24,
   },
   row: {
     flexDirection: 'row',
