@@ -90,17 +90,17 @@ public class ReplyServiceImpl implements ReplyService{
 
         if(categoryId == 1) {
             message = "(공지글) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
-            notificationType = 3;
+            notificationType = 4;
         } else if(categoryId == 2) {
             message = "(질문글) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
             notificationType = 1;
         } else if(categoryId == 3) {
             message = "(루틴 공유) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
-            notificationType = 1;
+            notificationType = 2;
         } else {
             message = "(그룹 모집) " + board.getTitle() + "글에 " + user.getName() + "님이 댓글을 달았습니다.";
             group = board.getGroup();
-            notificationType = 2;
+            notificationType = 3;
         }
 
         Notification notification = Notification.builder()

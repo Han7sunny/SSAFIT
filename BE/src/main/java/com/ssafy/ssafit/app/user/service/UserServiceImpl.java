@@ -182,9 +182,9 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void userJoin(UserJoinReqDto userJoinReqDto, MultipartFile file) throws Exception{
-//        String path = uploadImage(file);
-//        String encPath = path.replace("\\", "/");
-//        String encValue = saveFaceEncoding(encPath);
+        String path = uploadImage(file);
+        String encPath = path.replace("\\", "/");
+        String encValue = saveFaceEncoding(encPath);
 
         User user = User.builder()
                 .id(userJoinReqDto.getId())
@@ -193,8 +193,8 @@ public class UserServiceImpl implements UserService{
                 .email(userJoinReqDto.getEmail())
                 .photo("")
                 .photoEncoding("")
-//                .photo(path)
-//                .photoEncoding(encValue)
+                .photo(path)
+                .photoEncoding(encValue)
                 .onOff(false)
                 .role(Role.USER).roles(Collections.singletonList("ROLE_USER")) // 회원가입하는 모든 회원 권한 : USER
                 .build();
@@ -257,15 +257,15 @@ public class UserServiceImpl implements UserService{
             if(type == 0)
                 toAdd.setGroupId(notification.getGroup().getId());
 
-            else if(type == 1)
+            else if(type == 1 || type == 2)
                 toAdd.setBoardId(notification.getBoard().getId());
 
-            else if(type == 2){
+            else if(type == 3){
                 toAdd.setGroupId(notification.getGroup().getId());
                 toAdd.setBoardId(notification.getBoard().getId());
             }
 
-            else if(type == 3)
+            else if(type == 4)
                 toAdd.setBoardId(notification.getBoard().getId());
 
             else

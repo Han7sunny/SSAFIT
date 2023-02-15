@@ -8,9 +8,7 @@ import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.app.user.dto.CustomUserDetails;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.*;
 import com.ssafy.ssafit.mirror.service.MirrorService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,8 +119,8 @@ public class MirrorController {
     public ResponseEntity<?> startOutOfRoutine(@RequestBody MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto, @AuthenticationPrincipal CustomUserDetails user) {
         try {
             mirrorRecordGenerateReqDto.setUserId(user.getUser().getId());
-            Long recordDetailId = mirrorService.startOutOfRoutine(mirrorRecordGenerateReqDto);
-            return new ResponseEntity<Long>(recordDetailId, HttpStatus.OK);
+            MirrorOutOfRoutineRespDto mirrorOutOfRoutineRespDto = mirrorService.startOutOfRoutine(mirrorRecordGenerateReqDto);
+            return new ResponseEntity<MirrorOutOfRoutineRespDto>(mirrorOutOfRoutineRespDto, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
@@ -198,4 +196,25 @@ public class MirrorController {
         }
     }
 
+    @PutMapping("/update-challenge-time")
+    @ApiOperation(value = "챌린지 모드 시간 갱신", notes = "챌린지 모드 결과를 갱신합니다.", response = CommonResp.class)
+    public ResponseEntity<?> updateChallengeTime(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("time") long time) {
+        try {
+            mirrorService.updateChallengeTime(user.getUser().getId(), time);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/get-challenge-time")
+    @ApiOperation(value = "챌린지 모드 순위 정보", notes = "챌린지 모드 순위 정보를 받아옵니다.", response = MirrorChallengeTimeRespDto.class)
+    public ResponseEntity<?> getChallengeTime(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            MirrorChallengeTimeRespDto mirrorChallengeTimeRespDto = mirrorService.getChallengeTime(user.getUser().getId());
+            return new ResponseEntity<MirrorChallengeTimeRespDto>(mirrorChallengeTimeRespDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

@@ -30,6 +30,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
@@ -77,6 +78,7 @@ public class GroupController {
             status = HttpStatus.OK;
         return new ResponseEntity<List<GroupRespDto>>(myGroupList, status);
     }
+
 
         //  그룹 현황 보기
     //  그룹 초대 받았을 때 확인 가능
@@ -127,6 +129,7 @@ public class GroupController {
     }
 
     // 그룹 생성 -> 그룹 모집글 작성 시 그룹 생성됨
+    @Transactional
     @PostMapping(value = "/regist")
     @ApiOperation(value = "그룹 생성", notes = "입력한 정보로 새로운 그룹을 생성한다. 그룹 모집글의 경우 자동으로 그룹 생성")
     public ResponseEntity<Boolean> registGroup(@ApiParam(value = "그룹 정보", required = true) @RequestBody GroupReqDto group, @AuthenticationPrincipal CustomUserDetails user) throws Exception {
@@ -135,7 +138,7 @@ public class GroupController {
         group.setUserId(userId);
         Group newGroup = new Group(group);
         newGroup.setPeriod(Period.between(group.getStartDate(), group.getEndDate()).getDays() + 1);
-        newGroup.setCurrentMember(group.getGroupMemberId().size());
+        newGroup.setCurrentMember(group.getGroupMemberId().size() + 1);
 
         // 그룹 생성  ( + 루틴 설정)
 //        Group registedGroup = groupService.regist(group);

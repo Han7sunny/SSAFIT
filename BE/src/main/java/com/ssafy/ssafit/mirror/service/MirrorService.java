@@ -6,9 +6,7 @@ import com.ssafy.ssafit.app.record.dto.req.RecordRegisterReqDto;
 import com.ssafy.ssafit.app.record.dto.resp.RecordDetailInfoRespDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,7 +20,7 @@ public interface MirrorService {
 
     Long startBasicRoutine(RecordRegisterReqDto recordRegisterReqDto);
 
-    Long startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
+    MirrorOutOfRoutineRespDto startOutOfRoutine(MirrorRecordGenerateReqDto mirrorRecordGenerateReqDto);
 
     void startExercise(LocalDateTime startTime, Long recordId, String userId);
 
@@ -39,4 +37,8 @@ public interface MirrorService {
     String mirrorLogin(String id);
 
     MirrorMyPageRespDto getMyPageInfo(String id) throws Exception;
+
+    void updateChallengeTime(String id, long time);
+
+    MirrorChallengeTimeRespDto getChallengeTime(String id);
 }

@@ -65,9 +65,9 @@ public class UserController {
 //    })
     @PostMapping("/findId")
     @ApiOperation(value = "아이디 찾기", notes = "입력한 회원 이메일에 해당하는 아이디를 반환한다.", response = String.class)
-    public ResponseEntity<String> findId(@PathVariable("email") String email){
-        LOGGER.info("[Enter] findId email : {} ", email);
-        User user = userService.findId(email);
+    public ResponseEntity<String> findId(@RequestBody UserJoinReqDto info){
+        LOGGER.info("[Enter] findId email : {} ", info.getEmail());
+        User user = userService.findId(info.getEmail());
         HttpStatus status = HttpStatus.NO_CONTENT;
         if(user != null)
             status = HttpStatus.OK;
@@ -179,15 +179,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/password-verification")
+    @PostMapping("/password-verification")
     @ApiOperation(value = "비밀번호 유효성 검사",
             notes = "유효한 비밀번호인 경우 true, 아닐 경우 false 반환\n" +
             "비밀번호 조건 : 영문자, 숫자, 특수기호가 최소한 하나씩 들어간 8 ~ 16자리 비밀번호",
             response = CommonResp.class)
-    public ResponseEntity<?> passwordCheck(@RequestParam String password) {
-        LOGGER.info("[Enter] passwordCheck password : {} ", password);
+    public ResponseEntity<?> passwordCheck(@RequestBody UserJoinReqDto info) {
+        LOGGER.info("[Enter] passwordCheck password : {} ", info.getPassword());
         try {
-            boolean validation = userService.passwordCheck(password);
+            boolean validation = userService.passwordCheck(info.getPassword());
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(validation)).build(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
@@ -247,13 +247,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("/create-code")
+    @PostMapping("/create-code")
     @ApiOperation(value = "이메일 인증 시 이메일로 인증코드 발송 기능",
             notes = "입력받은 이메일로 인증코드를 보냅니다. 반환받은 id값은 입력받은 인증코드를 확인할 때 사용합니다.",
             response = CommonResp.class)
-    private ResponseEntity<?> createCode(@RequestParam("email") String email) {
+    private ResponseEntity<?> createCode(@RequestBody Map<String, String> info) {
         LOGGER.info("[Enter] createCode");
         try {
+            String email = info.get("email");
             String id = userService.createCode(email);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(id).build(), HttpStatus.OK);
         } catch(Exception e) {
@@ -262,13 +263,15 @@ public class UserController {
         }
     }
 
-    @GetMapping("/check-code")
+    @PostMapping("/check-code")
     @ApiOperation(value = "이메일 인증 시 인증코드 검증 기능",
             notes = "id값은 이메일을 보낼 때 반환받은 값, 코드는 메일에 입력된 값을 사용합니다.",
             response = CommonResp.class)
-    private ResponseEntity<?> checkCode(@RequestParam("code") String code,@RequestParam("id") String id) {
+    private ResponseEntity<?> checkCode(@RequestBody Map<String, String> info) {
         LOGGER.info("[Enter] checkCode");
         try {
+            String code = info.get("code");
+            String id = info.get("id");
             boolean check = userService.checkCode(code, id);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf(check)).build(), HttpStatus.OK);
         } catch (Exception e) {
