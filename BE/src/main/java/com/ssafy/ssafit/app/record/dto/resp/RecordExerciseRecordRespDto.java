@@ -13,12 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 public class RecordExerciseRecordRespDto {
 
-    private double totalAchievementRate;
+    private double totalAchievementRate; // 최근값 .. 오늘의 달성률
+
     private Long routineId;
 
     private String routineName;
 
-    private Double achievementRate;
+    private Double achievementRate; //
 
     private List<ExerciseDetail> exerciseDetailList;
 

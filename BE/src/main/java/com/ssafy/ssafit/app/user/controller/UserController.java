@@ -214,11 +214,11 @@ public class UserController {
             notes = "유저의 아이디와 바꿀 비밀번호 정보를 통해 비밀번호를 변경" +
             "{ password : String } 형태의 데이터 필요",
             response = CommonResp.class)
-    public ResponseEntity<?> changePassword(@AuthenticationPrincipal CustomUserDetails user, @RequestBody Map<String, String> password) {
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> password) {
         LOGGER.info("[Enter] changePassword");
         try {
             Map<String, String> idPwd = new HashMap<>();
-            idPwd.put("id", user.getUser().getId());
+            idPwd.put("id", password.get("id"));
             idPwd.put("password", password.get("password"));
             userService.changePassword(idPwd);
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("변경 성공").build(), HttpStatus.OK);
