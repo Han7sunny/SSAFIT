@@ -25,12 +25,10 @@ import com.ssafy.ssafit.app.user.entity.User;
 import com.ssafy.ssafit.app.user.repository.UserRepository;
 import com.ssafy.ssafit.mirror.dto.req.MirrorRecordGenerateReqDto;
 import com.ssafy.ssafit.mirror.dto.req.MirrorUpdateRecordReqDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorFaceEncodingRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorMyPageRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorOutOfRoutineRespDto;
-import com.ssafy.ssafit.mirror.dto.resp.MirrorRoutineRespDto;
+import com.ssafy.ssafit.mirror.dto.resp.*;
 import com.ssafy.ssafit.util.FileMultipartFileConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -319,6 +317,41 @@ public class MirrorServiceImpl implements MirrorService{
                 .build();
 
         return mirrorMyPageRespDto;
+    }
+
+    @Override
+    public void updateChallengeTime(String id, long time) {
+        User user = userRepository.findById(id).get();
+        if(user.getChallengeRecordTime() == null || user.getChallengeRecordTime() > time) {
+
+            userRepository.updateChallengeTime(id, time);
+        }
+    }
+
+    @Override
+    public MirrorChallengeTimeRespDto getChallengeTime(String id) {
+        List<User> userList = userRepository.findAll(Sort.by(Sort.Direction.ASC, "challengeRecordTime"));
+
+        List<MirrorChallengeTimeRespDto.RankInfo> rankInfoList = new ArrayList<>();
+        for (User user : userList) {
+            if(user.getChallengeRecordTime() != null) {
+                MirrorChallengeTimeRespDto.RankInfo rankInfo = MirrorChallengeTimeRespDto.RankInfo.builder()
+                        .userName(user.getName())
+                        .recordTime(user.getChallengeRecordTime())
+                        .build();
+
+                rankInfoList.add(rankInfo);
+            }
+        }
+
+        User user = userRepository.findById(id).get();
+
+        MirrorChallengeTimeRespDto mirrorChallengeTimeRespDto = MirrorChallengeTimeRespDto.builder()
+                .myRecordTime(user.getChallengeRecordTime())
+                .rankInfoList(rankInfoList)
+                .build();
+
+        return mirrorChallengeTimeRespDto;
     }
 
     private MirrorRoutineRespDto generateRoutineRespDto(Long recordId, Routine routine) {
