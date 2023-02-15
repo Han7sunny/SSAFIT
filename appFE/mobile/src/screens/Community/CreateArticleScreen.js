@@ -103,18 +103,20 @@ export default function CreateArticleScreen({navigation, route}) {
   ];
   return (
     <ScrollView>
-      <SelectList
-        data={category}
-        save="key"
-        placeholder="글 타입 선택"
-        setSelected={value => setCategoryId(value)}
-        defaultOption={{
-          key: categoryId,
-          value: categoryId === 2 ? '질문' : '루틴 공유',
-        }}
-      />
-      <View>
-        <Text variant="titleLarge" style={{margin: 10}}>
+      <View style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}>
+        <SelectList
+          data={category}
+          save="key"
+          placeholder="글 타입 선택"
+          setSelected={value => setCategoryId(value)}
+          defaultOption={{
+            key: categoryId,
+            value: categoryId === 2 ? '질문' : '루틴 공유',
+          }}
+        />
+      </View>
+      <View style={{ margin: 10 }}>
+        <Text variant="titleLarge" style={{margin: 10 }}>
           제목
         </Text>
         <TextInput
@@ -125,20 +127,22 @@ export default function CreateArticleScreen({navigation, route}) {
             console.log(title);
             if (isEnabled) file.current.focus();
           }}
+          style={{ borderRadius: 15, borderTopEndRadius: 15, borderTopStartRadius: 15 }}
         />
-        <Text variant="titleLarge" style={{margin: 10}}>
+        <Text variant="titleLarge" style={{margin: 10, marginTop: 20}}>
           내용
         </Text>
         <TextInput
           value={content}
-          multiline
+          multiline={true}
           textAlignVertical="top"
-          style={{height: 300, maxHeight: 500}}
+          style={{ height: 300, maxHeight: 500, borderRadius: 15, borderTopEndRadius: 15, borderTopStartRadius: 15 }}
           onChangeText={value => setContent(value)}
           returnKeyType="next"
           onSubmitEditing={() => {
             console.log(content);
           }}
+          
         />
         {categoryId === 3 && (
           <View style={styles.centeredView}>
@@ -150,7 +154,7 @@ export default function CreateArticleScreen({navigation, route}) {
                 setSelectedRoutine(Number(key)),
                   console.log('selected :', selectedroutine);
               }}
-              onSelect={() => alert(selectedroutine)}
+              onSelect={() => alert(selectedroutine, '번 루틴을 선택하셨습니다.')}
             />
           </View>
         )}
@@ -161,7 +165,7 @@ export default function CreateArticleScreen({navigation, route}) {
           alignItems: 'center',
           alignSelf: 'center',
         }}>
-        <Text>공유</Text>
+        <Text>비공개</Text>
         <Checkbox
           status={share ? 'checked' : 'unchecked'}
           onPress={() => {

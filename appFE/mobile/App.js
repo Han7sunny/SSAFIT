@@ -254,9 +254,9 @@ function App() {
     'ip',
     JSON.stringify({
       // ip: 'http://192.168.35.75:8090/api', // 집
-      ip: 'http://70.12.246.83:8090/api', // 싸피
+      // ip: 'http://70.12.246.83:8090/api', // 싸피
       // ip: 'http://192.168.0.13:8090/api', // 롯l데
-      // ip: 'https://i8a204.p.ssafy.io/api', // aws
+      ip: 'http://i8a204.p.ssafy.io:8080/api', // aws
     }),
     () => {
       console.log('ip등록성공');
