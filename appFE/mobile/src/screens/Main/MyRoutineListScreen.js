@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import {Text, Button, IconButton} from 'react-native-paper';
@@ -5,7 +6,8 @@ import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MyRoutineListScreen({navigation}) {
+export default function MyRoutineListScreen() {
+  const navigation = useNavigation();
   const [change, setChange] = useState(false);
   const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
@@ -68,6 +70,9 @@ export default function MyRoutineListScreen({navigation}) {
     <View>
       <Button
         mode="contained"
+        style={styles.button}
+        labelStyle={styles.label}
+        buttonColor="#29b6f6"
         onPress={() =>
           navigation.navigate('Home', {
             screen: 'CreateRoutineScreen',
@@ -78,6 +83,7 @@ export default function MyRoutineListScreen({navigation}) {
       </Button>
       {routineData.map(item => (
         <TouchableOpacity
+          style={{alignItems: 'center', width: '100%', margin: 0}}
           onPress={() =>
             navigation.navigate('Home', {
               screen: 'RoutineDetailScreen',
@@ -94,7 +100,15 @@ export default function MyRoutineListScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 40,
+  button: {
+    width: '95%',
+    height: 40,
+    borderRadius: 10,
+    alignSelf: 'center',
+    color: '#29b6f6',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

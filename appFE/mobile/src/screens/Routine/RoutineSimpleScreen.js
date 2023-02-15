@@ -4,10 +4,9 @@ import {View, Image, StyleSheet} from 'react-native';
 import {Text, IconButton, MD3Colors} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function RoutineSimpleScreen({navigation, id}) {
+export default function RoutineSimpleScreen({id}) {
   const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
-  const [Select, setSelect] = useState(false);
   const [item, setItem] = useState({});
   const [exercises, setExercises] = useState([]);
 
@@ -103,7 +102,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     // marginVertical: 30,
     borderRadius: 5,
-    marginBottom: 0.5,
+    marginBottom: 2,
+    alignSelf: 'center',
   },
   routineName: {
     fontSize: 20,

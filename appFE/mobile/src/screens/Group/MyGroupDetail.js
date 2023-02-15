@@ -16,8 +16,6 @@ import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function MyGroupSimple({navigation, route}) {
   const id = route.params.id;
-  console.log(id);
-
   const [userId, setUserId] = useState('');
   const [role, setRole] = useState('USER1');
   const [accessToken, setAccessToken] = useState('');
@@ -41,7 +39,6 @@ export default function MyGroupSimple({navigation, route}) {
     getData();
   }, [id, accessToken]);
   const getData = async () => {
-    console.log(ip, accessToken);
     if (accessToken === '') return;
     const data = (
       await axios.get(`${ip}/group/${id}`, {
@@ -54,7 +51,6 @@ export default function MyGroupSimple({navigation, route}) {
     setItem(data);
     setMembers(data.groupMemberList);
     setRoutines(data.routineList);
-    console.log('data', data);
   };
   const deleteGroup = async () => {
     const result = (
@@ -82,14 +78,18 @@ export default function MyGroupSimple({navigation, route}) {
           </Text>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
-            <Text style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              운동 기간
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
               {item.start_date} ~ {item.end_date}
             </Text>
           </View>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 목표
+            </Text>
             {/* <ProgressBar progress={item.goal / 100.0} color="red" /> */}
             {/* <Text
               style={{
@@ -113,20 +113,24 @@ export default function MyGroupSimple({navigation, route}) {
           </View>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
-            <Text style={{marginLeft: 12, paddingLeft: 20, borderLeftWidth: 2}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 패널티
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
               {item.penalty}
             </Text>
           </View>
 
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontSize: 20, fontWeight: 600}}>그룹 달성률</Text>
-            <Text style={{marginLeft: 12, paddingLeft: 20, borderLeftWidth: 2}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 달성률
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
               {item.totalResult}
             </Text>
           </View>
 
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
+          <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>그룹원</Text>
           {Members.map(item => (
             <MemberScreen member={item} />
           ))}

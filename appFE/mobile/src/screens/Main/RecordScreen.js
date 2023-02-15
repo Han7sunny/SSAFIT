@@ -10,7 +10,8 @@ const chartConfig = {
   backgroundColor: '#1cc910',
   backgroundGradientFrom: '#eff3ff',
   backgroundGradientTo: '#efefef',
-  decimalPlaces: 2,
+  decimalPlaces: 1,
+  strokeWidth: 2,
   color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
 };
 
@@ -20,10 +21,8 @@ const month = date.getMonth() + 1;
 const year = date.getFullYear();
 
 export default function RecordScreen() {
-  const days = [];
-  const achievementRate = [];
-  const [userId, setUserId] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
   const [data, setData] = useState({
     labels: [], // optional
     datasets: [
@@ -32,8 +31,6 @@ export default function RecordScreen() {
       },
     ],
   });
-  // componentDidMount(() => {
-  const [ip, setIP] = useState('');
   // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -43,19 +40,22 @@ export default function RecordScreen() {
     //  사용자 정보 가져오기
     AsyncStorage.getItem('username', (err, result) => {
       const UserInfo = JSON.parse(result);
-      setUserId(UserInfo.id);
       setAccessToken(UserInfo.token);
     });
   }, []);
   useEffect(() => {
     // axios 요청 보내기
     if (accessToken === '') return;
+    const days = [];
+    const achievementRate = [];
 
     const getData = async () => {
       for (let i = 0; i <= 6; i++) {
         await axios({
           method: 'get',
-          url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${15}`,
+          url: `${ip}/record/get-exercise-record?year=${year}&month=${month}&day=${
+            today + i
+          }`,
           headers: {
             authorization: `Bearer ${accessToken}`,
             'X-AUTH-TOKEN': `${accessToken}`,
@@ -90,23 +90,15 @@ export default function RecordScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> 오늘의 운동 달성률 </Text>
-      {/* <ProgressChart
-        data={data}
-        width={Dimensions.get('window').width - 16}
-        height={220}
-        strokeWidth={16}
-        radius={32}
-        chartConfig={chartConfig}
-        hideLegend={false}
-      /> */}
       <BarChart
         style={{marginVertical: 8, borderRadius: 16}}
         data={data}
-        width={screenWidth - 50}
+        width={screenWidth - 30}
         height={220}
         yAxisLabel={'%'}
         chartConfig={chartConfig}
-        verticalLabelRotation={30}
+        verticalLabelRotation={20}
+        showValuesOnTopOfBars={true}
       />
     </View>
   );
@@ -123,6 +115,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   title: {
+    color: '#000',
     fontSize: 30,
   },
 });
