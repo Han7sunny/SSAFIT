@@ -328,32 +328,27 @@ public class UserServiceImpl implements UserService{
         return null;
     }
 
-    public String saveFaceEncoding(String path) {
+    public String saveFaceEncoding(String path) throws Exception {
         String arg1 = "/home/ubuntu/python/faceEncoding.py";
         ProcessBuilder builder = new ProcessBuilder("python3", arg1, path);
 
-        try {
-            builder.redirectErrorStream(true);
-            Process process = builder.start();
-            int exitval = process.waitFor();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 
-            StringBuilder sb = new StringBuilder();
+        builder.redirectErrorStream(true);
+        Process process = builder.start();
+        int exitval = process.waitFor();
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
 
-            String line;
-            while((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+        StringBuilder sb = new StringBuilder();
 
-            if(exitval != 0) {
-                System.out.println("비정상 종료");
-            }
-
-            return sb.toString();
-
-        } catch (Exception e) {
-            System.out.println("오류");
-            return "오류";
+        String line;
+        while((line = br.readLine()) != null) {
+            sb.append(line);
         }
+
+        if(exitval != 0) {
+            System.out.println("비정상 종료");
+        }
+
+        return sb.toString();
     }
 }
