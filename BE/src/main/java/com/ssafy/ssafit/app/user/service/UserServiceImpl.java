@@ -130,13 +130,13 @@ public class UserServiceImpl implements UserService{
     @Override
     public void modifyFaceAuth(MultipartFile image, String id) throws Exception {
         String path = uploadImage(image);
-        String encPath = path.replace("\\", "/");
-        String encValue = saveFaceEncoding(encPath);
+//        String encPath = path.replace("\\", "/");
+        String encValue = saveFaceEncoding(path);
 
         User user = userRepository.findById(id).get();
 
-        File file = new File(user.getPhoto());
-        file.delete();
+/*        File file = new File(user.getPhoto());
+        file.delete();*/
 
         userRepository.updatePhotoAndPhotoEncoding(path, encValue, id);
     }
@@ -183,8 +183,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public void userJoin(UserJoinReqDto userJoinReqDto, MultipartFile file) throws Exception{
         String path = uploadImage(file);
-        String encPath = path.replace("\\", "/");
-        String encValue = saveFaceEncoding(encPath);
+       // String encPath = path.replace("\\", "/");
+        String encValue = saveFaceEncoding(path);
 
         User user = User.builder()
                 .id(userJoinReqDto.getId())
@@ -319,7 +319,7 @@ public class UserServiceImpl implements UserService{
         file.transferTo(new File(filePath));
 
 //        String enc_path = filePath.replace("\\", "/");
-        String enc_value = saveFaceEncoding(filePath);
+//        String enc_value = saveFaceEncoding(filePath);
 
         if (filePath != null) {
                 return filePath;
