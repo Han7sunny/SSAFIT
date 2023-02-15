@@ -312,14 +312,14 @@ public class UserServiceImpl implements UserService{
 
     public String uploadImage(MultipartFile file) throws Exception{
         UUID uuid = UUID.randomUUID();
-        final String FOLDER_PATH = "C:\\SSAFY\\upload_files\\";
+        final String FOLDER_PATH = "/home/ubuntu/photo/";
 
         String filePath = FOLDER_PATH + uuid.toString() + "_" + file.getOriginalFilename();
             // 파일 결로
         file.transferTo(new File(filePath));
 
-        String enc_path = filePath.replace("\\", "/");
-        String enc_value = saveFaceEncoding(enc_path);
+//        String enc_path = filePath.replace("\\", "/");
+        String enc_value = saveFaceEncoding(filePath);
 
         if (filePath != null) {
                 return filePath;
@@ -329,8 +329,8 @@ public class UserServiceImpl implements UserService{
     }
 
     public String saveFaceEncoding(String path) {
-        String arg1 = "C:/SSAFY/faceEncoding.py";
-        ProcessBuilder builder = new ProcessBuilder("python", arg1, path);
+        String arg1 = "/home/ubuntu/python/faceEncoding.py";
+        ProcessBuilder builder = new ProcessBuilder("python3", arg1, path);
 
         try {
             builder.redirectErrorStream(true);
