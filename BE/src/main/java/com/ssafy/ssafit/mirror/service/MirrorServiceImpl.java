@@ -277,8 +277,6 @@ public class MirrorServiceImpl implements MirrorService{
             if(today.compareTo(LocalDate.parse(dateList.get(idx), DateTimeFormatter.ISO_DATE)) != 0)
                 break;
         }
-
-        System.out.println("여기까지");
         
         List<Record> recordList = recordRepository.findByUserAndEndTimeIsNotNull(user);
 

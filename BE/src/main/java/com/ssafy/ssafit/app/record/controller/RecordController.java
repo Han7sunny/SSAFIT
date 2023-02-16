@@ -115,4 +115,18 @@ public class RecordController {
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg("오류 발생").build(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/continuous-period")
+    @ApiOperation(value = "연속으로 운동한 날",
+            notes = "오늘을 기준으로 연속 며칠째 운동 중인지 반환",
+            response = Long.class)
+    public ResponseEntity<?> getContinuousExercisePeriod(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            long result = recordService.getContinuousExercisePeriod(user.getUser().getId());
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(String.valueOf((result))).build(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

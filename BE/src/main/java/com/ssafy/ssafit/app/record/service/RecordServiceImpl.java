@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -191,6 +192,21 @@ public class RecordServiceImpl implements RecordService{
 
         return exerciseRecordList;
     }
+    @Override
+    public long getContinuousExercisePeriod(String id) {
+        List<String> dateList = recordRepository.findRecordDate(id);
+
+        int idx = 0;
+        int sz = dateList.size();
+
+        for (LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul")); idx < sz ; today = today.minusDays(1), idx++) {
+            if(today.compareTo(LocalDate.parse(dateList.get(idx), DateTimeFormatter.ISO_DATE)) != 0)
+                break;
+        }
+
+        return idx;
+    }
+
 
     @Scheduled(cron = "0 0 21 1/1 * ?", zone = "Asia/Seoul")
     @Transactional

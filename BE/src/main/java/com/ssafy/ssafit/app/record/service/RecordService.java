@@ -20,4 +20,6 @@ public interface RecordService {
     void removeSchedule(Long recordId);
 
     List<RecordExerciseRecordRespDto> getExerciseRecord(LocalDate time, String userId);
+
+    long getContinuousExercisePeriod(String id);
 }
