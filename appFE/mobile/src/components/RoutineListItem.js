@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {IconButton, MD3Colors} from 'react-native-paper';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {IconButton, Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import RoutineSimpleScreen from '../screens/Routine/RoutineSimpleScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';

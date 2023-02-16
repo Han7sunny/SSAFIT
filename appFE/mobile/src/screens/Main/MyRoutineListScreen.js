@@ -43,6 +43,7 @@ export default function MyRoutineListScreen() {
       .then(res => {
         console.log('My routine list screen 성공 :', res.data);
         setRoutineData(res.data);
+        setChange(false);
       })
       .catch(err => {
         console.log('My routine list screen 실패 :', err);

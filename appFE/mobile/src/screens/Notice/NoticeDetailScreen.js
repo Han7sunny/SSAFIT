@@ -171,23 +171,20 @@ export default function NoticeDetailScreen({navigation, route}) {
           <Text>{Notices.content}</Text>
         </View>
       </View>
-      <View>
-        <Text variant="titleLarge">댓글</Text>
-        <FlatList
-          data={Notices.replyList}
-          style={{height: 220}}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => (
-            <ReplyScreen reply={item} send={deleteReply} />
-          )}
-          keyExtractor={item => item.reply_id}
-        />
-      </View>
+      <FlatList
+        data={Notices.replyList}
+        style={{maxHeight: 230}}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        renderItem={({item}) => <ReplyScreen reply={item} send={deleteReply} />}
+        keyExtractor={item => item.reply_id}
+      />
       <TextInput
+        mode="outlined"
         label="댓글을 입력하세요"
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
+        style={{margin: 10}}
       />
     </View>
   );

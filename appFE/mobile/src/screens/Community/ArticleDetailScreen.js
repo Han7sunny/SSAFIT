@@ -42,19 +42,12 @@ export default function ArticleDetailScreen({navigation, route}) {
         },
       })
       .then(res => {
-        console.log('------', res.data);
         setArticleData(res.data);
         setHeartCnt(res.data.likes);
         setIsClickHeart(res.data.clickLikes);
         const date = res.data.registeredTime.split('T');
         setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
         setIsChange(role === 'ADMIN' || userId === res.data.userId);
-        console.log(
-          '------------',
-          role,
-          userId,
-          role === 'ADMIN' || userId === res.data.userId,
-        );
       })
       .catch(err => {
         console.log(err);
@@ -179,7 +172,9 @@ export default function ArticleDetailScreen({navigation, route}) {
           alignContent: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10, marginLeft: 10}}>
+        <Text
+          variant="titleLarge"
+          style={{fontWeight: 'bold', marginTop: 10, marginLeft: 10}}>
           {articleData.title}
         </Text>
       </View>
@@ -200,7 +195,7 @@ export default function ArticleDetailScreen({navigation, route}) {
                 borderRightWidth: 1,
                 paddingRight: 5,
               }}>
-              {articleData.userId}
+              {articleData.userName}
             </Text>
             <Text> {registeredTime}</Text>
           </View>
@@ -218,7 +213,7 @@ export default function ArticleDetailScreen({navigation, route}) {
             </View>
           </View>
         </View>
-        <View style={{ margin: 10}}>
+        <View style={{margin: 10}}>
           {/* <Text>내용</Text> */}
           <Text>{articleData.content}</Text>
         </View>
@@ -227,7 +222,7 @@ export default function ArticleDetailScreen({navigation, route}) {
         {/* <Text variant="titleLarge">댓글</Text> */}
         <FlatList
           data={articleData.replyList}
-          // style={{height: 220}}
+          style={{maxHeight: 230}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <ReplyScreen reply={item} send={deleteReply} />
@@ -241,7 +236,7 @@ export default function ArticleDetailScreen({navigation, route}) {
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
-        style={{ margin: 10 }}
+        style={{margin: 10}}
       />
     </View>
   );

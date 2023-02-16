@@ -257,9 +257,9 @@ function App() {
     'ip',
     JSON.stringify({
       // ip: 'http://192.168.35.176:8090/api', // 집
-      ip: 'http://70.12.246.83:8090/api', // 싸피
+      // ip: 'http://70.12.246.83:8090/api', // 싸피
       // ip: 'http://192.168.0.17:8090/api', // 롯l데
-      // ip: 'https://i8a204.p.ssafy.io/api', // aws
+      ip: 'http://i8a204.p.ssafy.io:8080/api', // aws
     }),
     () => {
       console.log('ip등록성공');
@@ -287,15 +287,13 @@ function App() {
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Group') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'body' : 'body-outline';
             } else if (route.name === 'Community') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'barbell' : 'barbell-outline';
             } else if (route.name === 'MyPage') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Login') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'person' : 'person-outline';
             } else if (route.name === 'Notice') {
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'megaphone' : 'megaphone-outline';
             }
 
             // You can return any component that you like here!
