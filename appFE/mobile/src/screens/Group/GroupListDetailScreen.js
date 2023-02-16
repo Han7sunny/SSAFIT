@@ -331,11 +331,8 @@ export default function GroupDetailScreen({navigation, route}) {
           </ScrollView>
         </View>
       </View>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image source={require('./comment.png')} />
-        <Text>{Reply ? Reply.length : 0}</Text>
-      </View>
       {/* <ReplyScreen reply={Reply} groupId={id} /> */}
+
       <FlatList
         data={Reply}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -347,14 +344,15 @@ export default function GroupDetailScreen({navigation, route}) {
             send={deleteReply}
           />
         )}
-        keyExtractor={item => item.reply_id.toString()}
-        style={{height: 160, padding: 0}}
+        keyExtractor={item => item.reply_id}
       />
       <TextInput
+        mode="outlined"
         label="댓글을 입력하세요"
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
+        style={{margin: 10}}
       />
     </View>
   );

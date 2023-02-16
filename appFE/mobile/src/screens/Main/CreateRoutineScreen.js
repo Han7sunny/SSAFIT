@@ -75,6 +75,7 @@ export default function CreateRoutineScreen({navigation, route}) {
   return (
     <ScrollView>
       <TextInput
+        mode="outlined"
         label="루틴 이름을 설정하세요!"
         value={routineName}
         onChangeText={text => {
@@ -91,6 +92,7 @@ export default function CreateRoutineScreen({navigation, route}) {
 
       <Button
         mode="contained"
+        buttonColor="#29b6f6"
         onPress={() => {
           onPost();
           // navigation.navigate('Home', {screen:'MyRoutineListScreen'});

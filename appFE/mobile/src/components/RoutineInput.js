@@ -8,7 +8,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // Trouble issue : 이 컴포넌트를 재 렌더링 시, 이전 컴포넌트의 값이 그대로 들어옴
 //                 즉, useState로 세팅해 둔 초기값이 적용이 안됨.
 
-const exerciseArea = ['전신', '상체', '하체'];
+const exerciseArea = [
+  '전신',
+  '하체',
+  '가슴',
+  '코어',
+  '어깨',
+  '등',
+  '팔',
+  '전신',
+  '스트레칭',
+];
 // let exerciseList = []
 
 export default function RoutineInput({countNum, routineInfo}) {
@@ -85,6 +95,8 @@ export default function RoutineInput({countNum, routineInfo}) {
               data={exerciseArea}
               save="key"
               setSelected={key => setExerciseId(key)}
+              inputStyles={{color: '#000'}}
+              dropdownTextStyles={{color: '#000'}}
               onSelect={key => {
                 // text represented after item is selected
                 // console.log(selectedItem)
@@ -112,6 +124,8 @@ export default function RoutineInput({countNum, routineInfo}) {
               placeholder="운동 부위 선택"
             />
             <SelectList
+              inputStyles={{color: '#000'}}
+              dropdownTextStyles={{color: '#000'}}
               data={exerciseList}
               save="key"
               setSelected={value => {

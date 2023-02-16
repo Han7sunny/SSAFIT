@@ -195,7 +195,9 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
           alignContent: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text variant="titleLarge" style={{fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>
+        <Text
+          variant="titleLarge"
+          style={{fontWeight: 'bold', marginLeft: 10, marginTop: 10}}>
           {articleInfo.title}
         </Text>
       </View>
@@ -220,7 +222,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
                 borderRightWidth: 1,
                 paddingRight: 5,
               }}>
-              {articleInfo.userId}
+              {articleInfo.userName}
             </Text>
             <Text> {registeredTime}</Text>
           </View>
@@ -240,7 +242,9 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
         </View>
         <View style={{maxHeight: 330, minHeight: 330}}>
           <ScrollView>
-            <Text style={{ margin: 10,paddingBottom: 20}}>{articleInfo.content}</Text>
+            <Text style={{margin: 10, paddingBottom: 20}}>
+              {articleInfo.content}
+            </Text>
             <View>
               <Button onPress={() => addToMyRoutine()}>루틴 퍼가기</Button>
               <View style={{alignItems: 'center'}}>
@@ -260,7 +264,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
             <ReplyScreen reply={item} send={deleteReply} />
           )}
           keyExtractor={item => item.reply_id}
-          style={{ margin: 10}}
+          style={{margin: 10}}
         />
       </View>
       <TextInput
@@ -269,7 +273,13 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
-        style={{ margin: 10, backgroundColor: 'white', borderRadius: 20, borderTopEndRadius: 20, borderTopStartRadius: 20}}
+        style={{
+          margin: 10,
+          backgroundColor: 'white',
+          borderRadius: 20,
+          borderTopEndRadius: 20,
+          borderTopStartRadius: 20,
+        }}
       />
     </ScrollView>
   );

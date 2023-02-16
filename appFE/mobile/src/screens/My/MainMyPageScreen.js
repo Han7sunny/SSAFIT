@@ -1,12 +1,20 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import {View, FlatList, StyleSheet, Pressable, Alert} from 'react-native';
-import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import {
+  Button,
+  IconButton,
+  MD3Colors,
+  Text,
+  Avatar,
+  SegmentedButtons,
+} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import base64 from 'base-64';
 
 export default function ArticleDetailScreen({navigation, route}) {
   // console.log(route.params);
+  const [value, setValue] = useState('Group');
   const [photo, setPhoto] = useState('null');
   const [role, setRole] = useState('');
   const [userId, setUserId] = useState('');
@@ -137,7 +145,7 @@ export default function ArticleDetailScreen({navigation, route}) {
       </View>
       <Button
         mode="contained"
-        buttonColor="red"
+        buttonColor="#29b6f6"
         style={styles.button}
         labelStyle={styles.label}
         onPress={() =>
@@ -152,18 +160,23 @@ export default function ArticleDetailScreen({navigation, route}) {
         }>
         로그아웃
       </Button>
-      <View>
-        <IconButton
-          icon={
-            infos !== undefined && infos.groupInvitationList.length > 0
-              ? 'bell'
-              : 'bell-outline'
-          }
-          size={40}
-          iconColor={groups.length > 0 ? 'yellow' : ''}
-          // onPress={() => deleteNotification()}
-        />
-        <Text>그룹</Text>
+      <SegmentedButtons
+        value={value}
+        onValueChange={setValue}
+        showSelectedCheck={true}
+        shadowColor="#29b6f6"
+        buttons={[
+          {
+            value: 'Group',
+            label: '그룹초대',
+          },
+          {
+            value: 'Community',
+            label: '커뮤니티',
+          },
+        ]}
+      />
+      {value === 'Group' && (
         <View style={styles.container}>
           <FlatList
             data={infos !== undefined && infos.groupInvitationList}
@@ -183,18 +196,9 @@ export default function ArticleDetailScreen({navigation, route}) {
             keyExtractor={item => item.groupId}
           />
         </View>
-      </View>
-      <View>
-        <IconButton
-          icon={
-            infos !== undefined && infos.notificationList.length > 0
-              ? 'bell'
-              : 'bell-outline'
-          }
-          size={40}
-          iconColor={groups.length > 0 ? 'yellow' : ''}
-          // onPress={() => deleteNotification()}
-        />
+      )}
+
+      {value === 'Community' && (
         <View style={styles.container}>
           <FlatList
             data={infos !== undefined && infos.notificationList}
@@ -250,7 +254,7 @@ export default function ArticleDetailScreen({navigation, route}) {
             keyExtractor={item => item.notificationId.toString()}
           />
         </View>
-      </View>
+      )}
 
       <Button
         mode="contained"
@@ -283,8 +287,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    minHeight: 200,
-    maxHeight: 200,
+    minHeight: 400,
+    maxHeight: 400,
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,

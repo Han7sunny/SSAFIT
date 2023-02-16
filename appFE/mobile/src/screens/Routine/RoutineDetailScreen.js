@@ -1,10 +1,40 @@
 import React, {useState, useEffect} from 'react';
 import {Text, IconButton} from 'react-native-paper';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Image} from 'react-native';
 import Button from '../../components/Button';
 import RoutineDetail from '../../components/RoutineDetail';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
+const images = [
+  '',
+  require(`../images/스쿼트.png`),
+  require(`../images/런지.png`),
+  require(`../images/팔굽혀펴기.png`),
+  require(`../images/플랭크.png`),
+  '',
+  require(`../images/딥스.png`),
+  require(`../images/벤치프레스.png`),
+  require(`../images/파이크푸쉬업.png`),
+  '',
+  require(`../images/덤벨프레스.png`),
+  require(`../images/윗몸일으키기.png`),
+  '',
+  '',
+  require(`../images/데드리프트.png`),
+  require(`../images/사이드플랭크.png`),
+  require(`../images/바이시클크런치.png`),
+  require(`../images/턱걸이.png`),
+  require(`../images/덤벨로우.png`),
+  require(`../images/이두.png`),
+  require(`../images/삼두.png`),
+  require(`../images/줄넘기.png`),
+  '',
+  '',
+  require(`../images/팔벌려높이뛰기.png`),
+  require(`../images/다리찢기.png`),
+  require(`../images/몸접기.png`),
+];
 
 export default function RoutineDetailScreen({route}) {
   const id = route.params.id;
@@ -13,6 +43,7 @@ export default function RoutineDetailScreen({route}) {
   const [accessToken, setAccessToken] = useState('');
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
+  const [image, setImage] = useState('');
   // 마운팅 될때 한번만 실행
   useEffect(() => {
     AsyncStorage.getItem('ip', (err, result) => {
@@ -65,7 +96,7 @@ export default function RoutineDetailScreen({route}) {
   }
   return (
     <ScrollView style={styles.container}>
-      <Text variant="titleMedium">루틴명 : {item.routineName}</Text>
+      <Text variant="headlineMedium">{item.routineName}</Text>
 
       <IconButton
         // mode="contained"
@@ -114,9 +145,11 @@ export default function RoutineDetailScreen({route}) {
                 </Text>
               </View>
             </View>
+            {/* {console.log(images[item.exerciseId])} */}
+
             <Image
-              source={require('../s.png')}
-              style={{width: 70, height: 70}}
+              source={images[item.exerciseId]}
+              style={{width: 70, height: 70, backgroundColor: 'white'}}
             />
           </View>
         </View>

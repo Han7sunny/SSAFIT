@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image, Alert} from 'react-native';
-import {Text, Button, TextInput} from 'react-native-paper';
+import {Text, IconButton, TextInput} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ReplyScreen({reply, send}) {
@@ -103,17 +103,10 @@ export default function ReplyScreen({reply, send}) {
       </View>
       {isChange && (
         <View>
-          <Button
-            mode="text"
-            style={styles.button}
-            labelStyle={styles.label}
-            onPress={click}>
-            수정
-          </Button>
-          <Button
-            mode="text"
-            style={styles.button}
-            labelStyle={styles.label}
+          <IconButton icon="file-edit" size={20} onPress={click} />
+          <IconButton
+            icon="delete"
+            size={20}
             onPress={() =>
               Alert.alert(
                 `${reply.user_id}님의댓글을 삭제하시겠습니까?`,
@@ -129,9 +122,8 @@ export default function ReplyScreen({reply, send}) {
                   },
                 ],
               )
-            }>
-            삭제
-          </Button>
+            }
+          />
         </View>
       )}
     </View>
