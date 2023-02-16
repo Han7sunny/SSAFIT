@@ -26,6 +26,8 @@ import com.ssafy.ssafit.util.Sha256;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import com.ssafy.ssafit.app.user.dto.req.UserJoinReqDto;
@@ -315,12 +317,15 @@ public class UserServiceImpl implements UserService{
         final String FOLDER_PATH = System.getProperty("file.separator") + "home" + System.getProperty("file.separator") + "ubuntu" + System.getProperty("file.separator") + "photo" + System.getProperty("file.separator");
 
         String filePath = FOLDER_PATH + uuid.toString() + "_" + file.getOriginalFilename();
-            // 파일 결로
-        File destFile = new File(filePath);
-        file.transferTo(destFile);
 
-        destFile.setWritable(true);
-        destFile.setReadable(true);
+        Path path = Paths.get(filePath).toAbsolutePath();
+        file.transferTo(path.toFile());
+            // 파일 결로
+//        File destFile = new File(filePath);
+//        file.transferTo(destFile);
+//
+//        destFile.setWritable(true);
+//        destFile.setReadable(true);
 
 //        String enc_path = filePath.replace("\\", "/");
 //        String enc_value = saveFaceEncoding(filePath);
