@@ -312,11 +312,15 @@ public class UserServiceImpl implements UserService{
 
     public String uploadImage(MultipartFile file) throws Exception{
         UUID uuid = UUID.randomUUID();
-        final String FOLDER_PATH = System.getProperty("user.home") + System.getProperty("file.separator");
+        final String FOLDER_PATH = System.getProperty("file.separator") + "home" + System.getProperty("file.separator") + "ubuntu" + System.getProperty("file.separator") + "photo" + System.getProperty("file.separator");
 
         String filePath = FOLDER_PATH + uuid.toString() + "_" + file.getOriginalFilename();
             // 파일 결로
-        file.transferTo(new File(filePath));
+        File destFile = new File(filePath);
+        file.transferTo(destFile);
+
+        destFile.setWritable(true);
+        destFile.setReadable(true);
 
 //        String enc_path = filePath.replace("\\", "/");
 //        String enc_value = saveFaceEncoding(filePath);
@@ -329,7 +333,7 @@ public class UserServiceImpl implements UserService{
     }
 
     public String saveFaceEncoding(String path) throws Exception {
-        String arg1 = System.getProperty("user.home") + System.getProperty("file.separator") + "faceEncoding.py";
+        String arg1 = System.getProperty("file.separator") + "home" + System.getProperty("file.separator") + "ubuntu" + System.getProperty("file.separator") + "python" + System.getProperty("file.separator");
         ProcessBuilder builder = new ProcessBuilder("python3", arg1, path);
 
 
