@@ -1,7 +1,6 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {TouchableOpacity, StyleSheet, View, Alert} from 'react-native';
-import {Text, Modal} from 'react-native-paper';
-import Button from '../../components/Button';
+import {Text, Modal, Button} from 'react-native-paper';
 import TextInput from '../../components/TextInput';
 import {theme} from '../../components/theme';
 import axios from 'axios';
@@ -77,10 +76,6 @@ export default function LoginScreen({navigation}) {
               ]);
             },
           );
-          // navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: 'HomeScreen'}],
-          // })
         } else {
           Alert.alert(response.data.msg);
         }
@@ -110,16 +105,13 @@ export default function LoginScreen({navigation}) {
         errorText={password.error}
         secureTextEntry
       />
-      <Button mode="contained" onPress={onLoginPressed}>
-        Login
+      <Button mode="contained" onPress={onLoginPressed} buttonColor="#29b6f6">
+        로 그 인
       </Button>
 
       <View style={styles.forgotPassword}>
         <TouchableOpacity onPress={() => showModal()}>
-          <Text style={[styles.forgot, {marginBottom: 5}]}>
-            {' '}
-            아이디를 잊으셨나요?{' '}
-          </Text>
+          <Text style={styles.forgot}> 아이디를 잊으셨나요? </Text>
         </TouchableOpacity>
       </View>
 
@@ -190,6 +182,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     width: '100%',
     alignItems: 'flex-end',
+    marginTop: 15,
   },
   row: {
     flexDirection: 'row',
@@ -205,7 +198,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 50,
-    color: theme.colors.primary,
+    color: '#29b6f6',
     fontWeight: 'bold',
     // paddingVertical: 12,
     // marginLeft: ,

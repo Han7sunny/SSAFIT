@@ -39,69 +39,74 @@ export default function GroupSearchScreen({navigation, item}) {
 
   return (
     <TouchableOpacity
+      style={[
+        styles.container,
+        {
+          flex: 1,
+          flexDirection: 'row',
+          padding: 10,
+          flex: 1,
+          minHeight: 180,
+          maxHeight: 250,
+          alignContent: 'space-around',
+        },
+      ]}
       onPress={() => {
         navigation.navigate('GroupListDetailScreen', {
           id: item.groupId,
           state: state,
         });
       }}>
-      <View
-        style={[
-          styles.container,
-          {
+      <View style={{flex: 5}}>
+        <Text variant="headlineSmall" style={{fontWeight: 'bold'}}>
+          {item.title}
+        </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
+          <Text>
+            {item.startRecruitDate} ~ {item.endRecruitDate}
+          </Text>
+        </View>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
+          <Text>
+            {item.startDate} ~ {item.endDate}
+          </Text>
+        </View>
+        <Text variant="titleMedium">{item.content}</Text>
+        <View
+          style={{
             flex: 1,
             flexDirection: 'row',
-            padding: 10,
-            flex: 1,
-            height: 150,
-            alignContent: 'space-around',
-          },
-        ]}>
-        <View style={{flex: 5}}>
-          <Text variant="headlineSmall" style={{fontWeight: 'bold'}}>
-            {item.title}
-          </Text>
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
-            <Text>
-              {item.startRecruitDate} ~ {item.endRecruitDate}
-            </Text>
+            <IconButton
+              icon={isClickHeart ? 'heart' : 'heart-outline'}
+              iconColor={isClickHeart ? 'red' : 'black'}
+              size={40}
+              onPress={clickHeart}
+              style={styles.iconButton}
+            />
+            <Text variant="titleLarge">{heartCnt}</Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
-            <Text>
-              {item.startDate} ~ {item.endDate}
+            <IconButton
+              icon="message-reply-text-outline"
+              size={40}
+              style={styles.iconButton}
+            />
+            <Text variant="titleLarge">
+              {item.replySize ? item.replySize : 0}
             </Text>
-          </View>
-          <Text variant="titleMedium">{item.content}</Text>
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <IconButton
-                icon={isClickHeart ? 'heart' : 'heart-outline'}
-                iconColor={isClickHeart ? 'red' : 'black'}
-                size={40}
-                onPress={clickHeart}
-                style={styles.iconButton}
-              />
-              <Text variant="titleLarge">{heartCnt}</Text>
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <IconButton
-                icon="message-reply-text-outline"
-                size={40}
-                style={styles.iconButton}
-              />
-              <Text variant="titleLarge">
-                {item.replySize ? item.replySize : 0}
-              </Text>
-            </View>
           </View>
         </View>
-        <Text
-          style={[styles.box, {flex: 1, fontSize: 15, alignItems: 'flex-end'}]}>
-          {item.currentMember}/{item.maximumMember} 명
-        </Text>
       </View>
+      <Text
+        style={[styles.box, {flex: 1, fontSize: 15, alignItems: 'flex-end'}]}>
+        {item.currentMember}/{item.maximumMember} 명
+      </Text>
     </TouchableOpacity>
   );
 }

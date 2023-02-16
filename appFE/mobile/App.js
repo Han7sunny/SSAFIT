@@ -8,7 +8,6 @@
 import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {StyleSheet, Pressable} from 'react-native';
@@ -16,11 +15,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
-  StartScreen,
   LoginScreen,
   RegisterScreen,
   ResetPasswordScreen,
-  Dashboard,
   ChangePasswordScreen,
   AddFacePhotoScreen,
 } from './src/screens/Login';
@@ -29,6 +26,7 @@ import {
   HomeScreen,
   CreateRoutineScreen,
   MyRoutineListScreen,
+  TodayRoutine,
 } from './src/screens/Main';
 
 import {
@@ -128,6 +126,11 @@ const MainNavigator = () => {
       <Main.Screen
         name="RoutineDetailScreen"
         component={RoutineDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Main.Screen
+        name="TodayRoutine"
+        component={TodayRoutine}
         options={{headerShown: false}}
       />
     </Main.Navigator>
@@ -253,10 +256,10 @@ function App() {
   AsyncStorage.setItem(
     'ip',
     JSON.stringify({
-      // ip: 'http://192.168.35.75:8090/api', // 집
-      // ip: 'http://70.12.246.83:8090/api', // 싸피
-      // ip: 'http://192.168.0.13:8090/api', // 롯l데
-      ip: 'http://i8a204.p.ssafy.io:8080/api', // aws
+      // ip: 'http://192.168.35.176:8090/api', // 집
+      ip: 'http://70.12.246.83:8090/api', // 싸피
+      // ip: 'http://192.168.0.17:8090/api', // 롯l데
+      // ip: 'https://i8a204.p.ssafy.io/api', // aws
     }),
     () => {
       console.log('ip등록성공');

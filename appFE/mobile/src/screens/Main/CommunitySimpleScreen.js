@@ -16,8 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // 함수형 컴포넌트 내에 setState 코드를 작성하면 무한 렌더링 현상이 발생
 
 export default function CommunitySimpleScreen({navigation}) {
-  const [data, setData] = useState([]);
-  const [value, setValue] = useState('QA');
+  const [QA, setQA] = useState([]);
+  const [shareRoutine, setShareRoutine] = useState([]);
 
   const [accessToken, setAccessToken] = useState('');
   const [ip, setIP] = useState('');
@@ -45,7 +45,8 @@ export default function CommunitySimpleScreen({navigation}) {
       .then(function (res) {
         console.log(res.data);
         const newData = res.data;
-        setData(newData);
+        setQA(newData.slice(0, 4));
+        setShareRoutine(newData.slice(4, 7));
         ArticleDataAction.getArticleData({
           newData,
         });
@@ -58,7 +59,7 @@ export default function CommunitySimpleScreen({navigation}) {
 
   return (
     <View>
-      <View style={styles.container}>
+      <View>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Community', {
@@ -72,16 +73,12 @@ export default function CommunitySimpleScreen({navigation}) {
           <Text style={styles.title}> 질문 게시판 </Text>
         </TouchableOpacity>
         <View>
-          <FlatList
-            data={data.slice(0, 4)}
-            renderItem={({item}) => (
-              <ArticleItem id={item.boardId} title={item.title} />
-            )}
-          />
+          {QA.length > 0 &&
+            QA.map(item => <ArticleItem data={item} key={item.boardId} />)}
         </View>
       </View>
 
-      <View style={styles.container}>
+      <View>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('Community', {
@@ -97,26 +94,10 @@ export default function CommunitySimpleScreen({navigation}) {
           </Text>
         </TouchableOpacity>
         <View>
-          <FlatList
-            data={data.slice(4, 7)}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('Community', {
-                    screen: 'RoutineArticleDetailScreen',
-                    params: {
-                      boardId: item.boardId,
-                      routineId: item.routineId,
-                    },
-                  })
-                }>
-                <RoutineListItem routineId={item.routineId} name={item.title} />
-                <Text>조회수 : {item.hits}</Text>
-                <Text>공유수 : {item.downloads}</Text>
-                <Text>좋아요 : {item.likes}</Text>
-              </TouchableOpacity>
-            )}
-          />
+          {shareRoutine.length > 0 &&
+            shareRoutine.map(item => (
+              <RoutineListItem data={item} key={item.boardId} />
+            ))}
         </View>
       </View>
     </View>
@@ -125,7 +106,13 @@ export default function CommunitySimpleScreen({navigation}) {
 
 const styles = StyleSheet.create({
   container: {
+    width: '95%',
+    justifyContent: 'center',
     borderWidth: 2,
+    // marginVertical: 30,
+    borderRadius: 5,
+    marginBottom: 2,
+    alignSelf: 'center',
   },
   title: {
     fontSize: 20,

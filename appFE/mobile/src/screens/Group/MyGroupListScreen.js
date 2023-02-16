@@ -42,7 +42,7 @@ export default function MyGroupListScreen({navigation, route}) {
     <View>
       <Button
         mode="contained"
-        buttonColor="black"
+        buttonColor="#29b6f6"
         style={styles.button}
         labelStyle={styles.label}
         onPress={() =>
@@ -53,9 +53,14 @@ export default function MyGroupListScreen({navigation, route}) {
         }>
         그룹 생성하기
       </Button>
-      {Lists.map(item => (
-        <MyGroupSimple item={item} navigation={navigation} />
-      ))}
+      {Lists.length > 0 &&
+        Lists.map(item => (
+          <MyGroupSimple
+            item={item}
+            navigation={navigation}
+            key={item.groupId}
+          />
+        ))}
     </View>
   );
 }
@@ -66,14 +71,13 @@ const styles = StyleSheet.create({
     height: 1,
   },
   button: {
-    width: 350,
-    height: 50,
+    width: '95%',
+    height: 40,
     borderRadius: 10,
     alignSelf: 'center',
   },
   label: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginTop: 17,
   },
 });
