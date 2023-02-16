@@ -67,7 +67,7 @@ jar {
 }
 
 bootJar {
-	mainClassName = 'com.ssafy.ssafit.SsafitApplication'
+	mainClass = 'com.ssafy.ssafit.SsafitApplication'
 }
 
 bootRun {
