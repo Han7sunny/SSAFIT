@@ -207,6 +207,9 @@ public class MirrorController {
         }
     }
 
+
+
+    
     @GetMapping("/get-challenge-time")
     @ApiOperation(value = "챌린지 모드 순위 정보", notes = "챌린지 모드 순위 정보를 받아옵니다.", response = MirrorChallengeTimeRespDto.class)
     public ResponseEntity<?> getChallengeTime(@AuthenticationPrincipal CustomUserDetails user) {
