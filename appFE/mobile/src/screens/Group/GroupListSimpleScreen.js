@@ -49,6 +49,7 @@ export default function GroupSearchScreen({navigation, item}) {
           minHeight: 180,
           maxHeight: 250,
           alignContent: 'space-around',
+          color: 'black',
         },
       ]}
       onPress={() => {
@@ -58,22 +59,28 @@ export default function GroupSearchScreen({navigation, item}) {
         });
       }}>
       <View style={{flex: 5}}>
-        <Text variant="headlineSmall" style={{fontWeight: 'bold'}}>
+        <Text
+          variant="headlineSmall"
+          style={{fontWeight: 'bold', color: 'black'}}>
           {item.title}
         </Text>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
-          <Text>
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', color: 'black'}}>
+          <Text style={{fontWeight: 'bold', color: 'black'}}>모집기간 : </Text>
+          <Text style={{color: 'black'}}>
             {item.startRecruitDate} ~ {item.endRecruitDate}
           </Text>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
-          <Text>
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', color: 'black'}}>
+          <Text style={{fontWeight: 'bold', color: 'black'}}>운동기간 : </Text>
+          <Text style={{color: 'black'}}>
             {item.startDate} ~ {item.endDate}
           </Text>
         </View>
-        <Text variant="titleMedium">{item.content}</Text>
+        <Text variant="titleMedium" style={{color: 'black'}}>
+          {item.content}
+        </Text>
         <View
           style={{
             flex: 1,
@@ -89,15 +96,18 @@ export default function GroupSearchScreen({navigation, item}) {
               onPress={clickHeart}
               style={styles.iconButton}
             />
-            <Text variant="titleLarge">{heartCnt}</Text>
+            <Text variant="titleLarge" style={{color: 'black'}}>
+              {heartCnt}
+            </Text>
           </View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <IconButton
               icon="message-reply-text-outline"
+              iconColor="black"
               size={40}
               style={styles.iconButton}
             />
-            <Text variant="titleLarge">
+            <Text variant="titleLarge" style={{color: 'black'}}>
               {item.replySize ? item.replySize : 0}
             </Text>
           </View>

@@ -4,6 +4,7 @@ import {Text, Checkbox, Button, TextInput} from 'react-native-paper';
 import {SelectList} from 'react-native-dropdown-select-list';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function CreateArticleScreen({navigation, route}) {
   const data = route.params.data;
@@ -89,7 +90,6 @@ export default function CreateArticleScreen({navigation, route}) {
         },
       })
     ).data;
-    console.log('123412341243', result);
     if (result)
       navigation.navigate('CommunityScreen', {
         community: category === 2 ? 'QA' : 'shareRoutine',
@@ -103,8 +103,10 @@ export default function CreateArticleScreen({navigation, route}) {
   ];
   return (
     <ScrollView>
-      <View style={{ marginTop: 10, marginLeft: 10, marginRight: 10 }}>
+      <View style={{marginTop: 10, marginLeft: 10, marginRight: 10}}>
         <SelectList
+          inputStyles={{color: '#000'}}
+          dropdownTextStyles={{color: '#000'}}
           data={category}
           save="key"
           placeholder="글 타입 선택"
@@ -115,11 +117,14 @@ export default function CreateArticleScreen({navigation, route}) {
           }}
         />
       </View>
-      <View style={{ margin: 10 }}>
-        <Text variant="titleLarge" style={{margin: 10 }}>
+      <View style={{margin: 10}}>
+        <Text variant="titleLarge" style={{margin: 10}}>
           제목
         </Text>
         <TextInput
+          mode="outlined"
+          placeholder="제목"
+          label="제목"
           value={title}
           onChangeText={value => setTitle(value)}
           returnKeyType="next"
@@ -127,26 +132,39 @@ export default function CreateArticleScreen({navigation, route}) {
             console.log(title);
             if (isEnabled) file.current.focus();
           }}
-          style={{ borderRadius: 15, borderTopEndRadius: 15, borderTopStartRadius: 15 }}
+          style={{
+            borderRadius: 15,
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
+          }}
         />
         <Text variant="titleLarge" style={{margin: 10, marginTop: 20}}>
           내용
         </Text>
         <TextInput
+          mode="outlined"
+          label="내용"
           value={content}
           multiline={true}
           textAlignVertical="top"
-          style={{ height: 300, maxHeight: 500, borderRadius: 15, borderTopEndRadius: 15, borderTopStartRadius: 15 }}
+          style={{
+            height: 300,
+            maxHeight: 400,
+            borderRadius: 15,
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
+          }}
           onChangeText={value => setContent(value)}
           returnKeyType="next"
           onSubmitEditing={() => {
             console.log(content);
           }}
-          
         />
         {categoryId === 3 && (
           <View style={styles.centeredView}>
             <SelectList
+              inputStyles={{color: '#000'}}
+              dropdownTextStyles={{color: '#000'}}
               data={routineData}
               save="key"
               placeholder="루틴을 선택하세요!"
@@ -154,7 +172,9 @@ export default function CreateArticleScreen({navigation, route}) {
                 setSelectedRoutine(Number(key)),
                   console.log('selected :', selectedroutine);
               }}
-              onSelect={() => alert(selectedroutine, '번 루틴을 선택하셨습니다.')}
+              onSelect={() =>
+                alert(selectedroutine, '번 루틴을 선택하셨습니다.')
+              }
             />
           </View>
         )}

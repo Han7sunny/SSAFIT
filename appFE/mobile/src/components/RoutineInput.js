@@ -21,7 +21,7 @@ const exerciseArea = [
 ];
 // let exerciseList = []
 
-export default function RoutineInput({countNum, routineInfo}) {
+export default function RoutineInput({routineInfo, func}) {
   // const [routineName, setRoutineName] = useState('')
   const [exerciseId, setExerciseId] = useState(
     routineInfo === false ? '' : routineInfo.exerciseId,
@@ -78,98 +78,90 @@ export default function RoutineInput({countNum, routineInfo}) {
     restTimeSeconds: restTimeSeconds,
     name: 'exercise',
   };
-  let sendData = undefined;
 
   return (
-    <View>
-      {countNum &&
-        countNum.map((item, i) => (
-          <View key={i} style={styles.container}>
-            {/* <TextInput
+    <View style={styles.container}>
+      {/* <TextInput
             onChangeText={(text) => setRoutineName(text)}
             placeholder= "루틴 이름을 설정하세요!"
             // maxLength="20"
             // onEndEditing={() => {data.push(routineName), console.log(0, data)}}
           /> */}
-            <SelectList
-              data={exerciseArea}
-              save="key"
-              setSelected={key => setExerciseId(key)}
-              inputStyles={{color: '#000'}}
-              dropdownTextStyles={{color: '#000'}}
-              onSelect={key => {
-                // text represented after item is selected
-                // console.log(selectedItem)
-                console.log(exerciseId);
-                axios({
-                  method: 'get',
-                  url: `${ip}/exercise/get-exercise-type?area=${exerciseId}`,
-                  headers: {
-                    authorization: `Bearer ${accessToken}`,
-                    'X-AUTH-TOKEN': `${accessToken}`,
-                  },
-                }).then(function (res) {
-                  console.log('어떤 운동 종류가 ㅣㅇㅆ는댝', res.data);
-                  let rawData = [];
-                  res.data.forEach(element => {
-                    rawData.push({
-                      key: element.exerciseTypeId,
-                      value: element.exerciseTypeName,
-                    });
-                  });
-                  setExerciseList(rawData);
-                  // console.log(exerciseList)
-                });
-              }}
-              placeholder="운동 부위 선택"
-            />
-            <SelectList
-              inputStyles={{color: '#000'}}
-              dropdownTextStyles={{color: '#000'}}
-              data={exerciseList}
-              save="key"
-              setSelected={value => {
-                setExerciseId(value), console.log(exerciseId);
-              }}
-              placeholder="운동 종류 선택"
-            />
-            <TextInput
-              label="세트 횟수"
-              value={exerciseSet}
-              onChange={value => exerciseSetChangeHandler(value)}
-              inputMode="numeric"
-              returnKeyType="next"
-              // onEndEditing={() => {data.push(exerciseSet), console.log(2, data)}}
-            />
-            <TextInput
-              label="운동 횟수"
-              value={reps}
-              onChange={value => setRepsChangeHandler(value)}
-              keyboardType="number-pad"
-              returnKeyType="next"
-              // onEndEditing={() => {data.push(reps), console.log(3, data)}}
-            />
-            <TextInput
-              label="휴식 시간 (분)"
-              value={restTimeMinutes}
-              onChange={value => restTimeMinutesChangeHandler(value)}
-              keyboardType="number-pad"
-              returnKeyType="next"
-              // onEndEditing={() => {data.push(restTimeMinutes), console.log(4, data)}}
-            />
-            <TextInput
-              label="휴식 시간 (초)"
-              value={restTimeSeconds}
-              onChange={value => restTimeSecondsChangeHandler(value)}
-              keyboardType="number-pad"
-              returnKeyType="done"
-              // onEndEditing={() => {sendData = data, console.log('sendData : ', sendData)}}
-              onEndEditing={() => {
-                (sendData = data), routineInfo({sendData});
-              }}
-            />
-          </View>
-        ))}
+      <SelectList
+        data={exerciseArea}
+        save="key"
+        setSelected={key => setExerciseId(key)}
+        inputStyles={{color: '#000'}}
+        dropdownTextStyles={{color: '#000'}}
+        onSelect={key => {
+          // text represented after item is selected
+          // console.log(selectedItem)
+          console.log(exerciseId);
+          axios({
+            method: 'get',
+            url: `${ip}/exercise/get-exercise-type?area=${exerciseId}`,
+            headers: {
+              authorization: `Bearer ${accessToken}`,
+              'X-AUTH-TOKEN': `${accessToken}`,
+            },
+          }).then(function (res) {
+            console.log('어떤 운동 종류가 ㅣㅇㅆ는댝', res.data);
+            let rawData = [];
+            res.data.forEach(element => {
+              rawData.push({
+                key: element.exerciseTypeId,
+                value: element.exerciseTypeName,
+              });
+            });
+            setExerciseList(rawData);
+            // console.log(exerciseList)
+          });
+        }}
+        placeholder="운동 부위 선택"
+      />
+      <SelectList
+        inputStyles={{color: '#000'}}
+        dropdownTextStyles={{color: '#000'}}
+        data={exerciseList}
+        save="key"
+        setSelected={value => {
+          setExerciseId(value), console.log(exerciseId);
+        }}
+        placeholder="운동 종류 선택"
+      />
+      <TextInput
+        label="세트 횟수"
+        value={exerciseSet}
+        onChange={value => exerciseSetChangeHandler(value)}
+        inputMode="numeric"
+        returnKeyType="next"
+        // onEndEditing={() => {data.push(exerciseSet), console.log(2, data)}}
+      />
+      <TextInput
+        label="운동 횟수"
+        value={reps}
+        onChange={value => setRepsChangeHandler(value)}
+        keyboardType="number-pad"
+        returnKeyType="next"
+        // onEndEditing={() => {data.push(reps), console.log(3, data)}}
+      />
+      <TextInput
+        label="휴식 시간 (분)"
+        value={restTimeMinutes}
+        onChange={value => restTimeMinutesChangeHandler(value)}
+        keyboardType="number-pad"
+        returnKeyType="next"
+        // onEndEditing={() => {data.push(restTimeMinutes), console.log(4, data)}}
+      />
+      <TextInput
+        label="휴식 시간 (초)"
+        value={restTimeSeconds}
+        onChange={value => restTimeSecondsChangeHandler(value)}
+        keyboardType="number-pad"
+        returnKeyType="done"
+        // onEndEditing={() => {sendData = data, console.log('sendData : ', sendData)}}
+        onEndEditing={() => func(data)}
+      />
     </View>
   );
 }

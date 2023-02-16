@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import ReplyScreen from './ReplyScreen';
 import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function RoutineArticleDetailScreen({route, navigation}) {
   let {boardId} = route.params;

@@ -14,6 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import MultiSelect from 'react-native-multiple-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RoutineInput from '../../components/RoutineInput';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function CreateGroupScreen({navigation, route}) {
   const data = route === false ? false : route.params.data;
@@ -160,6 +161,7 @@ export default function CreateGroupScreen({navigation, route}) {
 
   const handleConfirm = date => {
     console.warn('A date has been picked: ', date);
+    alert(date.toLocaleDateString());
     let day = date.toLocaleDateString().split('/');
     day = `${day[2]}-${day[0].padStart(2, '0')}-${day[1].padStart(2, '0')}`;
     switch (selectDate) {
@@ -591,6 +593,7 @@ export default function CreateGroupScreen({navigation, route}) {
         contentContainerStyle={{backgroundColor: 'white'}}>
         <ScrollView>
           <TextInput
+            mode="outlined"
             label="루틴 이름을 설정하세요!"
             value={routineName}
             onChangeText={text => {

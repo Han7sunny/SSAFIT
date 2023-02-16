@@ -13,6 +13,7 @@ import {
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import GroupListSimpleScreen from './GroupListSimpleScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function GroupListScreen({navigation, route}) {
   const [ip, setIP] = useState('');
@@ -72,7 +73,9 @@ export default function GroupListScreen({navigation, route}) {
     day = `${day[2]}-${day[0].padStart(2, '0')}-${day[1].padStart(2, '0')}`;
     switch (selectText) {
       case 'startDate':
-        setFilters(pre => Object.assign({}, pre, {startDate: day}));
+        setFilters(pre =>
+          Object.assign({}, pre, {startDate: date.toLocaleDateString()}),
+        );
         break;
       case 'endDate':
         setFilters(pre => Object.assign({}, pre, {endDate: day}));
@@ -127,7 +130,7 @@ export default function GroupListScreen({navigation, route}) {
         }}>
         <Text
           variant="headlineLarge"
-          style={{fontWeight: 'bold', marginTop: 10}}>
+          style={{fontWeight: 'bold', marginTop: 10, color: 'black'}}>
           {' 그룹 모집 '}
         </Text>
         <View style={{padding: 10, flexDirection: 'row-reverse'}}>
@@ -149,33 +152,7 @@ export default function GroupListScreen({navigation, route}) {
           />
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          minHeight: 50,
-          maxHeight: 50,
-          backgroundColor: 'red',
-          padding: 0,
-        }}>
-        {Object.keys(Filters).forEach(key => {
-          if (Filters[key] === '') return;
-          console.log(key);
-        })}
-        {/* {Filters.map((item, idx) =>
-          console.log(item),
-          // <Button
-          //   mode="contained"
-          //   style={[
-          //     styles.button,
-          //     {width: Math.max((item.length + 1) * 29, 100)},
-          //   ]}
-          //   labelStyle={styles.label}
-          //   onPress={() => onDeletionsChange(item)}>
-          //   {item} X
-          // </Button>
-        )} */}
-      </View>
-      <View style={{minHeight: 550, maxHeight: 550}}>
+      <View style={{maxHeight: 650}}>
         <FlatList
           data={FilteredLists}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -379,7 +356,7 @@ export default function GroupListScreen({navigation, route}) {
           </View>
           <Button
             mode="contained"
-            buttonColor="black"
+            buttonColor="#29b6f6"
             style={styles.button}
             labelStyle={styles.label}
             onPress={() => {

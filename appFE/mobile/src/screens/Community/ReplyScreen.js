@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image, Alert} from 'react-native';
 import {Text, IconButton, TextInput} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function ReplyScreen({reply, send}) {
   const [userId, setUserId] = useState('');

@@ -5,6 +5,7 @@ import {Button, TextInput, IconButton, Text} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function GroupDetailScreen({navigation, route}) {
   const groupId = route.params.id;
