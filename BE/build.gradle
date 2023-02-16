@@ -66,9 +66,9 @@ jar {
 	enabled = false
 }
 
-//bootJar {
-//	mainClass = 'com.ssafy.ssafit.SsafitApplication'
-//}
+bootJar {
+	mainClass = 'com.ssafy.ssafit.SsafitApplication'
+}
 //
 //bootRun {
 //	String activeProfile = System.properties['spring.profiles.active']
