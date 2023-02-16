@@ -312,7 +312,7 @@ public class UserServiceImpl implements UserService{
 
     public String uploadImage(MultipartFile file) throws Exception{
         UUID uuid = UUID.randomUUID();
-        final String FOLDER_PATH = "/home/ubuntu/photo/";
+        final String FOLDER_PATH = System.getProperty("user.home") + "/upload_files/";
 
         String filePath = FOLDER_PATH + uuid.toString() + "_" + file.getOriginalFilename();
             // 파일 결로
@@ -329,7 +329,7 @@ public class UserServiceImpl implements UserService{
     }
 
     public String saveFaceEncoding(String path) throws Exception {
-        String arg1 = "/home/ubuntu/python/faceEncoding.py";
+        String arg1 = System.getProperty("user.home") + "/faceEncoding.py";
         ProcessBuilder builder = new ProcessBuilder("python3", arg1, path);
 
 

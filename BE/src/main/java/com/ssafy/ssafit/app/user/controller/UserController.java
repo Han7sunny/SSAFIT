@@ -82,7 +82,7 @@ public class UserController {
             userService.modifyFaceAuth(image, user.getUser().getId());
             return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg("수정 성공").build(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<CommonResp>(CommonResp.builder().success(true).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<CommonResp>(CommonResp.builder().success(false).msg(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
         }
     }
 
