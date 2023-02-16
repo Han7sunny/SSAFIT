@@ -27,7 +27,7 @@ export default function RecordScreen() {
     labels: [], // optional
     datasets: [
       {
-        data: [0, 0, 0, 0, 0, 0, 0],
+        data: [0],
       },
     ],
   });
@@ -62,27 +62,30 @@ export default function RecordScreen() {
           },
         })
           .then(res => {
-            console.log('운동기록 : ', res.data);
+            console.log('운동기록 : ', today + i, res.data);
             days.push(month + '/' + (today + i));
             achievementRate.push(
-              res.data.length > 0 ? res.data.totalAchievementRate : 0,
+              res.data.length > 0
+                ? res.data[res.data.length - 1].totalAchievementRate
+                : 0,
             );
-            console.log(days, achievementRate);
+            console.log('----', days, achievementRate);
           })
           .catch(err => {
             console.log('record screen 실패 ', err);
           });
+        setData(pre =>
+          Object.assign({}, pre, {
+            labels: days,
+            datasets: [
+              {
+                data: achievementRate,
+              },
+            ],
+          }),
+        );
       }
-      setData(pre =>
-        Object.assign({}, pre, {
-          labels: days,
-          datasets: [
-            {
-              data: achievementRate,
-            },
-          ],
-        }),
-      );
+      console.log(data.datasets[0].data);
     };
     getData();
   }, [accessToken]);
@@ -90,16 +93,18 @@ export default function RecordScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> 오늘의 운동 달성률 </Text>
-      <BarChart
-        style={{marginVertical: 8, borderRadius: 16}}
-        data={data}
-        width={screenWidth - 30}
-        height={220}
-        yAxisLabel={'%'}
-        chartConfig={chartConfig}
-        verticalLabelRotation={20}
-        showValuesOnTopOfBars={true}
-      />
+      {data.labels.length === 7 && (
+        <BarChart
+          style={{marginVertical: 8, borderRadius: 16}}
+          data={data}
+          width={screenWidth - 30}
+          height={220}
+          yAxisLabel={'%'}
+          chartConfig={chartConfig}
+          verticalLabelRotation={20}
+          showValuesOnTopOfBars={true}
+        />
+      )}
     </View>
   );
 }

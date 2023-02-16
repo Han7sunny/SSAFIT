@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function ArticleItem(props) {
   const navigation = useNavigation();
   const data = props.data;
+  console.log('data', data);
   const [isClickHeart, setIsClickHeart] = useState(data.clickHeart);
   const [heartCnt, setHeartCnt] = useState(data.likes);
   const [accessToken, setAccessToken] = useState('');

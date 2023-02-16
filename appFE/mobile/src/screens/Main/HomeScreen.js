@@ -1,18 +1,47 @@
-import React, {useState} from 'react';
-import {StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, ScrollView} from 'react-native';
 import {Text, SegmentedButtons} from 'react-native-paper';
 import CommunitySimpleScreen from './CommunitySimpleScreen';
 import TodayRoutine from './TodayRoutine';
 import RecordScreen from './RecordScreen';
 import MyGroupListScreen from '../Group/MyGroupListScreen';
 import MyRoutineListScreen from './MyRoutineListScreen';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen({navigation}) {
   const [value, setValue] = useState('Exercise');
+  const [period, setPeriod] = useState('0');
+  const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
+  // 마운팅 될때 한번만 실행
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
+  useEffect(() => {
+    if (accessToken === '') return;
+    axios
+      .get(`${ip}/record/continuous-period`, {
+        authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      })
+      .then(res => {
+        console.log(res.data);
+        setPeriod(res.data);
+      })
+      .catch(err => console.log(err));
+  }, [accessToken]);
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.text}> 운동 시작한지 N일 </Text>
+      <Text style={styles.text}> {period}일째 연속 운동중 </Text>
       {/* <RecordScreen /> */}
       <SegmentedButtons
         value={value}

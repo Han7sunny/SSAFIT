@@ -1,18 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {Text, IconButton} from 'react-native-paper';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import Button from '../../components/Button';
 import RoutineDetail from '../../components/RoutineDetail';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export default function RoutineDetailScreen({route, navigation}) {
-  const [routineInfo, setRoutineInfo] = useState([]);
-  const [routineName, setRoutineName] = useState('');
+export default function RoutineDetailScreen({route}) {
+  const id = route.params.id;
+  const [item, setItem] = useState({});
+  const [exercises, setExercises] = useState([]);
   const [accessToken, setAccessToken] = useState('');
   const [userId, setUserId] = useState('');
-  let {routineId} = route.params;
-  console.log('루틴 아이디:', routineId);
   const [ip, setIP] = useState('');
   // 마운팅 될때 한번만 실행
   useEffect(() => {
@@ -28,23 +27,21 @@ export default function RoutineDetailScreen({route, navigation}) {
   }, []);
   useEffect(() => {
     if (accessToken === '') return;
-    axios({
-      method: 'get',
-      url: `${ip}/routine/get-exercise-info/${routineId}`,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'X-AUTH-TOKEN': `${accessToken}`,
-      },
-    })
-      .then(function (response) {
-        console.log('routine detail : ', response.data);
-        setRoutineName(response.data.routineName);
-        setRoutineInfo(response.data.exerciseInfoList);
+    console.log('id', id);
+    axios
+      .get(`${ip}/routine/get-exercise-info/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [accessToken]);
+      .then(res => {
+        console.log('routine detail : ', res.data);
+        setItem(res.data);
+        setExercises(res.data.exerciseInfoList);
+      })
+      .catch(err => console.log(err));
+  }, [id, accessToken]);
 
   function addTodayRoutine() {
     axios({
@@ -67,9 +64,9 @@ export default function RoutineDetailScreen({route, navigation}) {
       });
   }
   return (
-    <View style={styles.container}>
-      <Text> Routine Detail Screen! </Text>
-      <Text style={styles.title}>{routineName}</Text>
+    <ScrollView style={styles.container}>
+      <Text variant="titleMedium">루틴명 : {item.routineName}</Text>
+
       <IconButton
         // mode="contained"
         icon="plus-circle-outline"
@@ -77,22 +74,53 @@ export default function RoutineDetailScreen({route, navigation}) {
           addTodayRoutine, console.log('오늘의 운동으로 추가');
         }}
       />
-      <FlatList
-        data={routineInfo}
-        renderItem={({item}) => (
-          <RoutineDetail
-            exerciseTypeName={item.exerciseTypeName}
-            exerciseArea={item.exerciseArea}
-            exerciseSet={item.exerciseSet}
-            reps={item.reps}
-            restTimeMinutes={item.restTimeMinutes}
-            restTimeSeconds={item.restTimeSeconds}
-            name={item.name}
-          />
-        )}
-      />
-      {/* <Text>{routineId}</Text> */}
-      {/* <Text>{routineTitle}</Text> */}
+      {exercises.map(item => (
+        <View>
+          <View style={styles.separator} />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text>운동 부위</Text>
+                <Text
+                  style={{marginLeft: 50, paddingLeft: 20, borderLeftWidth: 2}}>
+                  {item.exerciseArea} - {item.exerciseTypeName}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text>세트 수</Text>
+                <Text
+                  style={{marginLeft: 63, paddingLeft: 20, borderLeftWidth: 2}}>
+                  {item.exerciseSet} {' 세트'}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text>세트별 횟수</Text>
+                <Text
+                  style={{marginLeft: 37, paddingLeft: 20, borderLeftWidth: 2}}>
+                  {item.reps}
+                  {' 회'}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text>세트별 쉬는 시간</Text>
+                <Text
+                  style={{marginLeft: 8, paddingLeft: 20, borderLeftWidth: 2}}>
+                  {item.restTimeMinutes} : {item.restTimeSeconds}
+                </Text>
+              </View>
+            </View>
+            <Image
+              source={require('../s.png')}
+              style={{width: 70, height: 70}}
+            />
+          </View>
+        </View>
+      ))}
       <Button
         onPress={() =>
           navigation.navigate('Home', {
@@ -102,7 +130,7 @@ export default function RoutineDetailScreen({route, navigation}) {
         }>
         수정하기
       </Button>
-    </View>
+    </ScrollView>
   );
 }
 

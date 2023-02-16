@@ -96,23 +96,7 @@ export default function CommunitySimpleScreen({navigation}) {
         <View>
           {shareRoutine.length > 0 &&
             shareRoutine.map(item => (
-              <TouchableOpacity
-                style={styles.container}
-                key={item.boardId}
-                onPress={() =>
-                  navigation.navigate('Community', {
-                    screen: 'RoutineArticleDetailScreen',
-                    params: {
-                      boardId: item.boardId,
-                      routineId: item.routineId,
-                    },
-                  })
-                }>
-                <RoutineListItem routineId={item.routineId} name={item.title} />
-                <Text>조회수 : {item.hits}</Text>
-                <Text>공유수 : {item.downloads}</Text>
-                <Text>좋아요 : {item.likes}</Text>
-              </TouchableOpacity>
+              <RoutineListItem data={item} key={item.boardId} />
             ))}
         </View>
       </View>

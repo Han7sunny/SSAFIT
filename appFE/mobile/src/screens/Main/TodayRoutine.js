@@ -69,20 +69,9 @@ export default function TodayRoutine() {
           <Text variant="titleLarge">운동을 추가해보세요</Text>
         </View>
       )}
-      <TouchableOpacity
-        style={{alignSelf: 'center', width: '100%'}}
-        onPress={() =>
-          navigation.navigate('Home', {
-            screen: 'RoutineDetailScreen',
-            params: {
-              routineId: todayRoutine[0].routineId,
-            },
-          })
-        }>
-        {todayRoutine.map(item => (
-          <RoutineSimpleScreen id={item.routineId} key={item.routineId} />
-        ))}
-      </TouchableOpacity>
+      {todayRoutine.map(item => (
+        <RoutineSimpleScreen id={item.routineId} />
+      ))}
     </View>
   );
 }
