@@ -114,33 +114,39 @@ export default function RoutineDetailScreen({route}) {
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-            <View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text>운동 부위</Text>
-                <Text
-                  style={{marginLeft: 50, paddingLeft: 20, borderLeftWidth: 2}}>
+            <View style={{flex: 2.7}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 20,
+                }}>
+                <Text style={{flex: 4}}>운동 부위</Text>
+                <Text style={{flex: 6, paddingLeft: 20, borderLeftWidth: 2}}>
                   {item.exerciseArea} - {item.exerciseTypeName}
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text>세트 수</Text>
-                <Text
-                  style={{marginLeft: 63, paddingLeft: 20, borderLeftWidth: 2}}>
+                <Text style={{flex: 4}}>세트 수</Text>
+                <Text style={{flex: 6, paddingLeft: 20, borderLeftWidth: 2}}>
                   {item.exerciseSet} {' 세트'}
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text>세트별 횟수</Text>
-                <Text
-                  style={{marginLeft: 37, paddingLeft: 20, borderLeftWidth: 2}}>
+                <Text style={{flex: 4}}>세트별 횟수</Text>
+                <Text style={{flex: 6, paddingLeft: 20, borderLeftWidth: 2}}>
                   {item.reps}
                   {' 회'}
                 </Text>
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text>세트별 쉬는 시간</Text>
-                <Text
-                  style={{marginLeft: 8, paddingLeft: 20, borderLeftWidth: 2}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  borderBottomWidth: 1,
+                }}>
+                <Text style={{flex: 4}}>세트별 쉬는 시간</Text>
+                <Text style={{flex: 6, paddingLeft: 20, borderLeftWidth: 2}}>
                   {item.restTimeMinutes} : {item.restTimeSeconds}
                 </Text>
               </View>
@@ -149,7 +155,7 @@ export default function RoutineDetailScreen({route}) {
 
             <Image
               source={images[item.exerciseId]}
-              style={{width: 70, height: 70, backgroundColor: 'white'}}
+              style={{width: 60, height: 70, backgroundColor: 'white', flex: 1}}
             />
           </View>
         </View>

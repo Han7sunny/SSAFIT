@@ -146,7 +146,7 @@ export default function ArticleDetailScreen({navigation, route}) {
       <Button
         mode="contained"
         buttonColor="#29b6f6"
-        style={styles.button}
+        style={[styles.button, {marginBottom: 10}]}
         labelStyle={styles.label}
         onPress={() =>
           AsyncStorage.removeItem('username', () => {

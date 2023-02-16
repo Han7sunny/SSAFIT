@@ -4,6 +4,7 @@ import {StyleSheet, FlatList, View, Alert} from 'react-native';
 import {Text, TextInput, IconButton, Button} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function ArticleDetailScreen({navigation, route}) {
   const id = route.params.id;

@@ -12,13 +12,17 @@ export default function CreateRoutineScreen({navigation, route}) {
     '',
     // data === false ? '' : route.params.data.name,
   );
-  let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+  // let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+  const [exerciseLists, setExerciseLists] = useState([false]);
   const [accessToken, setAccessToken] = useState();
   const [userId, setUserId] = useState('');
   const [ip, setIP] = useState('');
-  const routineInfo = ({sendData}) => {
-    exerciseLists.push(sendData);
-    console.log('저장한 루틴 리스트 :', exerciseLists);
+  const routineInfo = sendData => {
+    const arr = exerciseLists;
+    if (!arr.at(-1)) arr.splice(-1, 1);
+    arr.push(sendData);
+    setExerciseLists(arr);
+    console.log('저장한 루틴 리스트 :', arr);
   };
   // 마운팅 될때 한번만 실행
   useEffect(() => {
@@ -36,7 +40,7 @@ export default function CreateRoutineScreen({navigation, route}) {
   // axios 요청 보낼 함수
   function onPost() {
     if (accessToken === '') return;
-    let setExercise = [...new Set(exerciseLists)];
+    // let setExercise = [...new Set(exerciseLists)];
     console.log('se', setExercise);
     axios({
       method: 'post',
@@ -63,13 +67,10 @@ export default function CreateRoutineScreen({navigation, route}) {
   }
 
   // RoutineInput 컴포넌트 추가 코드
-  const [countNum, setCountNum] = useState([0]);
   const onAddRoutine = () => {
-    let countArr = [...countNum];
-    let counter = countArr.slice(-1)[0];
-    counter += 1;
-    countArr.push(counter);
-    setCountNum(countArr);
+    const arr = [...exerciseLists, false];
+    setExerciseLists(arr);
+    console.log('asd', arr);
   };
 
   return (
@@ -82,7 +83,10 @@ export default function CreateRoutineScreen({navigation, route}) {
           setRoutineName(text);
         }}
       />
-      <RoutineInput countNum={countNum} routineInfo={routineInfo} />
+      {exerciseLists.map(item => (
+        <RoutineInput routineInfo={item} func={routineInfo} />
+      ))}
+
       <IconButton
         style={{marginHorizontal: '50%'}}
         size={20}
@@ -95,7 +99,7 @@ export default function CreateRoutineScreen({navigation, route}) {
         buttonColor="#29b6f6"
         onPress={() => {
           onPost();
-          // navigation.navigate('Home', {screen:'MyRoutineListScreen'});
+          navigation.navigate('Home', {screen: 'MyRoutineListScreen'});
           // navigator 인덱스 초기화하기
         }}>
         저장하기
