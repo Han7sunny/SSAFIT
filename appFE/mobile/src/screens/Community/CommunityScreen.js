@@ -9,6 +9,7 @@ import {
 } from 'react-native-paper';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { color } from 'react-native-reanimated';
 
 // 함수형 컴포넌트 내에 setState 코드를 작성하면 무한 렌더링 현상이 발생
 
@@ -73,11 +74,12 @@ export default function CommunityScreen({navigation, route}) {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          margin: 10
         }}>
         <SegmentedButtons
           value={value}
           onValueChange={setValue}
-          style={{width: 300}}
+          style={{width: 200}}
           buttons={[
             {
               value: 'QA',
@@ -90,12 +92,13 @@ export default function CommunityScreen({navigation, route}) {
           ]}
         />
         <Button
-          mode="contained"
+          mode="elevated"
           onPress={() =>
             navigation.navigate('CreateArticleScreen', {
               data: false,
               categoryId: value === 'QA' ? 2 : 3,
             })
+          
           }>
           글 쓰기
         </Button>
@@ -105,7 +108,7 @@ export default function CommunityScreen({navigation, route}) {
           onChangeText={value => setFindWord(value)}
           onSubmitEditing={filter}
           placeholder="검색어를 입력하세요"
-          style={{backgroundColor: 'white'}}
+          style={{backgroundColor: 'white', height: 50, borderRadius: 10, borderTopLeftRadius:10, borderTopRightRadius: 10, borderWidth: 0.5, marginLeft: 10, marginRight: 10}}
           right={<TextInput.Icon icon="magnify" onPress={filter} />}
         />
         <View
@@ -178,7 +181,7 @@ export default function CommunityScreen({navigation, route}) {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <Pressable
-              style={{flexDirection: 'row', height: 30, alignItems: 'center'}}
+              style={{flexDirection: 'row', height: 25, alignItems: 'center'}}
               onPress={() => {
                 if (value === 'QA')
                   navigation.navigate('ArticleDetailScreen', {
@@ -191,11 +194,11 @@ export default function CommunityScreen({navigation, route}) {
                     navigation: {navigation},
                   });
               }}>
-              <Text style={{flex: 2.5, fontSize: 20}}>{item.title}</Text>
-              <Text style={{flex: 1, textAlign: 'center', fontSize: 17}}>
+              <Text style={{flex: 2.5, fontSize: 15}}>{item.title}</Text>
+              <Text style={{flex: 1, textAlign: 'center', fontSize: 15}}>
                 {item.userName}
               </Text>
-              <Text style={{flex: 1, textAlign: 'center', fontSize: 17}}>
+              <Text style={{flex: 1, textAlign: 'center', fontSize: 15}}>
                 {item.registeredTime.substring(0, 10)}
               </Text>
             </Pressable>
@@ -221,8 +224,8 @@ const styles = StyleSheet.create({
   listTitle: {
     height: 50,
     flexDirection: 'row',
-    borderTopWidth: 3,
-    marginTop: 10,
+    borderTopWidth: 1,
+    // marginTop: 10,
     borderBottomWidth: 1,
     marginBottom: 10,
     alignItems: 'center',

@@ -77,9 +77,10 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
       .then(res => {
         console.log('response :', res.data);
         console.log('나의 루틴에 추가');
+        // Alert.alert("알림","나의 루틴에 추가되었습니다.", [{text: "확인"}])
       })
       .catch(err => {
-        console.log('에러');
+        console.log('에러', err);
       });
   }
 
@@ -147,7 +148,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
   };
 
   return (
-    <View>
+    <ScrollView>
       {isChange && (
         <View style={{flexDirection: 'row'}}>
           <Button
@@ -194,7 +195,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
           alignContent: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10}}>
+        <Text variant="titleLarge" style={{fontWeight: 'bold', marginLeft: 10, marginTop: 10 }}>
           {articleInfo.title}
         </Text>
       </View>
@@ -239,7 +240,7 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
         </View>
         <View style={{maxHeight: 330, minHeight: 330}}>
           <ScrollView>
-            <Text style={{paddingBottom: 20}}>{articleInfo.content}</Text>
+            <Text style={{ margin: 10,paddingBottom: 20}}>{articleInfo.content}</Text>
             <View>
               <Button onPress={() => addToMyRoutine()}>루틴 퍼가기</Button>
               <View style={{alignItems: 'center'}}>
@@ -250,24 +251,27 @@ export default function RoutineArticleDetailScreen({route, navigation}) {
         </View>
       </View>
       <View>
-        <Text variant="titleLarge">댓글</Text>
+        {/* <Text variant="titleLarge">댓글</Text> */}
         <FlatList
           data={articleInfo.replyList}
-          style={{height: 220}}
+          // style={{height: 220}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <ReplyScreen reply={item} send={deleteReply} />
           )}
           keyExtractor={item => item.reply_id}
+          style={{ margin: 10}}
         />
       </View>
       <TextInput
-        label="댓글을 입력하세요"
+        mode="outlined"
+        placeholder="댓글을 입력하세요"
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
+        style={{ margin: 10, backgroundColor: 'white', borderRadius: 20, borderTopEndRadius: 20, borderTopStartRadius: 20}}
       />
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({

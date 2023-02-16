@@ -179,7 +179,7 @@ export default function ArticleDetailScreen({navigation, route}) {
           alignContent: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10}}>
+        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10, marginLeft: 10}}>
           {articleData.title}
         </Text>
       </View>
@@ -218,16 +218,16 @@ export default function ArticleDetailScreen({navigation, route}) {
             </View>
           </View>
         </View>
-        <View>
-          <Text>내용</Text>
+        <View style={{ margin: 10}}>
+          {/* <Text>내용</Text> */}
           <Text>{articleData.content}</Text>
         </View>
       </View>
       <View>
-        <Text variant="titleLarge">댓글</Text>
+        {/* <Text variant="titleLarge">댓글</Text> */}
         <FlatList
           data={articleData.replyList}
-          style={{height: 220}}
+          // style={{height: 220}}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({item}) => (
             <ReplyScreen reply={item} send={deleteReply} />
@@ -236,10 +236,12 @@ export default function ArticleDetailScreen({navigation, route}) {
         />
       </View>
       <TextInput
+        mode="outlined"
         label="댓글을 입력하세요"
         value={text}
         onChangeText={text => setText(text)}
         right={<TextInput.Icon icon="import" onPress={addReply} />}
+        style={{ margin: 10 }}
       />
     </View>
   );
