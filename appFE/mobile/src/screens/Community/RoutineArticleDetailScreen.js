@@ -318,12 +318,3 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 });
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 2
-  },
-  title: {
-    fontSize: 30
-  }
-})

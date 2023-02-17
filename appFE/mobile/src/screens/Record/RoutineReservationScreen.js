@@ -295,13 +295,3 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
   },
 });
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1.5
-  },
-  calendar: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  }
-})
