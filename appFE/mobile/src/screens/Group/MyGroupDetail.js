@@ -1,130 +1,161 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {View, Image, FlatList, StyleSheet} from 'react-native';
-import {Button, IconButton, MD3Colors, Text, Avatar} from 'react-native-paper';
+import {
+  View,
+  Image,
+  FlatList,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
+import {Button, Text, Avatar, ProgressBar} from 'react-native-paper';
 import MemberScreen from './MemberScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
 
 export default function MyGroupSimple({navigation, route}) {
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
-
   const id = route.params.id;
-  const [item, setItem] =
-    // useState({
-    //   "achievement_rate": 0,
-    //   "current_member": 0,
-    //   "end_date": "string",
-    //   "goal": 0,
-    //   "groupId": 0,
-    //   "groupMemberList": [
-    //     {
-    //       "acceptInvitation": true,
-    //       "achievementRate": 0,
-    //       "groupId": 0,
-    //       "groupMemberId": 0,
-    //       "on_off": true,
-    //       "userId": "string",
-    //       "userName": "string"
-    //     }
-    //   ],
-    //   "maximum_member": 0,
-    //   "msg": "string",
-    //   "name": "string",
-    //   "penalty": "string",
-    //   "period": 0,
-    //   "routineList": [
-    //     {
-    //       "name": "string",
-    //       "routineId": 0
-    //     }
-    //   ],
-    //   "start_date": "string",
-    //   "success": true
-    // })
-    useState({});
+  const [userId, setUserId] = useState('');
+  const [role, setRole] = useState('USER1');
+  const [accessToken, setAccessToken] = useState('');
+  const [item, setItem] = useState({});
+  const [Members, setMembers] = useState([]);
+  const [Routines, setRoutines] = useState([]);
+  const [ip, setIP] = useState('');
   useEffect(() => {
-    console.log(id);
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/group/` + Number(id), {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-AUTH-TOKEN': `${token}`,
-          },
-        })
-      ).data;
-      setItem(data);
-      console.log(data);
-    };
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setRole(UserInfo.role);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
+  useEffect(() => {
     getData();
-  }, [id]);
-  const deleteGroup = async () => {
-    const result = (
-      await axios.delete(`http://70.12.246.116:8080/group/${id}`, {
+  }, [id, accessToken]);
+  const getData = async () => {
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`${ip}/group/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'X-AUTH-TOKEN': `${token}`,
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
         },
       })
     ).data;
-    if (result) navigation.navigate('MainMyPageScreen');
+    setItem(data);
+    setMembers(data.groupMemberList);
+    setRoutines(data.routineList);
+  };
+  const deleteGroup = async () => {
+    const result = (
+      await axios.delete(`${ip}/group/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    if (result)
+      navigation.navigate('MyPage', {
+        screen: 'MainMyPageScreen',
+        params: {state: true},
+      });
   };
   return (
     <View>
-      <Text
-        variant="displayLarge"
-        style={{fontWeight: 'bold', margin: 20, marginBottom: 0}}>
-        {item.name}
-      </Text>
       <View style={styles.container}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            source={require('./icon.png')}
-            style={{width: 70, height: 70, margin: 10}}
-          />
-          <View>
-            <Text style={{fontSize: 30, fontWeight: 600}}>닉네임</Text>
-            <Text>sfg</Text>
-          </View>
-        </View>
-
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
-          <Text>
-            {item.start_date} ~ {item.end_date}
+        <ScrollView>
+          <Text
+            variant="headlineLarge"
+            style={{fontWeight: 'bold', marginLeft: 20, marginBottom: 0}}>
+            {item.name}
           </Text>
-        </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
-          <Text>{item.goal}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              운동 기간
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
+              {item.start_date} ~ {item.end_date}
+            </Text>
+          </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
-          <Text>{item.penalty}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 목표
+            </Text>
+            {/* <ProgressBar progress={item.goal / 100.0} color="red" /> */}
+            {/* <Text
+              style={{
+                marginLeft: 30,
+                paddingLeft: 20,
+                borderLeftWidth: 2,
+              }}
+            />
+            <View
+              style={{
+                borderWidth: 1,
+                width: '60%',
+                height: 20,
+                flexDirection: 'row',
+              }}>
+              <View style={{backgroundColor: 'red', width: `${item.goal}%`}}>
+                <Text> </Text>
+              </View>
+              <Text style={{paddingLeft: 15}}>{item.goal}</Text>
+            </View> */}
+          </View>
 
-        <View>
-          <Text style={{fontSize: 20, fontWeight: 600}}>그룹 달성률</Text>
-          <Text>{item.totalResult}</Text>
-        </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 패널티
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
+              {item.penalty}
+            </Text>
+          </View>
 
-        <Text style={{fontSize: 20, fontWeight: 600}}>그룹원</Text>
-        <FlatList
-          data={item.groupMemberList}
-          style={{height: 290}}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => <MemberScreen member={item} />}
-          keyExtractor={item => item.userName.toString()}
-        />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>
+              그룹 달성률
+            </Text>
+            <Text style={{flex: 3, borderLeftWidth: 2, paddingLeft: 10}}>
+              {item.totalResult}
+            </Text>
+          </View>
+
+          <Text style={{fontSize: 20, fontWeight: 600, flex: 1.5}}>그룹원</Text>
+          {Members.map(item => (
+            <MemberScreen member={item} />
+          ))}
+          {Routines.map(item => (
+            <RoutineSimpleScreen navigation={navigation} id={item.routineId} />
+          ))}
+        </ScrollView>
       </View>
       <Button
         mode="contained"
         buttonColor="red"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={deleteGroup}>
+        onPress={() =>
+          Alert.alert(`그룹을 탈퇴하시겠습니까?`, `${item.name}탈퇴합니다.`, [
+            {
+              text: '아니요',
+              style: 'cancel',
+            },
+            {
+              text: '네',
+              onPress: () => deleteGroup(),
+            },
+          ])
+        }>
         그룹 탈퇴
       </Button>
     </View>
@@ -139,8 +170,8 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    minHeight: 550,
-    maxHeight: 550,
+    minHeight: 615,
+    maxHeight: 615,
     borderWidth: 2,
     borderColor: 'black',
     borderRadius: 10,

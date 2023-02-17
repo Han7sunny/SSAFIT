@@ -1,112 +1,115 @@
-import axios from 'axios'
-import React, { useState, useEffect } from 'react'
-import { View, Button as Btn, StyleSheet, ScrollView } from 'react-native'
-import { Text } from 'react-native-paper'
-import Button from '../../components/Button'
-import TextInput from '../../components/TextInput'
-import RoutineInput from '../../components/RoutineInput'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-// import { useSelector } from 'react-redux'
+import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {IconButton, Text, TextInput, Button} from 'react-native-paper';
+import RoutineInput from '../../components/RoutineInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const userData = useSelector(store=>store.userData)
-let exerciseList = []  // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
-export default function CreateRoutineScreen({ navigation }) {
-  const [routineName, setRoutineName] = useState()
-  const [accessToken, setAccessToken] = useState()
-  const [userId, setUserId] = useState('')
+export default function CreateRoutineScreen({navigation, route}) {
+  // const data = route.params.data;
+  const [routineName, setRoutineName] = useState(
+    '',
+    // data === false ? '' : route.params.data.name,
+  );
+  // let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+  const [exerciseLists, setExerciseLists] = useState([false]);
+  const [accessToken, setAccessToken] = useState();
+  const [userId, setUserId] = useState('');
+  const [ip, setIP] = useState('');
+  const routineInfo = sendData => {
+    const arr = exerciseLists;
+    if (!arr.at(-1)) arr.splice(-1, 1);
+    arr.push(sendData);
+    setExerciseLists(arr);
+    console.log('저장한 루틴 리스트 :', arr);
+  };
+  // 마운팅 될때 한번만 실행
   useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
     AsyncStorage.getItem('username', (err, result) => {
-      const UserInfo = JSON.parse(result)
+      const UserInfo = JSON.parse(result);
       // console.log(UserInfo)
-      setAccessToken(UserInfo.token)
-      setUserId(UserInfo.id)
+      setAccessToken(UserInfo.token);
+      setUserId(UserInfo.id);
+    });
+  }, []);
+  // axios 요청 보낼 함수
+  function onPost() {
+    if (accessToken === '') return;
+    // let setExercise = [...new Set(exerciseLists)];
+    console.log('se', setExercise);
+    axios({
+      method: 'post',
+      url: `${ip}/routine/generate-routine`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      },
+      data: {
+        exerciseList: setExercise,
+        routineName: `${routineName}`,
+        userId: userId,
+        routineId: 0,
+      },
     })
-  }, [])
-// axios 요청 보낼 함수
-function onPost() {
-  console.log('루틴 생성 전 확인 = ',exerciseList)
-  console.log(accessToken)
-  axios({
-    method: 'post',
-    url: 'http://70.12.246.116:8080/routine/generate-routine',
-    headers: {
-      "authorization": `Bearer ${accessToken}`,
-      "X-AUTH-TOKEN":`${accessToken}`
-    },
-    data: {
-      "exerciseList": exerciseList,
-      "routineName": routineName,
-      "userId": userId,
-      "routineId": 0
-    }
-  })
-  .then(function (response) {
-    console.log(response.data)
-    console.log('==== 루틴 생성 성공 ======')
-    // console.log('routineName :', routineName)
-    // console.log('exerciseList :', exerciseList)
-  })
-  .catch(function (error) {
-    console.log('==== 루틴 생성 실패 ======')
-    // console.log('routineName :', routineName)
-    // console.log('exerciseList :', exerciseList)
-    console.log(error)
-  })
-}
+      .then(function (response) {
+        console.log('==== 루틴 생성 성공 ======');
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log('==== 루틴 생성 실패 ======');
+        console.log(error);
+      });
+  }
 
-  // const [routineName, setRoutineName] = useState('')
   // RoutineInput 컴포넌트 추가 코드
-
-  const [countNum, setCountNum] = useState([0])
   const onAddRoutine = () => {
-    let countArr = [...countNum]
-    let counter = countArr.slice(-1)[0]
-    counter += 1
-    countArr.push(counter)
-    setCountNum(countArr)
-  }
-
-  // routine 정보 주고 받을 함수
-  const routineInfo = ({sendData}) => {
-    // sendData.push({"name" : "1번운동 별칭"})
-    // console.log(`========== sendData : ${sendData} ============`)
-    exerciseList.push(sendData)
-    console.log('저장한 루틴 리스트 :', exerciseList)
-    // console.log('======================')
-  }
+    const arr = [...exerciseLists, false];
+    setExerciseLists(arr);
+    console.log('asd', arr);
+  };
 
   return (
     <ScrollView>
-      <Text> Create New Routine! </Text>
       <TextInput
+        mode="outlined"
         label="루틴 이름을 설정하세요!"
         value={routineName}
-        onChangeText={(value) => {
-          setRoutineName(value)
+        onChangeText={text => {
+          setRoutineName(text);
         }}
-        // onEndEditing={() => {console.log('routineName 외않되 : ',routineName)}}
       />
-      <RoutineInput countNum={countNum} routineInfo={routineInfo}/>
-      <Btn onPress={onAddRoutine} title="+"
-      style={styles.btn}>
-      </Btn>
+      {exerciseLists.map(item => (
+        <RoutineInput routineInfo={item} func={routineInfo} />
+      ))}
+
+      <IconButton
+        style={{marginHorizontal: '50%'}}
+        size={20}
+        onPress={onAddRoutine}
+        icon="plus-outline"
+      />
 
       <Button
         mode="contained"
+        buttonColor="#29b6f6"
         onPress={() => {
-          onPost()
-          navigation.navigate('MyRoutineListScreen'); 
+          onPost();
+          navigation.navigate('Home', {screen: 'MyRoutineListScreen'});
           // navigator 인덱스 초기화하기
-        }}
-      >
+        }}>
         저장하기
       </Button>
     </ScrollView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   btn: {
-    width: 5
-  }
-})
+    width: 5,
+  },
+});

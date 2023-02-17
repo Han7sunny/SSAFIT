@@ -1,120 +1,360 @@
 import axios from 'axios';
 import React, {useState, useEffect} from 'react';
-import {View, Image, FlatList, StyleSheet} from 'react-native';
+import {View, Image, FlatList, StyleSheet, ScrollView} from 'react-native';
 import {Button, TextInput, IconButton, Text} from 'react-native-paper';
 import ReplyScreen from './ReplyScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RoutineSimpleScreen from '../Routine/RoutineSimpleScreen';
+import {useIsFocused} from '@react-navigation/native';
 
-export default function GroupDetailScreen({route}) {
-  const id = route.params.id;
-  const my = {memberid: 'lhj', isMember: false, userId: 'test123'};
-  const [heartCnt, setIsHeartCnt] = useState(0);
+export default function GroupDetailScreen({navigation, route}) {
+  const groupId = route.params.id;
+  const [heartCnt, setHeartCnt] = useState(0);
+  const [registeredTime, setRegisteredTime] = useState('');
+
   const [isClickHeart, setIsClickHeart] = useState(0);
   const [text, setText] = useState('');
-  const [item, setItem] = useState({});
-  // useState({"achievementRate": 0, "boardId": 0, "categoryId": 0, "clickLikes": false, "content": "내용 바꿈ㅋㅋ", "currentMember": 2, "downloads": 0, "endDate": "2023-03-07", "endRecruitDate": null, "fileList": null, "goal": 89.24, "groupId": 1, "groupMemberList": [{"acceptInvitation": false, "achievementRate": 0, "groupId": 1, "groupMemberId": 2, "on_off": false, "userId": "test123", "userName": "test123"}], "groupName": "공주들", "groupRecruitReplyList": [{"board_id": 1, "content": "저를 받아주십시오.", "includedGroup": false, "msg": null, "registered_time": "2023-02-06T00:55:18.777+00:00", "reply_id": 1, "success": true, "userName": "test456", "user_id": "test456"}], "hits": 10, "likes": 0, "maximumMember": 5, "modifiedTime": "2023-02-06T11:21:30.166614", "msg": null, "penalty": "대가리 박박 밀기", "period": 5, "registeredTime": "2023-02-06T09:38:04.421357", "replyList": null, "replySize": 1, "routineId": 0, "routineList": [{"name": "루틴 1 _ test22", "routineId": 3}], "sharePost": true, "startDate": "2023-03-03", "startRecruitDate": null, "success": true, "title": "제목도 바꿔부러", "userId": "test1xoa", "userName": null});
+  const [info, setInfo] = useState({});
+
+  const [role, setRole] = useState('USER');
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
+
   const [Reply, setReply] = useState([]);
-  useEffect(async () => {
-    const data = (
-      await axios.get(`http://70.12.246.116:8080/group/recruit/${id}`)
-    ).data;
-    console.log(data);
-    setItem(data);
-    setReply(data.groupRecruitReplyList);
-    setIsHeartCnt(data.likes);
-    setIsClickHeart(data.clickLikes);
+  const [changeReply, setChangeReply] = useState(false);
+  const [isChange, setIsChange] = useState(role === 'ADMIN');
+  const [Routines, setRoutines] = useState([]);
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+      setRole(UserInfo.role);
+    });
   }, []);
-  const clickHeart = async () => {
-    const data = await axios.get(
-      `http://70.12.246.116:8080/group/recruit/${id}/likes`,
+  useEffect(() => {
+    getData();
+  }, [accessToken, groupId, changeReply]);
+  const getData = async () => {
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`${ip}/group/recruit/${groupId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
     ).data;
-    setIsClickHeart(data);
-    setIsHeartCnt(heartCnt + (data ? 1 : -1));
     console.log(data);
+    setInfo(data);
+    setReply(data.groupRecruitReplyList);
+    setHeartCnt(data.likes);
+    setIsClickHeart(data.clickLikes);
+    setRoutines(data.routineList);
+    const date = data.registeredTime.split('T');
+    setRegisteredTime(date[0] + ' ' + date[1].substring(0, 5));
+    setIsChange(role === 'ADMIN' || userId === data.userId);
+    setChangeReply(false);
+  };
+  const clickHeart = async () => {
+    const result = (
+      await axios.get(`${ip}/group/recruit/${groupId}/likes`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setIsClickHeart(result);
+    setHeartCnt(heartCnt + (result ? 1 : -1));
   };
   const deleteRecruit = async () => {
-    const result = (
-      await axios.delete(`http://70.12.246.116:8080/group/recruit/${id}`)
-    ).data;
-    if (result) navigation.navigate('MainMyPageScreen');
+    const result = await axios.delete(`${ip}/group/recruit/${groupId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
+      },
+    });
+    console.log(result);
+    // if (result) navigation.navigate('MyPage', {screen:'MainMyPageScreen'});
   };
-
+  const deleteReply = isDelete => {
+    console.log(isDelete);
+    if (isDelete) setChangeReply(true);
+  };
   const addReply = async () => {
-    // console.log(text)
     if (text.length === 0) return;
-    console.log(text);
     const uploadReply = await axios.post(
-      `http://70.12.246.116:8080/group/recruit/${id}/regist`,
+      `${ip}/group/recruit/${groupId}/regist`,
       {
-        board_id: Number(item.boardId),
+        board_id: Number(info.boardId),
         content: text,
-        registered_time: '2023-02-07T02:01:16.776Z',
+        registered_time: new Date(),
         reply_id: Number(0),
-        user_id: my.userId,
+        user_id: userId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
       },
     );
-    // setReply(Reply.push({memberid: my.memberid, commentText: text, isMember: my.isMember}));
-    console.log(uploadReply);
-    // setReply((await axios.get('http://70.12.246.116:8080/group/recruit/'+id)).data.groupRecruitReplyList);
+    setChangeReply(true);
     setText('');
   };
-
-  const deleteReply = async replyId => {
-    const result = (
-      await axios.delete(
-        `http://70.12.246.116:8080/group/recruit/${id}/${replyId}`,
-      )
-    ).data;
-  };
-
   return (
-    <View style={{flex: 1}}>
-      <Text variant="headlineLarge" style={{fontWeight: 'bold', marginTop: 10}}>
-        {' '}
-        {item.title}{' '}
-      </Text>
-      <View style={{margin: 20}}>
-        <Title style={{fontSize: 25}}> {item.name} </Title>
-        <Text style={[styles.box, {fontSize: 15, alignItems: 'flex-end'}]}>
-          <Title style={{fontSize: 15}}> 인원 </Title>
-          {item.currentMember}/{item.maximumMember} 명
-        </Text>
-        <Text style={{marginBottom: 20}}>{item.content}</Text>
+    <View>
+      {isChange && (
         <View style={{flexDirection: 'row'}}>
-          <IconButton
-            icon={isClickHeart ? 'heart' : 'heart-outline'}
-            iconColor={isClickHeart ? 'red' : 'black'}
-            size={40}
-            onPress={clickHeart}
-            style={styles.iconButton}
-          />
-          <Text>{heartCnt}</Text>
+          <Button
+            mode="contained"
+            buttonColor="black"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={() =>
+              navigation.navigate('CreateGroupScreen', {data: info})
+            }>
+            수정
+          </Button>
+          <Button
+            mode="contained"
+            buttonColor="red"
+            style={styles.button}
+            labelStyle={styles.label}
+            onPress={deleteRecruit}>
+            삭제
+          </Button>
+        </View>
+      )}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignContent: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text variant="titleLarge" style={{fontWeight: 'bold', marginTop: 10}}>
+          {' ' + info.title + ' '}
+        </Text>
+      </View>
+      {/* <View style={styles.container}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderBottomWidth: 2,
+            justifyContent: 'space-around',
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              variant="titleLarge"
+              style={{
+                fontWeight: 'bold',
+                borderRightWidth: 1,
+                paddingRight: 5,
+              }}>
+              {info.userId}
+            </Text>
+            <Text> {registeredTime}</Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text>{'조회 ' + info.hits}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <IconButton
+                icon={isClickHeart ? 'heart' : 'heart-outline'}
+                iconColor={isClickHeart ? 'red' : 'black'}
+                size={20}
+                onPress={clickHeart}
+                style={styles.iconButton}
+              />
+              <Text>{heartCnt}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View>
+          <ScrollView>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>모집기간 : </Text>
+              <Text>
+                {info.startRecruitDate} ~ {info.endRecruitDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>운동기간 : </Text>
+              <Text>
+                {info.startDate} ~ {info.endDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>그룹목표 : </Text>
+              <Text>{info.goal}</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontWeight: 'bold'}}>인원 : </Text>
+              <Text>
+                {info.currentMember}/{info.maximumMember} 명
+              </Text>
+            </View>
+            <View>
+              <Text style={{fontWeight: 'bold'}}>운동 루틴 </Text>
+              <FlatList
+                data={info.routineList}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                renderItem={({item}) => <Text>{item.name}</Text>}
+                keyExtractor={item => item.routineId}
+                style={{maxHeight: 100, padding: 0, height: 100}}
+              />
+            </View>
+            <Text
+              style={{marginBottom: 20, height: 175, backgroundColor: 'blue'}}>
+              {info.content}
+            </Text>
+          </ScrollView>
+        </View>
+      </View>*/}
+
+      <View style={{alignItems: 'center'}}>
+        <View
+          style={[
+            styles.container,
+            {maxHeight: isChange ? 400 : 435, minHeight: isChange ? 400 : 435},
+          ]}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              borderBottomWidth: 2,
+              justifyContent: 'space-around',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text
+                variant="titleLarge"
+                style={{
+                  fontWeight: 'bold',
+                  borderRightWidth: 1,
+                  paddingRight: 5,
+                }}>
+                {info.userId}
+              </Text>
+              <Text> {registeredTime}</Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text>{'조회 ' + info.hits}</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <IconButton
+                  icon={isClickHeart ? 'heart' : 'heart-outline'}
+                  iconColor={isClickHeart ? 'red' : 'black'}
+                  size={20}
+                  onPress={clickHeart}
+                  style={styles.iconButton}
+                />
+                <Text>{heartCnt}</Text>
+              </View>
+            </View>
+          </View>
+          <ScrollView>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>모집 기간</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.startRecruitDate} ~ {info.endRecruitDate}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>운동 기간</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.startDate} ~ {info.endDate}
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>그룹 목표</Text>
+              <Text
+                style={{marginLeft: 30, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.goal}
+              </Text>
+              {/* <Text
+                style={{
+                  marginLeft: 30,
+                  paddingLeft: 20,
+                  borderLeftWidth: 2,
+                }}
+              />
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '60%',
+                  height: 20,
+                  flexDirection: 'row',
+                }}>
+                <View style={{backgroundColor: 'red', width: `${item.goal}%`}}>
+                  <Text> </Text>
+                </View>
+                <Text style={{paddingLeft: 15}}>{item.goal}</Text>
+              </View> */}
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>인원</Text>
+              <Text
+                style={{marginLeft: 71, paddingLeft: 20, borderLeftWidth: 2}}>
+                {info.currentMember}/{info.maximumMember} 명
+              </Text>
+            </View>
+
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={{fontSize: 20, fontWeight: 600}}>그룹 패널티</Text>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  paddingLeft: 20,
+                  borderLeftWidth: 2,
+                  width: '65%',
+                }}>
+                {info.penalty}
+              </Text>
+            </View>
+            <Text style={{fontSize: 20, fontWeight: 600}}>루틴정보</Text>
+            <View style={{alignItems: 'center'}}>
+              {Routines.map(item => (
+                <RoutineSimpleScreen
+                  navigation={navigation}
+                  id={item.routineId}
+                />
+              ))}
+            </View>
+          </ScrollView>
         </View>
       </View>
-      <View style={{flexDirection: 'row', alignContent: 'center'}}>
-        <Image source={require('./comment.png')} />
-        <Text>{Reply ? Reply.length : 0}</Text>
-      </View>
+      {/* <ReplyScreen reply={Reply} groupId={id} /> */}
+
       <FlatList
         data={Reply}
-        ItemSeparatorComponent={() => <View />}
-        renderItem={({item}) => {
-          <View>
-            <ReplyScreen reply={item} groupId={id} />
-            <Button onPress={() => deleteReply(item.reply_id)}>
-              댓글 삭제하기
-            </Button>
-          </View>;
-        }}
-        keyExtractor={item => item.id}
-        style={{flex: 2}}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        renderItem={({item}) => (
+          <ReplyScreen
+            reply={item}
+            leader={info.userId}
+            groupId={groupId}
+            send={deleteReply}
+          />
+        )}
+        keyExtractor={item => item.reply_id}
       />
-      <View>
-        <TextInput
-          label="댓글을 입력하세요"
-          onChangeText={text => setText(text)}
-        />
-        <Button onPress={addReply}>댓글 작성하기</Button>
-      </View>
+      <TextInput
+        mode="outlined"
+        label="댓글을 입력하세요"
+        value={text}
+        onChangeText={text => setText(text)}
+        right={<TextInput.Icon icon="import" onPress={addReply} />}
+        style={{margin: 10}}
+      />
     </View>
   );
 }
@@ -125,15 +365,23 @@ const styles = StyleSheet.create({
     height: 1,
   },
   container: {
-    flex: 1,
-    flexWrap: 'wrap',
     marginTop: 8,
     backgroundColor: 'aliceblue',
-    maxHeight: 400,
+    minHeight: 435,
+    maxHeight: 435,
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 10,
+    // margin: 20,
   },
-  box: {
+  button: {
+    width: 80,
     height: 40,
+    borderRadius: 10,
+    alignSelf: 'center',
+  },
+  label: {
+    fontSize: 14,
     fontWeight: 'bold',
-    fontSize: 25,
   },
 });

@@ -1,8 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import UploadModeModal from './UploadModeModal';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {Text, Button, IconButton, MD3Colors, Avatar} from 'react-native-paper';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const imagePickerOption = {
   mediaType: 'photo',
@@ -15,9 +17,26 @@ const imagePickerOption = {
   //   path: 'images',
   // },
 };
-export default function ChangeImageScreen({navigation}) {
-  const my = {id: 1, name: '이학준'};
-  const [photo, setPhoto] = useState(undefined);
+export default function ChangeImageScreen({navigation, route}) {
+  const [photoUri, setPhotoUri] = useState(route.params.uri);
+  const [accessToken, setAccessToken] = useState('');
+  const [UserId, setUserId] = useState('');
+  const [role, setRole] = useState('');
+  const [UserName, setUserName] = useState('');
+  const [ip, setIP] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setAccessToken(UserInfo.token);
+      setUserId(UserInfo.id);
+      setRole(UserInfo.role);
+      setUserName(UserInfo.username);
+    });
+  }, []);
   // 선택 사진 또는 촬영된 사진 정보
   const onPickImage = res => {
     if (res.didCancel || !res) {
@@ -26,10 +45,48 @@ export default function ChangeImageScreen({navigation}) {
     console.log(res);
     const localUri = res.assets[0].uri;
     const uriPath = localUri.split('//').pop();
-    const imageName = localUri.split('/').pop();
-    setPhoto('file://' + uriPath);
+    setPhotoUri('file://' + uriPath);
     console.log(localUri);
     console.log(res.assets[0]);
+  };
+
+  const changeImage = async () => {
+    var body = new FormData();
+    var photo = {
+      uri: photoUri,
+      type: 'multipart/form-data',
+      name: `${UserId}.jpg`,
+    };
+    body.append('image', photo);
+    const result = (
+      await axios.put(`${ip}/user/modifyFaceAuth`, body, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+          'content-type': 'multipart/form-data',
+        },
+      })
+    ).data;
+    console.log(result);
+    if (result) {
+      AsyncStorage.setItem(
+        'username',
+        JSON.stringify({
+          username: UserName,
+          id: UserId,
+          token: accessToken,
+          role: role,
+          imageUri: photoUri,
+        }),
+        () => {
+          console.log('AsyncStorage에 유저 정보 저장 완료');
+        },
+      );
+      navigation.navigate('MyPage', {
+        screen: 'MainMyPageScreen',
+        params: {state: true},
+      });
+    }
   };
 
   // 카메라 촬영
@@ -67,7 +124,9 @@ export default function ChangeImageScreen({navigation}) {
           <Avatar.Image
             size={150}
             source={
-              photo == undefined ? require('../Group/icon.png') : {uri: photo}
+              photoUri === 'undefined'
+                ? require('../Group/icon.png')
+                : {uri: photoUri}
             }
             style={{backgroundColor: '#fff'}}
           />
@@ -88,7 +147,7 @@ export default function ChangeImageScreen({navigation}) {
       </View>
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('MainMyPageScreen')}
+        onPress={changeImage}
         buttonColor="black"
         style={styles.button}
         labelStyle={styles.label}>

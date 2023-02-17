@@ -1,14 +1,6 @@
 import axios from 'axios';
 import React, {useState, useRef, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
+import {View, ScrollView, SafeAreaView, StyleSheet} from 'react-native';
 import {
   TextInput,
   Button,
@@ -20,22 +12,30 @@ import {
 } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import MultiSelect from 'react-native-multiple-select';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RoutineInput from '../../components/RoutineInput';
+import {useIsFocused} from '@react-navigation/native';
 
-export default function CreateGroupScreen({navigation}) {
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
+export default function CreateGroupScreen({navigation, route}) {
+  const data = route === false ? false : route.params.data;
+  let exerciseLists = []; // RoutineInput.js에서 사용자가 입력한 루틴 정보를 저장할 리스트
+  const [routineName, setRoutineName] = useState('');
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
 
-  const my = {memberid: 'lhj', isMember: false, userId: 'test123'};
   const [isEnabled, setIsEnabled] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectDate, setselectDate] = useState('');
-  const [checked, setChecked] = React.useState('id');
+  const [CheckedMember, setCheckedMember] = useState('id');
+  const [CheckedRoutine, setCheckedRoutine] = useState('my');
+  const [myRoutines, setMyRoutines] = useState([]);
 
   const [Data, setData] = useState({
     title: '',
     name: '',
     member: [],
+    routine: [],
     maxMemberNum: 0,
     startDate: '',
     endDate: '',
@@ -50,12 +50,118 @@ export default function CreateGroupScreen({navigation}) {
     setDatePickerVisibility(true);
     setselectDate(date);
   };
+  useEffect(() => {
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); //
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+    });
+  }, []);
+  useEffect(() => {
+    setIsEnabled(data === false ? false : true);
+    setData(
+      data === false
+        ? {
+            title: '',
+            name: '',
+            member: [],
+            routine: [],
+            maxMemberNum: '',
+            startDate: '',
+            endDate: '',
+            startRecruitDate: '',
+            endRecruitDate: '',
+            goal: '',
+            penalty: '',
+            content: '',
+          }
+        : {
+            title: data.title,
+            name: data.groupName,
+            member: data.groupMemberId, // 수정필요
+            routine: data.routine, // 수정필요
+            maxMemberNum: data.maximumMember + '',
+            startDate: data.startDate,
+            endDate: data.endDate,
+            startRecruitDate: data.startRecruitDate,
+            endRecruitDate: data.endRecruitDate,
+            goal: data.goal + '',
+            penalty: data.penalty,
+            content: data.content,
+          },
+    );
+  }, [route.params]);
+
+  useEffect(() => {
+    getRoutine();
+  }, [accessToken, addRoutine]);
+
+  const getRoutine = async () => {
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`${ip}/routine/get-user-routine`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    console.log(data);
+    setMyRoutines(data);
+    setAddRoutine(false);
+  };
+  const onPost = async () => {
+    if (accessToken === '') return;
+    let setExercise = [...new Set(exerciseLists)];
+    console.log('se', setExercise);
+    const result = (
+      await axios.post(
+        `${ip}/routine/generate-routine`,
+        {
+          routineName: `${routineName}`,
+          userId: userId,
+          exerciseList: setExercise,
+          routineId: 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        },
+      )
+    ).data;
+    let change = [...Data.routine, Number(result.msg)];
+    console.log(change);
+    setData(pre => Object.assign({}, pre, {routine: change}));
+    setAddRoutine(true);
+    hideModal();
+  };
 
   const hideDatePicker = () => setDatePickerVisibility(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const [countNum, setCountNum] = useState([0]);
+  const [addRoutine, setAddRoutine] = useState(false);
+  const onAddRoutine = () => {
+    let countArr = [...countNum];
+    let counter = countArr.slice(-1)[0];
+    counter += 1;
+    countArr.push(counter);
+    setCountNum(countArr);
+  };
+
+  const routineInfo = ({sendData}) => {
+    exerciseLists.push(sendData);
+    console.log('저장한 루틴 리스트 :', exerciseLists);
+  };
 
   const handleConfirm = date => {
     console.warn('A date has been picked: ', date);
+    alert(date.toLocaleDateString());
     let day = date.toLocaleDateString().split('/');
     day = `${day[2]}-${day[0].padStart(2, '0')}-${day[1].padStart(2, '0')}`;
     switch (selectDate) {
@@ -76,11 +182,14 @@ export default function CreateGroupScreen({navigation}) {
   };
 
   const createGroup = async () => {
-    setData(pre => Object.assign({}, pre, {title: ''}));
-    const result = await axios.post(
-      `http://70.12.246.116:8080/group/regist`,
-      {
-        categoryId: Number(0),
+    console.log('id', data.groupId);
+    await axios({
+      method: data === false ? 'post' : 'put',
+      url:
+        `${ip}/group/` +
+        (data === false ? `regist` : `recruit/${data.groupId}`),
+      data: {
+        categoryId: isEnabled ? Number(4) : Number(0),
         content: Data.content,
         currentMember: Number(Data.member ? Data.member.length : 0),
         endDate: Data.endDate,
@@ -88,7 +197,7 @@ export default function CreateGroupScreen({navigation}) {
         goal: Number(Data.goal),
         groupMemberId: Data.member,
         groupName: Data.name,
-        groupRoutineId: ['string'],
+        groupRoutineId: Data.routine,
         maximumMember: Number(Data.maxMemberNum),
         penalty: Data.penalty,
         period: Number(0),
@@ -96,90 +205,54 @@ export default function CreateGroupScreen({navigation}) {
         startDate: Data.startDate,
         startRecruitDate: Data.startRecruitDate,
         title: Data.title,
-        userId: my.userId,
+        userId: userId,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-AUTH-TOKEN': `${token}`,
-        },
+
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-AUTH-TOKEN': `${accessToken}`,
       },
-    );
-    console.log(result);
-    if (result)
-      navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen');
+    }).then(res => {
+      navigation.navigate(isEnabled ? 'GroupListScreen' : 'MyGroupListScreen', {
+        change: true,
+      }),
+        setData(pre => Object.assign({}, pre, {title: ''}));
+    });
   };
 
-  const [Lists, setLists] = useState([
-    // {userId: 'david1235', userName: '아뇽'},
-    // {userId: 'dkdlel', userName: 'notfound'},
-    // {userId: 'dkdlel1', userName: 'username1'},
-    // {userId: 'gkfrpdjqtk', userName: 'slrspdla'},
-    // {userId: 'test123', userName: 'test123'},
-    // {userId: 'test1xoa', userName: '서니'},
-    // {userId: 'test22', userName: '투투'},
-    // {userId: 'test456', userName: 'test456'},
-    // {userId: 'testlogin', userName: '로그인테스트용'},
-    // {userId: 'testLoginTest', userName: 'testName'},
-    // {userId: 'xoa1235', userName: '서니사라ㅇ'},
-  ]);
-  //useState([]);
-  const [selecUsers, setSelectUsers] = useState([]);
-  const [findUser, setFindUser] = useState('');
-  onSelectedUsersChange = selecUsers => {
-    setSelectUsers(selecUsers);
+  const [Lists, setLists] = useState([]);
+  onSelectedUsersChange = selectUsers => {
+    setData(pre => Object.assign({}, pre, {member: selectUsers}));
+  };
+  onSelectedRoutineChange = selectRoutine => {
+    setData(pre => Object.assign({}, pre, {routine: selectRoutine}));
   };
 
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const showModal = async () => {
-    // const data = (await axios.get(`http://70.12.246.116:8080/group/search?name=${findUser}`)).data;
-    // setLists(data);
-    // console.log(data);
-    // console.log(Lists);
     setIsOpenModal(true);
   };
   const hideModal = () => {
-    setData(pre => Object.assign({}, pre, {member: selecUsers}));
+    // setData(pre => Object.assign({}, pre, {member: selectUsers}));
+    setCheckedRoutine('my');
     setIsOpenModal(false);
-  };
-  // onSelectionsChange = (selectLists) => {
-  //   setSelectLists(selectLists)
-  //   // setData(pre => Object.assign({}, pre, {member: value}))
-  //   console.log(selectLists)
-  // }
-  // onDeletionsChange = (value) => {
-  //   const filter = selectLists.filter(e => e.value !== value)
-  //   setSelectLists(filter)
-  //   console.log(filter)
-  // }
-  const renderLabel = (label, style) => {
-    console.log(label);
-    return (
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{marginLeft: 10}}>
-          <Text style={style}>{label}</Text>
-        </View>
-      </View>
-    );
   };
 
   const getMember = text => {
-    console.log(text);
-    if (text.length === 1) {
-      const getData = async () => {
-        const data = (
-          await axios.get(
-            `http://70.12.246.102:8080/group/search?name=${text}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'X-AUTH-TOKEN': `${token}`,
-              },
-            },
-          )
-        ).data;
-        setLists(data);
-      };
-    }
+    if (text.length !== 1) return;
+    const getData = async () => {
+      const data = (
+        await axios.get(`${ip}/group/search?name=${text}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'X-AUTH-TOKEN': `${accessToken}`,
+          },
+        })
+      ).data;
+      setLists(data);
+      console.log(data);
+    };
+    getData();
   };
 
   return (
@@ -188,16 +261,14 @@ export default function CreateGroupScreen({navigation}) {
         <Text
           variant="headlineLarge"
           style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
-          {' '}
-          그룹 생성{' '}
+          {' 그룹 생성 '}
         </Text>
       )}
       {isEnabled && (
         <Text
           variant="headlineLarge"
           style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
-          {' '}
-          그룹 게시글 작성{' '}
+          {' 그룹 게시글 작성 '}
         </Text>
       )}
       <View
@@ -244,27 +315,101 @@ export default function CreateGroupScreen({navigation}) {
               }}
             />
           </View>
-          <View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text>그룹원</Text>
             <View>
-              <IconButton icon={'plus-circle-outline'} onPress={showModal} />
+              {/* <IconButton icon={'plus-circle-outline'} onPress={showModal} /> */}
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', margin: 10}}>
+                  <RadioButton
+                    value="ID"
+                    status={CheckedMember === 'id' ? 'checked' : 'unchecked'}
+                    onPress={() => setCheckedMember('id')}
+                  />
+                  <Text>ID</Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <RadioButton
+                    value="NAME"
+                    status={CheckedMember === 'name' ? 'checked' : 'unchecked'}
+                    onPress={() => setCheckedMember('name')}
+                  />
+                  <Text>NAME</Text>
+                </View>
+              </View>
             </View>
-            {/* <TextInput
-              value={Data.member}
-              mode="outlined"
-              returnKeyType="next"
-              onChangeText={value => setFindUser(value)}
-              right={
-                <TextInput.Icon
-                  icon="plus-circle-outline"
-                  onPress={showModal}
-                />
-              }
-              onSubmitEditing={() => {
-                console.log(findUser);
-              }}
-            /> */}
           </View>
+          <MultiSelect
+            // hideTags
+            items={Lists ? Lists : [{userId: '1', userName: '1'}]}
+            displayKey={CheckedMember === 'id' ? 'userId' : 'userName'}
+            uniqueKey="userId"
+            onSelectedItemsChange={onSelectedUsersChange}
+            selectedItems={Data.member}
+            selectText="Pick Users"
+            searchInputPlaceholderText="Search Users..."
+            onChangeInput={text => getMember(text)}
+            altFontFamily="ProximaNova-Light"
+            tagRemoveIconColor="#999"
+            tagBorderColor="#999"
+            tagTextColor="#000"
+            selectedItemTextColor="#999"
+            selectedItemIconColor="#999"
+            itemTextColor="#000"
+            searchInputStyle={{color: '#999'}}
+            submitButtonColor="#bbb"
+            submitButtonText="Submit"
+          />
+          <View>
+            <Text>루틴추가</Text>
+            <View>
+              {/* <IconButton icon={'plus-circle-outline'} onPress={showModal} /> */}
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', margin: 10}}>
+                  <RadioButton
+                    value="my"
+                    status={CheckedRoutine === 'my' ? 'checked' : 'unchecked'}
+                    onPress={() => setCheckedRoutine('my')}
+                  />
+                  <Text>나의 루틴</Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <RadioButton
+                    value="new"
+                    status={CheckedRoutine === 'new' ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      showModal();
+                      setCheckedRoutine('new');
+                    }}
+                  />
+                  <Text>루틴만들기</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <MultiSelect
+            // hideTags
+            items={myRoutines ? myRoutines : [{name: ' ', routineId: '-1'}]}
+            displayKey={'name'}
+            uniqueKey="routineId"
+            onSelectedItemsChange={onSelectedRoutineChange}
+            selectedItems={Data.routine}
+            selectText="Pick Routines"
+            searchInputPlaceholderText="Search Routines..."
+            onChangeInput={text => getMember(text)}
+            altFontFamily="ProximaNova-Light"
+            tagRemoveIconColor="#999"
+            tagBorderColor="#999"
+            tagTextColor="#000"
+            selectedItemTextColor="#999"
+            selectedItemIconColor="#999"
+            itemTextColor="#000"
+            searchInputStyle={{color: '#999'}}
+            submitButtonColor="#bbb"
+            submitButtonText="Submit"
+            // fixedHeight={true}
+          />
+
           {isEnabled && (
             <View>
               <Text>모집인원</Text>
@@ -433,7 +578,7 @@ export default function CreateGroupScreen({navigation}) {
         style={styles.button}
         labelStyle={styles.label}
         onPress={createGroup}>
-        등록
+        {data === false ? '등록' : '수정'}
       </Button>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -444,43 +589,35 @@ export default function CreateGroupScreen({navigation}) {
       <Modal
         presentationStyle={'FullScreen'}
         visible={isOpenModal}
-        onDismiss={hideModal}>
-        <View>
-          <RadioButton
-            value="ID"
-            status={checked === 'id' ? 'checked' : 'unchecked'}
-            onPress={() => setChecked('id')}
+        onDismiss={hideModal}
+        contentContainerStyle={{backgroundColor: 'white'}}>
+        <ScrollView>
+          <TextInput
+            mode="outlined"
+            label="루틴 이름을 설정하세요!"
+            value={routineName}
+            onChangeText={text => {
+              setRoutineName(text);
+            }}
           />
-          <RadioButton
-            value="NAME"
-            status={checked === 'name' ? 'checked' : 'unchecked'}
-            onPress={() => setChecked('name')}
+          <RoutineInput countNum={countNum} routineInfo={routineInfo} />
+          <IconButton
+            style={{marginHorizontal: '50%'}}
+            size={20}
+            onPress={onAddRoutine}
+            icon="plus-outline"
           />
-        </View>
-        <MultiSelect
-          hideTags
-          items={Lists}
-          displayKey={checked === 'id' ? 'userId' : 'userName'}
-          uniqueKey="userId"
-          onSelectedItemsChange={onSelectedUsersChange}
-          selectedItems={selecUsers}
-          selectText="Pick Items"
-          searchInputPlaceholderText="Search Items..."
-          onChangeInput={text => {
-            getMember(text);
-          }}
-          altFontFamily="ProximaNova-Light"
-          tagRemoveIconColor="#CCC"
-          tagBorderColor="#CCC"
-          tagTextColor="#fff"
-          selectedItemTextColor="#CCC"
-          selectedItemIconColor="#CCC"
-          itemTextColor="#000"
-          searchInputStyle={{color: '#CCC'}}
-          submitButtonColor="#CCC"
-          submitButtonText="Submit"
-          fixedHeight={true}
-        />
+
+          <Button
+            mode="contained"
+            onPress={() => {
+              onPost();
+              // navigation.navigate('MyRoutineListScreen');
+              // navigator 인덱스 초기화하기
+            }}>
+            저장하기
+          </Button>
+        </ScrollView>
       </Modal>
     </SafeAreaView>
   );

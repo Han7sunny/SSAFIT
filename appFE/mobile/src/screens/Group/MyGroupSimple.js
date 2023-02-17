@@ -6,7 +6,12 @@ export default function MyGroupSimple({item, navigation}) {
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigation.navigate('MyGroupDetail', {id: item.groupId})}>
+      onPress={() =>
+        navigation.navigate('Group', {
+          screen: 'MyGroupDetail',
+          params: {id: item.groupId},
+        })
+      }>
       <View>
         <Text style={styles.box}>{item.name}</Text>
         <Text style={[styles.box, {fontSize: 20}]}>

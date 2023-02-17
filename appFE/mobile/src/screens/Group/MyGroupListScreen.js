@@ -3,59 +3,64 @@ import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import MyGroupSimple from './MyGroupSimple';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function MyGroupListScreen({navigation}) {
-  // const Lists = [
-  //   {groupId: 0, title: 'a', nowNum: 2, date: '01/01/23'},
-  //   {groupId: 1, title: 'b', nowNum: 1, heart: 1, date: '01/01/23'},
-  //   {groupId: 2, title: 'c', nowNum: 10, heart: 10, date: '01/01/23'},
-  //   {groupId: 3, title: 'd', nowNum: 1, heart: 1, date: '01/01/23'},
-  // ];
+export default function MyGroupListScreen({navigation, route}) {
   const [Lists, setLists] = useState([]);
-  const token =
-    'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaGpUZXN0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY3NTgxODU4OSwiZXhwIjoxNjc1ODIyMTg5fQ.LxUTcNvKyqt3JQ1dGfi6DoB4fz4T78MBL9RVUJ5wr4Y';
+  const [userId, setUserId] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [ip, setIP] = useState('');
   useEffect(() => {
-    const getData = async () => {
-      const data = (
-        await axios.get(`http://70.12.246.116:8080/group/myGroupList`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-AUTH-TOKEN': `${token}`,
-          },
-        })
-      ).data;
-      setLists(data);
-      console.log(data);
-    };
-    getData();
+    AsyncStorage.getItem('ip', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setIP(UserInfo.ip);
+    });
+    AsyncStorage.getItem('username', (err, result) => {
+      const UserInfo = JSON.parse(result); // JSON.parse를 꼭 해줘야 한다!
+      setUserId(UserInfo.id);
+      setAccessToken(UserInfo.token);
+    });
   }, []);
+  useEffect(() => {
+    getData();
+  }, [route.params, accessToken]);
+  const getData = async () => {
+    if (accessToken === '') return;
+    const data = (
+      await axios.get(`${ip}/group/myGroupList`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'X-AUTH-TOKEN': `${accessToken}`,
+        },
+      })
+    ).data;
+    setLists(data);
+    console.log(data);
+  };
 
   return (
     <View>
-      <Text
-        variant="headlineLarge"
-        style={{fontWeight: 'bold', margin: 10, marginBottom: 30}}>
-        {' '}
-        OOO님의 그룹 목록{' '}
-      </Text>
-      <View style={{maxHeight: 570, minHeight: 570}}>
-        <FlatList
-          data={Lists}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          renderItem={({item}) => (
-            <MyGroupSimple item={item} navigation={navigation} />
-          )}
-          keyExtractor={item => item.name.toString()}
-        />
-      </View>
       <Button
         mode="contained"
-        buttonColor="black"
+        buttonColor="#29b6f6"
         style={styles.button}
         labelStyle={styles.label}
-        onPress={() => navigation.navigate('CreateGroupScreen')}>
+        onPress={() =>
+          navigation.navigate('Group', {
+            screen: 'CreateGroupScreen',
+            params: {data: false},
+          })
+        }>
         그룹 생성하기
       </Button>
+      {Lists.length > 0 &&
+        Lists.map(item => (
+          <MyGroupSimple
+            item={item}
+            navigation={navigation}
+            key={item.groupId}
+          />
+        ))}
     </View>
   );
 }
@@ -66,14 +71,13 @@ const styles = StyleSheet.create({
     height: 1,
   },
   button: {
-    width: 350,
-    height: 50,
+    width: '95%',
+    height: 40,
     borderRadius: 10,
     alignSelf: 'center',
   },
   label: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginTop: 17,
   },
 });

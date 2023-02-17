@@ -1,23 +1,49 @@
-import React from "react";
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native'
-import styled from 'styled-components/native'
-
-const Title = styled.Text`
-  font-size: 60px;
-  font-weight: 800;
-  align-self: flex-start;
-  margin: 0px 20px;
-`;
+import React from 'react';
+import {View, Image} from 'react-native';
+import {Text} from 'react-native-paper';
 
 export default function MemberScreen({member}) {
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-      {member.on_off && <Image source={require('./on.png')} style={{width:50, height: 50}}/>}
-      {!member.on_off && <Image source={require('./off.png')} style={{width:50, height: 50}}/>}
-      <Title>{member.userName}</Title>
-      <Text>{member.achievementRate}</Text>
+    <View>
+      {member.acceptInvitation && (
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {member.on_off && (
+            <Image
+              source={require('./on.png')}
+              style={{width: 50, height: 50}}
+            />
+          )}
+          {!member.on_off && (
+            <Image
+              source={require('./off.png')}
+              style={{width: 50, height: 50}}
+            />
+          )}
+          <View>
+            <Text variant="titleLarge" style={{fontWeight: 'bold'}}>
+              {member.userName}
+            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View
+                style={{
+                  borderWidth: 1,
+                  width: '90%',
+                  height: 25,
+                  flexDirection: 'row',
+                }}>
+                <View
+                  style={{
+                    backgroundColor: 'red',
+                    width: `${member.achievementRate}%`,
+                  }}>
+                  <Text> </Text>
+                </View>
+                <Text style={{paddingLeft: 15}}>{member.achievementRate}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
-  )
+  );
 }
-
-
